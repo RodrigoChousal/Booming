@@ -152,10 +152,12 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
                                                  lastName: lastName,
                                                  email: email,
                                                  profilePicture: img)
+                    Global.localUser?.backgroundPicture = #imageLiteral(resourceName: "placeholder")
                     
                     // Store details in d cloud:
                     if let localUser = Global.localUser {
                         ImageManager.postImageToFirebase(forUser: fireUser, image: img)
+                        ImageManager.postBackgroundImageToFirebase(forUser: fireUser, image: #imageLiteral(resourceName: "placeholder"))
                         Global.databaseRef.child("users")
                             .child(fireUser.uid)
                             .setValue(["email" : localUser.email,
@@ -169,8 +171,6 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
                         let changeRequest = fireUser.createProfileChangeRequest()
                         changeRequest.displayName = firstName + " " + lastName
                     }
-                    
-                    
                     
                     // We're done
                     print("Finished sign up. Accessing main VC.")

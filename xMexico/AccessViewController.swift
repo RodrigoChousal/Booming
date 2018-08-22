@@ -98,7 +98,7 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Login Controls
     
     @IBAction func showLoginForm(_ sender: Any) {
-        if self.buttonsView.frame.origin.x < UIScreen.main.bounds.width && self.buttonsView.frame.origin.x > 0{
+        if self.buttonsView.frame.origin.x < UIScreen.main.bounds.width && self.buttonsView.frame.origin.x > 0 {
             UIView.animate(withDuration: 0.3) {
                 self.buttonsView.frame.origin.x -= self.buttonsViewPadding + self.buttonsView.frame.width/2
             }
@@ -163,10 +163,10 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
                             let firstName = value?["firstName"] as? String ?? ""
                             let lastName = value?["lastName"] as? String ?? ""
                             let email = value?["email"] as? String ?? ""
-                            Global.localUser = LocalUser(firstName: firstName,
-                                                         lastName: lastName,
-                                                         email: email,
-                                                         profilePicture: ImageManager.fetchImageFromFirebase(forUser: fireUser))
+                        Global.localUser = LocalUser(firstName: firstName,
+                                                    lastName: lastName,
+                                                    email: email,
+                                                    profilePicture: ImageManager.fetchImageFromFirebase(forUser: fireUser))
                         }) { (error) in
                             print(error.localizedDescription)
                         }
@@ -207,10 +207,8 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func keyboardWillShow(notification: NSNotification) {
-        
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
             if !keyboardVisible {
-                self.titleImageView.frame.origin.y += keyboardSize.height / 2
                 self.view.frame.origin.y -= keyboardSize.height
             }
         }
@@ -219,14 +217,9 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func keyboardWillHide(notification: NSNotification) {
-        
-        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-            if keyboardVisible && view.frame.origin.y < 0{
-                self.titleImageView.frame.origin.y -= keyboardSize.height / 2
-                self.view.frame.origin.y += keyboardSize.height
-            }
+        if keyboardVisible {
+            self.view.frame.origin.y = 0
         }
-        
         keyboardVisible = false
     }
     

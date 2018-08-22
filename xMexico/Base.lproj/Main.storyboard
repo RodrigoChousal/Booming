@@ -27,7 +27,7 @@
                             <inset key="sectionInset" minX="10" minY="18" maxX="10" maxY="0.0"/>
                         </collectionViewFlowLayout>
                         <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" misplaced="YES" reuseIdentifier="CampaignCell" id="SbG-DP-XCQ" customClass="CampaignCell" customModule="xMexico" customModuleProvider="target">
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CampaignCell" id="SbG-DP-XCQ" customClass="CampaignCell" customModule="xMexico" customModuleProvider="target">
                                 <rect key="frame" x="10" y="18" width="172" height="273"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -847,7 +847,7 @@
                                                 </constraints>
                                             </view>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="teléfono celular" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8fp-7K-sRZ">
-                                                <rect key="frame" x="21.333333333333336" y="249" width="103.66666666666666" height="21"/>
+                                                <rect key="frame" x="21" y="249" width="104" height="21"/>
                                                 <fontDescription key="fontDescription" name="Avenir-Light" family="Avenir" pointSize="15"/>
                                                 <color key="textColor" red="0.50744800220214992" green="0.51247223984771573" blue="0.51247223984771573" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
@@ -1428,15 +1428,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="750" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="login_bg" translatesAutoresizingMaskIntoConstraints="NO" id="6SV-4U-Xhk">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                            </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="first_title" translatesAutoresizingMaskIntoConstraints="NO" id="6XM-Ok-rS5">
-                                <rect key="frame" x="67" y="201" width="240" height="56"/>
+                                <rect key="frame" x="67" y="219" width="240" height="38"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="R5k-NL-lZm">
-                                <rect key="frame" x="52" y="406" width="646" height="241"/>
+                                <rect key="frame" x="52" y="406" width="646" height="261"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="center" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F7U-BS-3ql">
@@ -1547,12 +1544,6 @@
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstAttribute="trailing" secondItem="6SV-4U-Xhk" secondAttribute="trailing" constant="375" id="8b5-Xj-XF6"/>
-                            <constraint firstItem="6SV-4U-Xhk" firstAttribute="top" secondItem="bI9-sO-idK" secondAttribute="top" id="DaM-lG-6BW"/>
-                            <constraint firstItem="6SV-4U-Xhk" firstAttribute="leading" secondItem="bI9-sO-idK" secondAttribute="leading" id="ECc-RT-vKZ"/>
-                            <constraint firstAttribute="bottom" secondItem="6SV-4U-Xhk" secondAttribute="bottom" id="tnq-03-pgg"/>
-                        </constraints>
                     </view>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="750" height="667"/>
@@ -1566,7 +1557,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JAV-PH-xgB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3365" y="-817"/>
+            <point key="canvasLocation" x="-3366.4000000000001" y="-817.61083743842369"/>
         </scene>
         <!--Sign Up View Controller-->
         <scene sceneID="xyD-uh-kGc">
@@ -2257,7 +2248,7 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="c2N-71-BDT"/>
-        <segue reference="QvK-uZ-PNE"/>
+        <segue reference="GkI-xa-TZo"/>
         <segue reference="0mk-ad-VM3"/>
     </inferredMetricsTieBreakers>
 </document>

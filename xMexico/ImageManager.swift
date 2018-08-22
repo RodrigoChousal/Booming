@@ -12,7 +12,6 @@ import Firebase
 class ImageManager {
     
     static func postImageToFirebase(forUser fireUser: User, image: UIImage) {
-        
         let imageData = UIImagePNGRepresentation(image)
         let imagePath = "userPictures/" + fireUser.uid + "/" + "userProfile.png"
         let metadata = StorageMetadata()
@@ -24,13 +23,30 @@ class ImageManager {
                     return
                 }
         }
-        
+    }
+    
+    static func postBackgroundImageToFirebase(forUser fireUser: User, image: UIImage) {
+        let imageData = UIImagePNGRepresentation(image)
+        let imagePath = "userBackgrounds/" + fireUser.uid + "/" + "userBackground.png"
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/png"
+        Global.storageRef.child(imagePath)
+            .putData(imageData!, metadata: metadata) { (metadata, error) in
+                if let error = error {
+                    print("Error uploading: \(error)")
+                    return
+                }
+        }
     }
     
     static func fetchImageFromFirebase(forUser fireUser: User) -> UIImage {
         let profileImgRef = Global.storageRef.child("userPictures/" + fireUser.uid + "/" + "userProfile.png")
         let imageView: UIImageView = UIImageView()
         imageView.sd_setImage(with: profileImgRef)
-        return imageView.image!
+        if imageView.image != nil {
+            return imageView.image!
+        } else {
+            return #imageLiteral(resourceName: "placeholder")
+        }
     }
 }

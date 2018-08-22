@@ -43,13 +43,12 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
         view.addSubview(topFilter)
         
         optionsTableView.isScrollEnabled = false
-        
         optionsTableView.delegate = self
         optionsTableView.dataSource = self
         
         if campaignList.count == 0 {
             isLoading = true
-            downloadJSONGist(downloadURL: Constants.gistURL)
+            downloadCampaignData()
         }
         
         navigationController?.navigationBar.titleTextAttributes =
@@ -78,15 +77,11 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "ShowCampaignSegue" {
-            
             let cell = sender as! CampaignCell
             let indexPath = collectionView?.indexPath(for: cell)
-            
             let campaignDetailVC = segue.destination as! CampaignVC
             campaignDetailVC.campaign = campaignList[(indexPath?.row)!]
-            
         } else if segue.identifier == "FindCampaignSegue" {
-            
             let searchVC = segue.destination as! SearchTableViewController
             searchVC.campaignsArray = campaignList
         }
@@ -100,7 +95,6 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
         if isLoading {
             return 4
         } else {
@@ -196,63 +190,49 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     
     // MARK: - Helper Methods
     
-    func downloadJSONGist(downloadURL: String) {
-        
-        DispatchQueue.global(qos: .background).async {
-            Alamofire.request(downloadURL).responseJSON { response in
-                guard response.result.isSuccess else {
-                    print("Error while fetching tags: \(String(describing: response.result.error))")
-                    return
+    func downloadCampaignData() {
+        var campaignCount = 0
+        Global.databaseRef.child("campaigns").observeSingleEvent(of: .value) { (listSnapshot) in
+            if let campaignsDictionary = listSnapshot.value as? NSArray  {
+                campaignCount = campaignsDictionary.count
+                for i in 0...(campaignCount - 1) {
+                    Global.databaseRef.child("campaigns").child(String(i)).observeSingleEvent(of: .value, with: { (campaignSnapshot) in
+                        if let campaignMeta = campaignSnapshot.value as? NSDictionary {
+                            let campaign = Campaign(name: campaignMeta.value(forKey: "nombre") as! String,
+                                                    desc: campaignMeta.value(forKey: "desc") as! String,
+                                                    contact: campaignMeta.value(forKey: "apoyo") as! String)
+                            campaign.date = campaignMeta.value(forKey: "fecha") as! String
+                            campaign.image = #imageLiteral(resourceName: "placeholder")
+                            campaign.imageURL = URL(string: campaignMeta.value(forKey: "logo_170x224") as! String)
+                            campaign.circularImageURL = URL(string: campaignMeta.value(forKey: "logo_142x142") as! String)
+                            if let picURLs = campaignMeta.value(forKey: "photo_gallery") as? NSArray {
+                                for value in picURLs {
+                                    if let str = value as? String {
+                                        if let url = URL(string: str) {
+                                            campaign.galleryImageURLs.append(url)
+                                        }
+                                    }
+                                }
+                            }
+                            campaignList.append(campaign)
+                            print("Appended new campaign to internal list.")
+                            
+                            // Uses downloaded Firebase data, needs full campaignList before execution
+                            DispatchQueue.global(qos: .background).async {
+                                self.loadCampaignImages()
+                            }
+                            self.isLoading = false
+                            self.collectionView?.reloadData()
+                        }
+                    })
                 }
-                
-                guard let responseJSON = response.result.value as? [String: Any] else {
-                    print("Invalid tag information received from the service")
-                    return
-                }
-                
-                self.jsonData = JSON(responseJSON)
-                
-                DispatchQueue.main.async {
-                    self.populateLocalData()
-                }
+            } else {
+                print("Invalid campaigns array.")
             }
         }
     }
     
-    func populateLocalData() {
-        
-        // _ is index
-        for (_,subJson):(String, JSON) in (self.jsonData?["campaigns"]["NGO"])! {
-            
-            let campaign = Campaign(
-                name: subJson["nombre"].stringValue,
-                desc: subJson["desc"].stringValue,
-                contact: subJson["apoyo"].stringValue) // falso
-            
-            campaign.date = subJson["fecha"].stringValue
-            campaign.image = #imageLiteral(resourceName: "placeholder")
-            campaign.imageURL = URL(string: subJson["logo_170x224"].stringValue)
-            
-            // To load if selected
-            campaign.circularImageURL = URL(string: subJson["logo_142x142"].stringValue)
-            let stringArray = subJson["photo_gallery"].arrayValue.map { $0.stringValue}
-            for element in stringArray {
-                campaign.galleryImageURLs.append(URL(string: element)!)
-            }
-            
-            campaignList.append(campaign)
-        }
-        
-        // Uses downloaded JSON data, needs full campaignList before execution
-        DispatchQueue.global(qos: .background).async {
-            self.loadCampaignImages()
-        }
-        
-        isLoading = false
-        self.collectionView?.reloadData()
-    }
-    
-    func loadCampaignImages() { // maybe reload data as images load, instead of waiting for all
+    func loadCampaignImages() {
         
         for campaign in campaignList {
             
