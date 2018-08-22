@@ -14,12 +14,6 @@ target 'xMexico' do
   pod 'Firebase/Storage'
   pod 'FirebaseUI/Storage'
   pod 'Firebase/Database'
-  
-#   pod 'SwiftyJSON'
-#   pod 'SimpleKeychain'
-#   pod 'Alamofire', '~> 4.7'
-#   pod 'AlamofireImage', '~> 3.3'
-#   pod 'mailcore2-ios'
 
 end
 
