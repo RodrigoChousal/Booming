@@ -1,1 +1,0 @@
-../../../../mailcore2-ios/include/MailCore/MCRFC822.h
