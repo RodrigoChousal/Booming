@@ -8,7 +8,6 @@
 
 import UIKit
 import Firebase
-import SimpleKeychain
 
 class SettingsTableViewController: UITableViewController, UITextViewDelegate, UITextFieldDelegate {
     

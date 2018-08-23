@@ -8,9 +8,8 @@
 
 import UIKit
 import Firebase
-import SimpleKeychain
 
-var skippedLogin = true
+var userSignedIn = true
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -21,6 +20,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         FirebaseApp.configure()
         print("Application did finish launching")
+        
+        let credentials = KeychainManager.fetchCredentials()
+        Auth.auth().signIn(withEmail: credentials.email, password: credentials.password) { (dataResult, error) in
+            if let error = error { // No credentials
+                print("First time signing in")
+                print(error)
+            } else { // Login successful
+                // Store important user data
+                if let fireUser = Auth.auth().currentUser {
+                    Global.databaseRef.child("users").child(fireUser.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                        let value = snapshot.value as? NSDictionary
+                        let firstName = value?["firstName"] as? String ?? ""
+                        let lastName = value?["lastName"] as? String ?? ""
+                        let email = value?["email"] as? String ?? ""
+                        Global.localUser = LocalUser(firstName: firstName,
+                                                     lastName: lastName,
+                                                     email: email,
+                                                     profilePicture: ImageManager.fetchImageFromFirebase(forUser: fireUser))
+                        
+                    }) { (error) in
+                        print(error.localizedDescription)
+                    }
+                }
+                
+                userSignedIn = true
+            }
+        }
         
         // set common text attributes
 //        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font : UIFont(name: "Avenir-light", size: 15)!], for: .normal)

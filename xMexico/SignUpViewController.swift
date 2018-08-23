@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SimpleKeychain
 import Firebase
 import FirebaseStorage
 
@@ -140,10 +139,9 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
             
             Auth.auth().createUser(withEmail: email, password: password) { (authResult, error) in
                 
-                // Store email and password in keychain
-                let keychain = A0SimpleKeychain(service: "Hatcher")
-                keychain.setString(email, forKey: "email")
-                keychain.setString(password, forKey: "password")
+                // Store user credentials in keychain
+                let credentials = Credentials(email: email, password: password)
+                KeychainManager.storeCredentials(credentials: credentials)
                 
                 if let fireUser = Auth.auth().currentUser, let img = self.chosenImage {
                     

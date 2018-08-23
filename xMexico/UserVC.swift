@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import SimpleKeychain
+import Firebase
 
 private let reuseIdentifier = "AchievementCell"
 
@@ -62,7 +62,7 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         setupView()
     }
     
-    // MARK: UICollectionViewDataSource
+    // MARK: - UICollectionViewDataSource
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
@@ -111,37 +111,6 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         return cell
     }
     
-    // MARK: UICollectionViewDelegate
-    
-    /*
-     // Uncomment this method to specify if the specified item should be highlighted during tracking
-     override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-     return true
-     }
-     */
-    
-    /*
-     // Uncomment this method to specify if the specified item should be selected
-     override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-     return true
-     }
-     */
-    
-    /*
-     // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-     override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-     return false
-     }
-     
-     override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-     return false
-     }
-     
-     override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
-     
-     }
-     */
-    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
         // TODO: Animated blur effect
@@ -184,24 +153,22 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         
         if let image = info[UIImagePickerControllerEditedImage] as? UIImage {
             
-            if pickingProfile {
+            if let user = Auth.auth().currentUser {
                 
-                // FIXME: Still need to upload and update meta
-                DispatchQueue.main.async {
-                    self.userPortraitView.image = image.circleMasked
+                if pickingProfile {
+                    // Upload and update meta
+                    ImageManager.postImageToFirebase(forUser: user, image: image)
+                    DispatchQueue.main.async {
+                        self.userPortraitView.image = image.circleMasked
+                    }
+                    pickingProfile = false
+                } else if pickingBackground {
+                    DispatchQueue.main.async {
+                        self.userBgImageView.image = image
+                    }
+                    ImageManager.postBackgroundImageToFirebase(forUser: user, image: image)
+                    pickingBackground = false
                 }
-                
-//                uploadToImgur(image: image, key: "profile")
-                pickingProfile = false
-                
-            } else if pickingBackground {
-                
-                DispatchQueue.main.async {
-                    self.userBgImageView.image = image
-                }
-                
-//                uploadToImgur(image: image, key: "background")
-                pickingBackground = false
             }
             
         } else {

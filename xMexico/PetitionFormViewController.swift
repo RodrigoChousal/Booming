@@ -88,43 +88,8 @@ class PetitionFormViewController: UIViewController, UITextViewDelegate, UITextFi
             
         } else {
             
+            //FIXME: Método para enviar correo
             view.showLoadingIndicator(withMessage: "Enviando petición...")
-            
-            let smtpSession = MCOSMTPSession()
-            smtpSession.hostname = "smtp.gmail.com"
-            smtpSession.username = "rodrigochousal.dev@gmail.com"
-            smtpSession.password = "rchrch1999"
-            smtpSession.port = 465
-            smtpSession.authType = MCOAuthType.saslPlain
-            smtpSession.connectionType = MCOConnectionType.TLS
-            smtpSession.connectionLogger = {(connectionID, type, data) in
-                if data != nil {
-                    if let string = NSString(data: data!, encoding: String.Encoding.utf8.rawValue){
-                        NSLog("Connectionlogger: \(string)")
-                    }
-                }
-            }
-            
-            let builder = MCOMessageBuilder()
-            builder.header.to = [MCOAddress(displayName: "Rod", mailbox: "rodrigochousal.dev@gmail.com")]
-            builder.header.from = MCOAddress(displayName: "Rod", mailbox: "rodrigochousal.dev@gmail.com")
-            builder.header.subject = "Propuesta: " + campaignNameField.text!
-            builder.htmlBody = "Individuo: \(nameField.text! + lastNameField.text!) \nTeléfono: \(phoneField.text!) \nCampaña: \(campaignNameField.text!)\nDescripción: \(campaignDescriptionTextView.text!)"
-            
-            let rfc822Data = builder.data()
-            let sendOperation = smtpSession.sendOperation(with: rfc822Data!)
-            sendOperation?.start { (error) -> Void in
-                
-                self.view.stopLoadingIndicator()
-                
-                if (error != nil) {
-                    NSLog("Error sending email: \(String(describing: error))")
-                    SCLAlertView().showError("Error!", subTitle: "No podemos recibir la petición en este momento. Favor de intentar más tarde.")
-                } else {
-                    NSLog("Successfully sent email!")
-                    SCLAlertView().showSuccess("Gracias!", subTitle: "Tu petición ha sido recibida con éxito. Te contáctaremos en un par de días con más información.")
-                }
-            }
         }
     }
 

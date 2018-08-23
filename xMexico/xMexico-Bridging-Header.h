@@ -3,4 +3,3 @@
 //
 
 #import "SWRevealViewController.h"
-#import <MailCore/MailCore.h>

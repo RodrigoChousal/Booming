@@ -78,6 +78,11 @@ class LocalUser {
     }
 }
 
+struct Credentials {
+    var email: String
+    var password: String
+}
+
 class Achievement {
     var icon: UIImage = UIImage()
     var name: String = ""

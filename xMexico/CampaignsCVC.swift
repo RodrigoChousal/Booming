@@ -7,9 +7,6 @@
 //
 
 import UIKit
-import Alamofire
-import AlamofireImage
-import SwiftyJSON
 
 private let reuseIdentifier = "CampaignCell"
 private var campaignList = [Campaign]()
@@ -18,7 +15,6 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
         
     @IBOutlet weak var menuButton: UIBarButtonItem!
     
-    var jsonData: JSON?
     var campaignImages = [UIImage]()
     var isLoading = false
     var topFilter = UIButton(type: .system)

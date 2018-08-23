@@ -64,7 +64,7 @@ class MenuTVC: UITableViewController {
         } else if indexPath.row == 1 { // Campaigns VC
             
             // FIXME: Bad design
-            skippedLogin = false
+            userSignedIn = false
             
         } else if indexPath.row == 2 { // Proposal VC
             

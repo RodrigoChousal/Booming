@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SimpleKeychain
 import Firebase
 import FirebaseStorage
 import FirebaseUI
@@ -33,6 +32,14 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(AccessViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(AccessViewController.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
+        if userSignedIn {
+            // Show guests inside
+            DispatchQueue.main.async { // animation onoff detona crash en otra cosa.. checar
+//                UIView.setAnimationsEnabled(false)
+                self.performSegue(withIdentifier: "AccessGranted", sender: self)
+//                UIView.setAnimationsEnabled(true)
+            }
+        }
     }
     
     override func viewDidLoad() {
@@ -151,11 +158,6 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
 
                 } else { // Login successful
                     
-                    // Store email and password in keychain
-                    let keychain = A0SimpleKeychain(service: "Hatcher")
-                    keychain.setString(accessEmail, forKey: "email")
-                    keychain.setString(accessPassword, forKey: "password")
-                    
                     // Store important user data
                     if let fireUser = Auth.auth().currentUser {
                         Global.databaseRef.child("users").child(fireUser.uid).observeSingleEvent(of: .value, with: { (snapshot) in
@@ -163,10 +165,15 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
                             let firstName = value?["firstName"] as? String ?? ""
                             let lastName = value?["lastName"] as? String ?? ""
                             let email = value?["email"] as? String ?? ""
-                        Global.localUser = LocalUser(firstName: firstName,
+                            Global.localUser = LocalUser(firstName: firstName,
                                                     lastName: lastName,
                                                     email: email,
                                                     profilePicture: ImageManager.fetchImageFromFirebase(forUser: fireUser))
+                            
+                            // Store user credentials in keychain
+                            let credentials = Credentials(email: accessEmail, password: accessPassword)
+                            KeychainManager.storeCredentials(credentials: credentials)
+                            
                         }) { (error) in
                             print(error.localizedDescription)
                         }
