@@ -38,7 +38,6 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     var collectionViewOffset = CGFloat(0)
     var userBgHeight = CGFloat(0)
     var noAchievementsLabel = UILabel()
-    var userImage = UIImage()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -154,22 +153,39 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         if let image = info[UIImagePickerControllerEditedImage] as? UIImage {
             
             if let user = Auth.auth().currentUser {
-                
-                if pickingProfile {
-                    // Upload and update meta
-                    ImageManager.postImageToFirebase(forUser: user, image: image)
-                    DispatchQueue.main.async {
-                        self.userPortraitView.image = image.circleMasked
+                if let locUser = Global.localUser {
+                    if pickingProfile {
+                        
+                        // Upload and update meta
+                        ImageManager.postImageToFirebase(forUser: user, image: image)
+                        
+                        // Update local user object
+                        locUser.profilePicture = image
+                        
+                        // Update view
+                        DispatchQueue.main.async {
+                            self.userPortraitView.image = image.circleMasked
+                        }
+                        pickingProfile = false
+                        
+                    } else if pickingBackground {
+                        
+                        // Upload and update meta
+                        ImageManager.postBackgroundImageToFirebase(forUser: user, image: image)
+                        
+                        // Update local user object
+                        locUser.backgroundPicture = image
+                        
+                        // Update view
+                        DispatchQueue.main.async {
+                            self.userBgImageView.image = image
+                        }
+                        pickingBackground = false
                     }
-                    pickingProfile = false
-                } else if pickingBackground {
-                    DispatchQueue.main.async {
-                        self.userBgImageView.image = image
-                    }
-                    ImageManager.postBackgroundImageToFirebase(forUser: user, image: image)
-                    pickingBackground = false
                 }
             }
+            
+            print("Finished picking new profile picture...")
             
         } else {
             print("Something went wrong")
@@ -192,7 +208,8 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     func setupView() {
         
         if let user = Global.localUser {
-            userPortraitView.image = userImage.circleMasked
+            
+            userPortraitView.image = user.profilePicture.circleMasked
             
             userBgImageView.image = user.backgroundPicture
             userBgImageView.contentMode = .scaleAspectFill

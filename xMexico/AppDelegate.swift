@@ -19,7 +19,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         FirebaseApp.configure()
-        print("Application did finish launching")
         
         let credentials = KeychainManager.fetchCredentials()
         Auth.auth().signIn(withEmail: credentials.email, password: credentials.password) { (dataResult, error) in
@@ -27,23 +26,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("First time signing in")
                 print(error)
             } else { // Login successful
+                print("User can bypass login, keychain found")
                 // Store important user data
                 if let fireUser = Auth.auth().currentUser {
-                    Global.databaseRef.child("users").child(fireUser.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                    Global.databaseRef.child("users").child(fireUser.uid).observe(DataEventType.value, with: { (snapshot) in
                         let value = snapshot.value as? NSDictionary
                         let firstName = value?["firstName"] as? String ?? ""
                         let lastName = value?["lastName"] as? String ?? ""
                         let email = value?["email"] as? String ?? ""
                         Global.localUser = LocalUser(firstName: firstName,
                                                      lastName: lastName,
-                                                     email: email,
-                                                     profilePicture: ImageManager.fetchImageFromFirebase(forUser: fireUser))
-                        
+                                                     email: email)
+                        ImageManager.fetchImageFromFirebase(forUser: fireUser, profilePicture: true)
                     }) { (error) in
-                        print(error.localizedDescription)
+                        print("ERROR:" + error.localizedDescription)
                     }
                 }
-                
                 userSignedIn = true
             }
         }

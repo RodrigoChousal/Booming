@@ -8,6 +8,7 @@
 
 import Foundation
 import Firebase
+import FirebaseUI
 
 class ImageManager {
     
@@ -39,14 +40,48 @@ class ImageManager {
         }
     }
     
-    static func fetchImageFromFirebase(forUser fireUser: User) -> UIImage {
-        let profileImgRef = Global.storageRef.child("userPictures/" + fireUser.uid + "/" + "userProfile.png")
-        let imageView: UIImageView = UIImageView()
-        imageView.sd_setImage(with: profileImgRef)
-        if imageView.image != nil {
-            return imageView.image!
+    static func getDataFromUrl(url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            completion(data, response, error)
+            }.resume()
+    }
+    
+    static func fetchImageFromFirebase(forUser fireUser: User, profilePicture: Bool) {
+        // Check if profile picture or not, and make reference appropriately
+        var imgRef = StorageReference()
+        if profilePicture {
+            imgRef = Global.storageRef.child("userPictures/" + fireUser.uid + "/" + "userProfile.png")
         } else {
-            return #imageLiteral(resourceName: "placeholder")
+            imgRef = Global.storageRef.child("userPictures/" + fireUser.uid + "/" + "userBackground.png")
+        }
+        
+        var image = UIImage()
+        // Fetch the download URL
+        imgRef.downloadURL { url, error in
+            if let error = error {
+                // Handle any errors
+                print("Error getting URL: " + error.localizedDescription)
+            } else {
+                // Get image from Firebase
+                if let imageUrl = url {
+                    print("Download Started")
+                    getDataFromUrl(url: imageUrl) { data, response, error in
+                        guard let data = data, error == nil else { return }
+                        print(response?.suggestedFilename ?? imageUrl.lastPathComponent)
+                        print("Download Finished")
+                        DispatchQueue.main.async() {
+                            image = UIImage(data: data)!
+                            if let user = Global.localUser {
+                                if profilePicture {
+                                    user.profilePicture = image
+                                } else {
+                                    user.backgroundPicture = image
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

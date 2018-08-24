@@ -53,8 +53,8 @@ class LocalUser {
     var lastName: String
     var fullName: String { return firstName + " " + lastName }
     var email: String
-    var profilePicture: UIImage
     var memberSince: Date = Date()
+    var profilePicture: UIImage = #imageLiteral(resourceName: "placeholder")
     
     // Optional data
     var backgroundPicture: UIImage?
@@ -70,11 +70,10 @@ class LocalUser {
         lastName = fullNameArr.joined(separator: " ")
     }
     
-    init(firstName: String, lastName: String, email: String, profilePicture: UIImage) {
+    init(firstName: String, lastName: String, email: String) {
         self.firstName = firstName
         self.lastName = lastName
         self.email = email
-        self.profilePicture = profilePicture
     }
 }
 

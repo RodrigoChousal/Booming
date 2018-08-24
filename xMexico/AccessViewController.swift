@@ -167,8 +167,8 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
                             let email = value?["email"] as? String ?? ""
                             Global.localUser = LocalUser(firstName: firstName,
                                                     lastName: lastName,
-                                                    email: email,
-                                                    profilePicture: ImageManager.fetchImageFromFirebase(forUser: fireUser))
+                                                    email: email)
+                            ImageManager.fetchImageFromFirebase(forUser: fireUser, profilePicture: true)
                             
                             // Store user credentials in keychain
                             let credentials = Credentials(email: accessEmail, password: accessPassword)

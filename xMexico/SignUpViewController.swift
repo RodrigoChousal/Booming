@@ -148,9 +148,11 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
                     // Store details locally:
                     Global.localUser = LocalUser(firstName: firstName,
                                                  lastName: lastName,
-                                                 email: email,
-                                                 profilePicture: img)
-                    Global.localUser?.backgroundPicture = #imageLiteral(resourceName: "placeholder")
+                                                 email: email)
+                    if let user = Global.localUser {
+                        user.profilePicture = img
+                        user.backgroundPicture = #imageLiteral(resourceName: "placeholder")
+                    }
                     
                     // Store details in d cloud:
                     if let localUser = Global.localUser {

@@ -31,7 +31,9 @@ class MenuTVC: UITableViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        // FIXME: Solution to updating menu with new profile pic
+        if let locUser = Global.localUser {
+            userPictureView.image = locUser.profilePicture.circleMasked
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -42,14 +44,6 @@ class MenuTVC: UITableViewController {
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
-        if segue.identifier == "ProfileSegue" {
-            
-            let destinationNavigationController = segue.destination as! UINavigationController
-            let userVC = destinationNavigationController.topViewController as! UserVC
-            
-            userVC.userImage = self.userPictureView.image!
-        }
         
     }
     
@@ -87,6 +81,8 @@ class MenuTVC: UITableViewController {
     // MARK: - Helper Methods
     
     func setupView() {
+        
+        print("Setting up view in menu...")
     
         if !isVisitor {
             DispatchQueue.main.async {
