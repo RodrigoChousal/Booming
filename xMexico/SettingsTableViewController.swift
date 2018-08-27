@@ -158,8 +158,6 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
                     print("Something went wrong")
                     SCLAlertView().showWarning("Lo sentimos!", subTitle: "Intenta cerrar sesión en otro momento.")
                 }
-                
-                
             }
         }
     }

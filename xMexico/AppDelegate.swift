@@ -25,6 +25,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if let error = error { // No credentials
                 print("No credentials found in Keychain, first time signing in to Firebase")
                 print(error)
+                
+                // Show user to AccessVC without automatic access
+                self.window = UIWindow(frame: UIScreen.main.bounds)
+                let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                let accessVC = mainStoryboard.instantiateViewController(withIdentifier: "AccessViewController") as! AccessViewController
+                accessVC.newUser = true
+                self.window?.rootViewController = accessVC
+                self.window?.makeKeyAndVisible()
+                
             } else { // Login successful
                 
                 print("User has been successfully signed in to Firebase")
@@ -45,14 +54,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     }
                 }
                 
-                // Show AccessVC
-                print("Instantiating AccessVC")
-                
+                // Show user to AccessVC with automatic access
                 self.window = UIWindow(frame: UIScreen.main.bounds)
                 let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
                 let accessVC = mainStoryboard.instantiateViewController(withIdentifier: "AccessViewController") as! AccessViewController
                 accessVC.newUser = false
-                
                 self.window?.rootViewController = accessVC
                 self.window?.makeKeyAndVisible()
             }
