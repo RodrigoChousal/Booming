@@ -9,8 +9,6 @@
 import UIKit
 import Firebase
 
-var userSignedIn = true
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -21,12 +19,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
         
         let credentials = KeychainManager.fetchCredentials()
+        
         Auth.auth().signIn(withEmail: credentials.email, password: credentials.password) { (dataResult, error) in
+            
             if let error = error { // No credentials
-                print("First time signing in")
+                print("No credentials found in Keychain, first time signing in to Firebase")
                 print(error)
             } else { // Login successful
-                print("User can bypass login, keychain found")
+                
+                print("User has been successfully signed in to Firebase")
+                
                 // Store important user data
                 if let fireUser = Auth.auth().currentUser {
                     Global.databaseRef.child("users").child(fireUser.uid).observe(DataEventType.value, with: { (snapshot) in
@@ -42,7 +44,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         print("ERROR:" + error.localizedDescription)
                     }
                 }
-                userSignedIn = true
+                
+                // Show AccessVC
+                print("Instantiating AccessVC")
+                
+                self.window = UIWindow(frame: UIScreen.main.bounds)
+                let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                let accessVC = mainStoryboard.instantiateViewController(withIdentifier: "AccessViewController") as! AccessViewController
+                accessVC.newUser = false
+                
+                self.window?.rootViewController = accessVC
+                self.window?.makeKeyAndVisible()
             }
         }
         

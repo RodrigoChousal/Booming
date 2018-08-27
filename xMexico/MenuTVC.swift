@@ -56,10 +56,7 @@ class MenuTVC: UITableViewController {
         if indexPath.row == 0 { // User VC
             
         } else if indexPath.row == 1 { // Campaigns VC
-            
-            // FIXME: Bad design
-            userSignedIn = false
-            
+                        
         } else if indexPath.row == 2 { // Proposal VC
             
         } else if indexPath.row == 3 { // Mission VC

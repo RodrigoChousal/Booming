@@ -25,25 +25,31 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
     var blurEffectView = UIView()
     var keyboardVisible = false
     var presentedFromLogout = false
+    
+    var newUser = true
         
     override func viewWillAppear(_ animated: Bool) {
         UIApplication.shared.statusBarStyle = .lightContent
         
         NotificationCenter.default.addObserver(self, selector: #selector(AccessViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(AccessViewController.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-        
-        if userSignedIn {
-            // Show guests inside
-            DispatchQueue.main.async { // animation onoff detona crash en otra cosa.. checar
-//                UIView.setAnimationsEnabled(false)
-                self.performSegue(withIdentifier: "AccessGranted", sender: self)
-//                UIView.setAnimationsEnabled(true)
-            }
-        }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if !newUser {
+            print("User appears to be signed in...")
+            // Show guests inside
+            DispatchQueue.main.async { // animation onoff detona crash en otra cosa.. checar
+                //                UIView.setAnimationsEnabled(false)
+                self.performSegue(withIdentifier: "AccessGranted", sender: self)
+                //                UIView.setAnimationsEnabled(true)
+            }
+        } else {
+            print("User appears to not be signed in yet...")
+        }
+        
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(AccessViewController.hideKeyboard)))
         
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(self.backPressed(_:)))

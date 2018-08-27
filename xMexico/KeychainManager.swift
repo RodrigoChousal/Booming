@@ -12,6 +12,12 @@ class KeychainManager {
     
     static let server = "www.hatcher-81d8c.firebaseapp.com"
     
+    enum KeychainError: Error {
+        case noPassword
+        case unexpectedPasswordData
+        case unhandledError(status: OSStatus)
+    }
+    
     static func storeCredentials(credentials: Credentials) {
         
         let account = credentials.email
@@ -54,5 +60,17 @@ class KeychainManager {
         
         let credentials = Credentials(email: email, password: pass)
         return credentials
+    }
+    
+    static func deleteCredentials(credentials: Credentials) throws {
+        let account = credentials.email
+        let password = credentials.password.data(using: String.Encoding.utf8)!
+        let query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+                                    kSecAttrAccount as String: account,
+                                    kSecAttrServer as String: KeychainManager.server,
+                                    kSecValueData as String: password]
+        
+        let status = SecItemDelete(query as CFDictionary)
+        guard status == errSecSuccess || status == errSecItemNotFound else { throw KeychainError.unhandledError(status: status) }
     }
 }

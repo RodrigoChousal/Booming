@@ -16,24 +16,16 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var descTextView: UITextView!
     @IBOutlet weak var expensesTextView: UITextView!
-    @IBOutlet weak var contributeBottomView: UIView!
-    @IBOutlet weak var contributeButton: UIButton!
 
+    @IBOutlet weak var contributeBottomView: UIView!
+    @IBOutlet weak var contributeFullControlView: UIView!
+    
     var campaign = Campaign()
     var photoGallery = [UIImage]()
     var galleryController = GalleryVC()
     
     var darkView = UIView()
     var keyboardVisible = false
-    
-    // Contribution controls
-    var cancelButton = UIButton()
-    var nextButton = UIButton()
-    var contributionLabel = UILabel()
-    var contributionField = UITextField()
-    var contributionFieldBackground = UIImageView()
-    var minimumLabel = UILabel()
-    var contributeTranslation = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,16 +38,13 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
         descTextView.isScrollEnabled = false
         descTextView.sizeToFit()
         
-        contributeBottomView.layer.shadowColor = UIColor.black.cgColor
-        contributeBottomView.layer.shadowOffset = CGSize(width: 0, height: 2)
-        contributeBottomView.layer.shadowOpacity = 1
-        contributeBottomView.layer.shadowRadius = 4
-        
         darkView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height))
         darkView.backgroundColor = .black
         darkView.alpha = 0.0
         contentView.addSubview(darkView)
-        setupContributionControls()
+        
+        contributeBottomView.alpha = 1.0
+        contributeFullControlView.alpha = 0.0
         
         DispatchQueue.global(qos: .background).async {
             self.loadCampaignImages()
@@ -115,10 +104,9 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
         let isBottom = (contentView.frame.height - scrollView.contentOffset.y) <= (scrollView.frame.height)
                 
         if isBottom {
-            
-            contributeBottomView.layer.shadowOpacity = 0.0
+//            contributeBottomView.layer.shadowOpacity = 0.0
         } else {
-            contributeBottomView.layer.shadowOpacity = 1.0
+//            contributeBottomView.layer.shadowOpacity = 1.0
         }
     }
     
@@ -126,36 +114,36 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
     
     @IBAction func showContribute(_ sender: Any) {
         
-        self.contributeTranslation = (214 - Int(self.contributeBottomView.frame.height))
-        print("Contribute Translation at show: \(contributeTranslation)")
+        contributeFullControlView.alpha = 1.0
+        contributeBottomView.alpha = 0.0
         
-        // Set transform identity
-        let moveUp = CGAffineTransform(translationX: 0, y: -(CGFloat)(self.contributeTranslation))
+        let displacement = contributeFullControlView.frame.height - contributeBottomView.frame.height
         
-        // Make view larger
-        contributeBottomView.frame = CGRect(x: contributeBottomView.frame.origin.x, y: contributeBottomView.frame.origin.y, width: contributeBottomView.frame.width, height: 214)
+        // Animate slide-up
+        UIView.animate(withDuration: 0.3, animations: {
+            self.contributeFullControlView.center.y -= displacement
+        }) { (true) in
+            // Make scroll view fit new content view position
+            self.scrollView.frame.size.height -= displacement
+            print(self.contributeFullControlView.frame.origin.y.description)
+        }
+    }
+    
+    func hideContributionVC() {
+        
+        let displacement = contributeFullControlView.frame.height - contributeBottomView.frame.height
         
         // Make scroll view fit new content view position
-        scrollView.frame.size.height += -(CGFloat)(self.contributeTranslation)
-
-        // Animate slide-up
-        UIView.animate(withDuration: 0.3) {
-            self.contributeBottomView.transform = moveUp
+        self.scrollView.frame.size.height += displacement
+        
+        // Animate slide-down
+        UIView.animate(withDuration: 0.3, animations: {
+            self.contributeFullControlView.center.y += displacement
+        }) { (true) in
+            self.contributeBottomView.alpha = 1.0
+            self.contributeFullControlView.alpha = 0.0
+            print(self.contributeFullControlView.frame.origin.y.description)
         }
-        
-        // FIXME: Scroll doesn't get to top of view
-        
-        // Hide 'contribute' button
-        contributeButton.alpha = 0.0
-        contributeButton.isEnabled = false
-        
-        // Show controls
-        contributeBottomView.addSubview(cancelButton)
-        contributeBottomView.addSubview(nextButton)
-        contributeBottomView.addSubview(contributionLabel)
-        contributeBottomView.addSubview(contributionFieldBackground)
-        contributeBottomView.addSubview(contributionField)
-        contributeBottomView.addSubview(minimumLabel)
     }
     
     // MARK: - Helper Methods
@@ -173,6 +161,7 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
         }
         
         for url in campaign.galleryImageURLs {
+            // FIXME: Use ImageManager and change image URLs in Firebase to Firebase URLs
             
             print("unpacking url: \(url)")
             
@@ -202,61 +191,18 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
         galleryController.galleryCollectionView.reloadData()
     }
     
-    func setupContributionControls() {
-        
-        let buttonWidth = contributeBottomView.frame.width * 0.45
-        
-        // Set 'Cancelar'
-        cancelButton = UIButton(frame: CGRect(x: 12, y: 14, width: buttonWidth, height: 56))
-        cancelButton.backgroundColor = UIColor(red: 39/255, green: 39/255, blue: 39/255, alpha: 1.0)
-        cancelButton.setTitle("Cancelar", for: .normal)
-        cancelButton.setTitleColor(UIColor.white, for: .normal)
-        cancelButton.titleLabel?.font = UIFont(name: "Avenir-Heavy", size: 18)
-        cancelButton.addTarget(self, action: #selector(self.hideContribute), for: .touchUpInside)
-        
-        // Set 'Siguiente'
-        nextButton = UIButton(frame: CGRect(x: (12 + buttonWidth + 12), y: 14, width: buttonWidth, height: 56))
-        nextButton.backgroundColor = UIColor(red: 45/255, green: 98/255, blue: 152/255, alpha: 1.0)
-        nextButton.setTitle("Siguiente", for: .normal)
-        nextButton.setTitleColor(UIColor.white, for: .normal)
-        nextButton.titleLabel?.font = UIFont(name: "Avenir-Heavy", size: 18)
-        nextButton.addTarget(self, action: #selector(self.showConfirmation), for: .touchUpInside)
-        
-        // Set contribution label
-        contributionLabel = UILabel(frame: CGRect(x: 31, y: 89, width: contributeBottomView.frame.width * 0.5, height: 27))
-        contributionLabel.text = "Tu contribución:"
-        contributionLabel.font = UIFont(name: "Avenir-Heavy", size: 20)
-        contributionLabel.textColor = UIColor(red: 39/255, green: 39/255, blue: 39/255, alpha: 1.0)
-        
-        // Set text field for quantity
-        contributionField = UITextField(frame: CGRect(x: 55, y: 125, width: contributeBottomView.frame.width * 0.94, height: 56))
-        contributionField.font = UIFont(name: "Avenir-Heavy", size: 25)
-        contributionField.backgroundColor = .clear
-        contributionField.keyboardType = .numberPad
-        contributionField.textColor = UIColor(red: 39/255, green: 39/255, blue: 39/255, alpha: 1.0)
-        
-        // Set fake background for text field
-        contributionFieldBackground = UIImageView(frame: CGRect(x: 12, y: 123, width: contributeBottomView.frame.width * 0.94, height: 56))
-        contributionFieldBackground.image = #imageLiteral(resourceName: "contribution_field")
-        
-        // Set minimum label
-        minimumLabel = UILabel(frame: CGRect(x: 168, y: 188, width: contributeBottomView.frame.width * 0.2, height: 20))
-        minimumLabel.text = "$20 mínimo"
-        minimumLabel.font = UIFont(name: "Avenir-Medium", size: 15)
-        minimumLabel.textColor = UIColor(red: 39/255, green: 39/255, blue: 39/255, alpha: 1.0)
-        minimumLabel.sizeToFit()
-        minimumLabel.center.x = contributeBottomView.frame.width * 0.5
-    }
-    
     @objc func keyboardWillShow(notification: NSNotification) {
         
         // Disable scrolling
         self.scrollView.isScrollEnabled = false
         
-        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            
+            print(keyboardSize.height.description)
             
             if !keyboardVisible {
-                self.contributeBottomView.frame.origin.y -= keyboardSize.height
+                print(keyboardSize.height.description)
+                self.contributeFullControlView.frame.origin.y -= keyboardSize.height
                 
                 // Darken rest of view
                 darkView.alpha = 0.6
@@ -272,10 +218,11 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
         // Enable scrolling
         self.scrollView.isScrollEnabled = true
         
-        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             
             if keyboardVisible {
-                self.contributeBottomView.frame.origin.y += keyboardSize.height
+                print(keyboardSize.height.description)
+                self.contributeFullControlView.frame.origin.y += keyboardSize.height
             }
             
             // Remove dark view
@@ -291,34 +238,6 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
             self.view.endEditing(true)
             keyboardVisible = false
         }
-    }
-    
-    @objc func hideContribute() {
-        
-        // Show 'contribute' button
-        contributeButton.alpha = 1.0
-        contributeButton.isEnabled = true
-        
-        // Remove other controls
-        cancelButton.removeFromSuperview()
-        nextButton.removeFromSuperview()
-        contributionLabel.removeFromSuperview()
-        contributionFieldBackground.removeFromSuperview()
-        contributionField.removeFromSuperview()
-        minimumLabel.removeFromSuperview()
-        
-        // Set transform identity
-        let moveDown = CGAffineTransform(translationX: 0, y: 0)
-        
-        // Animate slide-down
-        UIView.animate(withDuration: 0.3) {
-            self.contributeBottomView.transform = moveDown
-            self.contentView.transform = moveDown
-            self.contributeBottomView.frame.size.height = 57
-        }
-        
-        // Make view smaller
-//        contributeBottomView.frame = CGRect(x: contributeBottomView.frame.origin.x, y: contributeBottomView.frame.origin.y, width: contributeBottomView.frame.width, height: 57)
     }
     
     @objc func showConfirmation() {

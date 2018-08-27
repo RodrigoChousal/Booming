@@ -133,12 +133,33 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+        print("I felt that press")
+        
         if indexPath.row == 5 { // logout cell index path
+            
+            print("Attempting sign out...")
             
             if let currentWindow = UIApplication.shared.keyWindow {
                 currentWindow.showLoadingIndicator(withMessage: "Cerrando sesión")
-//                SessionManager.shared.logout()
-                currentWindow.stopLoadingIndicator()
+                
+                if let _ = try? Auth.auth().signOut() {
+                    currentWindow.stopLoadingIndicator()
+                    print("Successfully signed out")
+                    // Purge keychain access
+                    if let _ = try? KeychainManager.deleteCredentials(credentials: KeychainManager.fetchCredentials()) {
+                        print("Successfully deleted credentials in Keychain")
+                    } else {
+                        print("Something went wrong deleting credentials in Keychain")
+                    }
+                    self.navigationController?.popToRootViewController(animated: true)
+                    
+                } else {
+                    currentWindow.stopLoadingIndicator()
+                    print("Something went wrong")
+                    SCLAlertView().showWarning("Lo sentimos!", subTitle: "Intenta cerrar sesión en otro momento.")
+                }
+                
+                
             }
         }
     }
