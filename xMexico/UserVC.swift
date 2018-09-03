@@ -211,7 +211,7 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
             
             userPortraitView.image = user.profilePicture.circleMasked
             
-            userBgImageView.image = user.backgroundPicture
+            userBgImageView.image = #imageLiteral(resourceName: "placeholder")
             userBgImageView.contentMode = .scaleAspectFill
             userBgImageView.clipsToBounds = true
             

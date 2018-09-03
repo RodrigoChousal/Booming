@@ -111,9 +111,10 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Login Controls
     
     @IBAction func showLoginForm(_ sender: Any) {
-        if self.buttonsView.frame.origin.x < UIScreen.main.bounds.width && self.buttonsView.frame.origin.x > 0 {
+        if self.buttonsView.frame.origin.x >= 0 {
+			self.buttonsViewPadding = self.buttonsView.frame.origin.x
             UIView.animate(withDuration: 0.3) {
-                self.buttonsView.frame.origin.x -= self.buttonsViewPadding + self.buttonsView.frame.width/2
+				self.buttonsView.frame.origin.x -= self.buttonsView.frame.width/2 + self.buttonsViewPadding
             }
         }
     }
@@ -121,7 +122,7 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
     @IBAction func backPressed(_ sender: Any) {
         if self.buttonsView.frame.origin.x < 0 {
             UIView.animate(withDuration: 0.3) {
-                self.buttonsView.frame.origin.x += self.buttonsViewPadding + self.buttonsView.frame.width/2
+				self.buttonsView.frame.origin.x += self.buttonsView.frame.width/2 + self.buttonsViewPadding
             }
         }
     }
@@ -163,6 +164,10 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
                     }
 
                 } else { // Login successful
+					
+					print("Login successful with credentials:")
+					print("Email: " + accessEmail)
+					print("Password: " + accessPassword)
                     
                     // Store important user data
                     if let fireUser = Auth.auth().currentUser {
@@ -220,7 +225,7 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func keyboardWillShow(notification: NSNotification) {
-        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             if !keyboardVisible {
                 self.view.frame.origin.y -= keyboardSize.height
             }

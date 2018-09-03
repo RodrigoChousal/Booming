@@ -19,6 +19,7 @@ class KeychainManager {
     }
     
     static func storeCredentials(credentials: Credentials) {
+		print("Storing user credentials...")
         
         let account = credentials.email
         let password = credentials.password.data(using: String.Encoding.utf8)!
@@ -28,7 +29,8 @@ class KeychainManager {
                                     kSecValueData as String: password]
         
         let status = SecItemAdd(query as CFDictionary, nil)
-        if status == errSecSuccess { print("Success") } else { print(status) }
+		
+        if status == errSecSuccess { print("Successfully added credentials") } else { print(status.description) }
     }
     
     static func fetchCredentials() -> Credentials {
@@ -51,7 +53,9 @@ class KeychainManager {
             let passwordData = existingItem[kSecValueData as String] as? Data,
             let password = String(data: passwordData, encoding: String.Encoding.utf8),
             let account = existingItem[kSecAttrAccount as String] as? String {
-                print("Successful retrieval of credentials")
+			print("Successful retrieval of credentials: ")
+			print("Email: " + account)
+			print("Password: " + password)
             email = account
             pass = password
         } else {

@@ -15,7 +15,12 @@ class CustomSearchBar: UISearchBar {
     
     init(frame: CGRect, font: UIFont, textColor: UIColor) {
         super.init(frame: frame)
-        
+		
+		let attributes : [NSAttributedStringKey : Any] = [
+			NSAttributedStringKey.foregroundColor : UIColor.black,
+			NSAttributedStringKey.font : UIFont(name: "Avenir-Light", size: 16.0) ?? UIFont.systemFont(ofSize: 16.0)
+		]
+		UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(attributes, for: .normal)
         self.frame = frame
         preferredFont = font
         preferredTextColor = textColor

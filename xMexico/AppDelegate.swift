@@ -21,9 +21,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let credentials = KeychainManager.fetchCredentials()
         
         Auth.auth().signIn(withEmail: credentials.email, password: credentials.password) { (dataResult, error) in
+			print(credentials.email)
+			print(credentials.password)
             
             if let error = error { // No credentials
-                print("No credentials found in Keychain, first time signing in to Firebase")
+                print("Credentials are not valid, first time signing in...")
                 print(error)
                 
                 // Show user to AccessVC without automatic access
@@ -37,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             } else { // Login successful
                 
                 print("User has been successfully signed in to Firebase")
-                
+                 
                 // Store important user data
                 if let fireUser = Auth.auth().currentUser {
                     Global.databaseRef.child("users").child(fireUser.uid).observe(DataEventType.value, with: { (snapshot) in

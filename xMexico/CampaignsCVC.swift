@@ -189,8 +189,8 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     func downloadCampaignData() {
         var campaignCount = 0
         Global.databaseRef.child("campaigns").observeSingleEvent(of: .value) { (listSnapshot) in
-            if let campaignsDictionary = listSnapshot.value as? NSArray  {
-                campaignCount = campaignsDictionary.count
+            if let campaignsArray = listSnapshot.value as? NSArray  {
+                campaignCount = campaignsArray.count
                 for i in 0...(campaignCount - 1) {
                     Global.databaseRef.child("campaigns").child(String(i)).observeSingleEvent(of: .value, with: { (campaignSnapshot) in
                         if let campaignMeta = campaignSnapshot.value as? NSDictionary {
@@ -272,7 +272,8 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
         if optionsTableView.frame.origin.y < 0 {
             
             darkenCollectionView()
-            
+			
+			
             collectionView?.addSubview(optionsTableView)
             optionsTableView.alpha = 1.0
             
@@ -290,6 +291,8 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     
     func darkenCollectionView() {
         if let collectionView = collectionView {
+			
+			collectionView.isScrollEnabled = false
             
             shadowView = UIView(frame: CGRect(x: 0, y: (self.collectionView?.contentOffset.y)!, width: collectionView.frame.width, height: collectionView.frame.height))
             shadowView.backgroundColor = .black
@@ -301,6 +304,7 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     
     @objc func hideShadowView() {
         shadowView.removeFromSuperview()
+		self.collectionView?.isScrollEnabled = true
         
         UIView.animate(withDuration: 0.5, animations: { // This should not be here
             self.optionsTableView.frame = CGRect(x: 0, y: -self.optionsTableView.frame.height, width: self.optionsTableView.frame.width, height: self.optionsTableView.frame.height)
