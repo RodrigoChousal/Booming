@@ -44,7 +44,12 @@ class MenuTVC: UITableViewController {
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
+		if segue.identifier == "BackedCampaignsSegue" {
+			let destination = segue.destination as! BackedCampaignsTVC
+			if let localUser = Global.localUser {
+				destination.backedCampaigns = localUser.backedCampaigns
+			}
+		}
     }
     
     // MARK: - UITableViewDelegate
@@ -57,11 +62,13 @@ class MenuTVC: UITableViewController {
             
         } else if indexPath.row == 1 { // Campaigns VC
                         
-        } else if indexPath.row == 2 { // Proposal VC
+        } else if indexPath.row == 2 { // Backed Campaigns VC
             
-        } else if indexPath.row == 3 { // Mission VC
+        } else if indexPath.row == 3 { // Proposal VC
             
-        }
+		} else { // Mission VC
+			
+		}
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

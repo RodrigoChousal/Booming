@@ -18,10 +18,11 @@ class Global {
 
 class Campaign {
     
-    var name = String()
+	var name: String = ""
     var desc: String = ""
     var date: String = ""
     var contact: String = ""
+	var supporters: [LocalUser] = [LocalUser]()
     
     var image: UIImage = UIImage()
     var imageURL: URL?
@@ -40,6 +41,11 @@ class Campaign {
     }
 }
 
+class BackedCampaign: Campaign {
+	var contributionAmount: Int = 0
+	var status: String = "status"
+}
+
 class LimitedCampaign: Campaign {
     var goal: Int = 0
     var progress: Int = 0
@@ -55,6 +61,7 @@ class LocalUser {
     var email: String
     var memberSince: Date = Date()
     var profilePicture: UIImage = #imageLiteral(resourceName: "placeholder")
+	var backedCampaigns: [BackedCampaign] = [BackedCampaign]()
     
     // Optional data
     var backgroundPicture: UIImage?

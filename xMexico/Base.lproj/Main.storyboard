@@ -1862,7 +1862,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="bNJ-lE-bbu" kind="custom" customClass="SWRevealViewControllerSeguePushController" id="8SF-DL-SaZ"/>
+                                            <segue destination="bNJ-lE-bbu" kind="custom" identifier="BackedCampaignsSegue" customClass="SWRevealViewControllerSeguePushController" id="8SF-DL-SaZ"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="54" id="fYJ-qy-W5R">
@@ -2158,34 +2158,46 @@
         <scene sceneID="DNz-gY-MCC">
             <objects>
                 <tableViewController id="B4D-bH-CAA" customClass="BackedCampaignsTVC" customModule="xMexico" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="82" sectionHeaderHeight="28" sectionFooterHeight="28" id="2Ju-rP-E3S">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="122" sectionHeaderHeight="28" sectionFooterHeight="28" id="2Ju-rP-E3S">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="BackedCell" textLabel="x8l-ZY-QfG" detailTextLabel="z27-Zx-zmG" rowHeight="82" style="IBUITableViewCellStyleValue1" id="iRT-hH-oo0">
-                                <rect key="frame" x="0.0" y="28" width="375" height="82"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="BackedCampaignCell" rowHeight="122" id="iRT-hH-oo0" customClass="BackedCampaignTVCell" customModule="xMexico" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="375" height="122"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="iRT-hH-oo0" id="2hx-Aw-qra">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="81.666666666666671"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="341" height="121.66666666666667"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Nombre de iniciativa" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="x8l-ZY-QfG">
-                                            <rect key="frame" x="16" y="31" width="156" height="20.333333333333332"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Cantidad" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="H4e-2g-56w">
+                                            <rect key="frame" x="16" y="72" width="69" height="21"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Cantidad" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="z27-Zx-zmG">
-                                            <rect key="frame" x="290" y="31" width="69" height="20.333333333333332"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Status" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OjH-fX-dvP">
+                                            <rect key="frame" x="291" y="50" width="50" height="21"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Nombre" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dJK-C8-qzt">
+                                            <rect key="frame" x="16" y="33" width="62" height="21"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="amountLabel" destination="H4e-2g-56w" id="4bC-wu-BQ2"/>
+                                    <outlet property="nameLabel" destination="dJK-C8-qzt" id="2XE-4O-yQc"/>
+                                    <outlet property="statusLabel" destination="OjH-fX-dvP" id="bbU-8z-ptW"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -2204,7 +2216,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="djW-Ij-Fnv" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="89" y="606"/>
+            <point key="canvasLocation" x="88.799999999999997" y="605.9113300492611"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="gIP-jR-AuP">
@@ -2383,7 +2395,7 @@
         <image name="xMexico" width="189" height="189"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="c2N-71-BDT"/>
+        <segue reference="jU4-P0-rrX"/>
         <segue reference="GkI-xa-TZo"/>
         <segue reference="84D-iH-pZy"/>
     </inferredMetricsTieBreakers>
