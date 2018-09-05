@@ -9,11 +9,15 @@
 import Foundation
 import Firebase
 import FirebaseDatabase
+import FirebaseFirestore
 
 class Global {
     static var localUser: LocalUser? // Optional because users can enter as visitors
     static let databaseRef = Database.database().reference()
     static let storageRef = Storage.storage().reference()
+	
+	static let usersCollectionRef = Firestore.firestore().collection("users")
+	static let campaignsCollectionRef = Firestore.firestore().collection("campaigns")
 }
 
 class Campaign {
@@ -41,7 +45,7 @@ class Campaign {
     var galleryImageURLs = [URL]()
 	
 	enum Status: String {
-		case ONGOING = "En progreso"
+		case ONGOING = "EnProgreso"
 		case CANCELED = "Cancelada"
 		case COMPLETED = "Completada"
 		case UNKNOWN = "Unknown"

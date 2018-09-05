@@ -188,7 +188,11 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
 	
     func downloadCampaignData() {
         var campaignCount = 0
-        Global.databaseRef.child("campaigns").observeSingleEvent(of: .value) { (listSnapshot) in
+		
+		// FIXME: To migrate campaign downloading to Firestore,
+		// might need to create new collection of "IDs" containing a document that lists
+		// all campaign IDs for iteration
+		Global.databaseRef.child("campaigns").observeSingleEvent(of: .value) { (listSnapshot) in
             if let campaignsArray = listSnapshot.value as? NSArray  {
                 campaignCount = campaignsArray.count
                 for i in 0...(campaignCount - 1) {

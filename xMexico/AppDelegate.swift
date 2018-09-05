@@ -17,6 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         FirebaseApp.configure()
+		
+		try? KeychainManager.deleteCredentials(credentials: Credentials(email: "rch@gmail.com", password: "testing123"))
         
         let credentials = KeychainManager.fetchCredentials()
         

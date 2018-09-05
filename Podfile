@@ -14,6 +14,7 @@ target 'xMexico' do
   pod 'Firebase/Storage'
   pod 'FirebaseUI/Storage'
   pod 'Firebase/Database'
+  pod 'Firebase/Firestore'
 
 end
 

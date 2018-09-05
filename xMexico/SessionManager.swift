@@ -12,40 +12,39 @@ import Firebase
 class SessionManager {
 	
 	static func populateLocalUser(withFireUser fireUser: User) {
-		Global.databaseRef.child("users").child(fireUser.uid).observe(DataEventType.value, with: { (snapshot) in
-			let value = snapshot.value as? NSDictionary
-			let firstName = value?["first_name"] as? String ?? ""
-			let lastName = value?["last_name"] as? String ?? ""
-			let email = value?["email"] as? String ?? ""
-			let dateCreated = DatabaseManager.validDate(fromString: value?["date_created"] as? String ?? "")
-			let backedCampaignsDictionaries = value?["backed_campaigns"] as? NSArray ?? NSArray()
-			var backedCampaigns = [BackedCampaign]()
-			for backedCampaignDictionary in backedCampaignsDictionaries {
-				backedCampaigns.append(DatabaseManager.validBackedCampaign(fromDictionary: backedCampaignDictionary as! NSDictionary))
+		Global.usersCollectionRef.document(fireUser.uid).getDocument { (document, error) in
+			if let value = document?.data() as NSDictionary? {
+				let firstName = value["first_name"] as? String ?? ""
+				let lastName = value["last_name"] as? String ?? ""
+				let email = value["email"] as? String ?? ""
+				let dateCreated = DatabaseManager.validDate(fromString: value["date_created"] as? String ?? "")
+				let backedCampaignsDictionaries = value["backed_campaigns"] as? NSArray ?? NSArray()
+				var backedCampaigns = [BackedCampaign]()
+				for backedCampaignDictionary in backedCampaignsDictionaries {
+					backedCampaigns.append(DatabaseManager.validBackedCampaign(fromDictionary: backedCampaignDictionary as! NSDictionary))
+				}
+				Global.localUser = LocalUser(firstName: firstName,
+											 lastName: lastName,
+											 email: email,
+											 dateCreated: dateCreated,
+											 backedCampaigns: backedCampaigns)
+				ImageManager.fetchImageFromFirebase(forFireUser: fireUser, profilePicture: true)
+				ImageManager.fetchImageFromFirebase(forFireUser: fireUser, profilePicture: false)
+			} else if let error = error {
+				print("ERROR:" + error.localizedDescription)
 			}
-			Global.localUser = LocalUser(firstName: firstName,
-										 lastName: lastName,
-										 email: email,
-										 dateCreated: dateCreated,
-										 backedCampaigns: backedCampaigns)
-			ImageManager.fetchImageFromFirebase(forFireUser: fireUser, profilePicture: true)
-			ImageManager.fetchImageFromFirebase(forFireUser: fireUser, profilePicture: false)
-		}) { (error) in
-			print("ERROR:" + error.localizedDescription)
 		}
 	}
 	
 	static func populate(fireUser: User, withLocalUser localUser: LocalUser) {
-		Global.databaseRef.child("users")
-			.child(fireUser.uid)
-			.setValue(["email" : localUser.email,
-					   "first_name" : localUser.firstName,
-					   "last_name" : localUser.lastName,
-					   "date_created" : localUser.dateCreated.description,
-					   "bio" : localUser.bio ?? "",
-					   "city" : localUser.city ?? "",
-					   "state" : localUser.state ?? "",
-					   "backed_campaigns" : DatabaseManager.uploadableBackedCampaigns(fromArray: localUser.backedCampaigns)])
+		Global.usersCollectionRef.addDocument(data: ["email" : localUser.email,
+													 "first_name" : localUser.firstName,
+													 "last_name" : localUser.lastName,
+													 "date_created" : localUser.dateCreated.description,
+													 "bio" : localUser.bio ?? "",
+													 "city" : localUser.city ?? "",
+													 "state" : localUser.state ?? "",
+													 "backed_campaigns" : DatabaseManager.uploadableBackedCampaigns(fromArray: localUser.backedCampaigns)])
 		let changeRequest = fireUser.createProfileChangeRequest()
 		changeRequest.displayName = localUser.firstName + " " + localUser.lastName
 		ImageManager.postImageToFirebase(forFireUser: fireUser, image: localUser.profilePicture)

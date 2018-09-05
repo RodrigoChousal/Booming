@@ -157,10 +157,7 @@
 			children = (
 				33E445091E75D70D00ACEB0D /* Constants.swift */,
 				33866AE71E51F74900D885D1 /* MexModel.swift */,
-				C2C6626B213EF5AB0004A40D /* DatabaseManager.swift */,
-				C2A039EF214045B8007CF467 /* SessionManager.swift */,
-				C25DD7ED212E09E90047E044 /* KeychainManager.swift */,
-				333ACD4A1E76FD7B001D220F /* ImageManager.swift */,
+				C2BDACD42140615D00697758 /* Managers */,
 				3350D3231E50FE9600359414 /* AppDelegate.swift */,
 				335BF3A51E63736F00929D2A /* SignUpViewController.swift */,
 				33B52A221E62342F00722A52 /* AccessViewController.swift */,
@@ -234,7 +231,7 @@
 				336C14261E555A5D002B0033 /* CampaignCell.swift */,
 				330BC4F61E56682200C64E66 /* CampaignVC.swift */,
 				C23D10A72130674500D55C01 /* ContributionViewController.swift */,
-				C2E41604212776540084B0A7 /* Media */,
+				C2E41604212776540084B0A7 /* Gallery */,
 			);
 			name = Campaigns;
 			sourceTree = "<group>";
@@ -248,6 +245,17 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		C2BDACD42140615D00697758 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				C2A039EF214045B8007CF467 /* SessionManager.swift */,
+				C25DD7ED212E09E90047E044 /* KeychainManager.swift */,
+				C2C6626B213EF5AB0004A40D /* DatabaseManager.swift */,
+				333ACD4A1E76FD7B001D220F /* ImageManager.swift */,
+			);
+			name = Managers;
+			sourceTree = "<group>";
+		};
 		C2C6626A213EEE090004A40D /* BackedCampaign */ = {
 			isa = PBXGroup;
 			children = (
@@ -257,13 +265,13 @@
 			name = BackedCampaign;
 			sourceTree = "<group>";
 		};
-		C2E41604212776540084B0A7 /* Media */ = {
+		C2E41604212776540084B0A7 /* Gallery */ = {
 			isa = PBXGroup;
 			children = (
 				33B0178F1E574B6300045E14 /* GalleryVC.swift */,
 				33EC83FE1EAAD30E00C20A39 /* GalleryCell.swift */,
 			);
-			name = Media;
+			name = Gallery;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -346,17 +354,29 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-xMexico/Pods-xMexico-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/BoringSSL/openssl.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC/GRPCClient.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-ProtoRPC/ProtoRPC.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-RxLibrary/RxLibrary.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRPCClient.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ProtoRPC.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxLibrary.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);

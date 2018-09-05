@@ -45,11 +45,11 @@ class DatabaseManager {
 	
 	// MARK: - Native-to-Custom Class
 	
-	static func validBackedCampaign(fromDictionary backedCampaignDictionary: NSDictionary) -> BackedCampaign {
+	static func validBackedCampaign(fromDictionary dictionary: NSDictionary) -> BackedCampaign {
 		
-		let campaign = validCampaign(fromDictionary: backedCampaignDictionary)
-		let amountContributed = validFunds(fromString: backedCampaignDictionary.value(forKey: "amount_contributed") as! String)
-		let dateContributed = validDate(fromString: backedCampaignDictionary.value(forKey: "date_contributed") as! String)
+		let campaign = validCampaign(fromDictionary: dictionary)
+		let amountContributed = validFunds(fromString: dictionary.value(forKey: "amount_contributed") as! String)
+		let dateContributed = validDate(fromString: dictionary.value(forKey: "date_contributed") as! String)
 		let backedCampaign = BackedCampaign(campaign: campaign,
 											amountContributed: amountContributed,
 											dateContributed: dateContributed,
@@ -58,7 +58,8 @@ class DatabaseManager {
 	}
 	
 	static func validCampaign(fromDictionary dictionary: NSDictionary) -> Campaign {
-		let campaign = Campaign(uniqueID: dictionary.value(forKey: "uniqueID") as! String, // FIXME: This is crashing because not using Firestore yet...
+		print(dictionary)
+		let campaign = Campaign(uniqueID: dictionary.value(forKey: "unique_id") as! String, // FIXME: This is crashing because not using Firestore yet...
 			status: validStatus(fromString: dictionary.value(forKey: "status") as! String),
 			name: dictionary.value(forKey: "nombre") as! String,
 			description: dictionary.value(forKey: "description") as! String,
