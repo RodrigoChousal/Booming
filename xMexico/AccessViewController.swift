@@ -165,29 +165,13 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
 
                 } else { // Login successful
 					
-					print("Login successful with credentials:")
-					print("Email: " + accessEmail)
-					print("Password: " + accessPassword)
+					// Store user credentials in keychain
+					let credentials = Credentials(email: accessEmail, password: accessPassword)
+					KeychainManager.storeCredentials(credentials: credentials)
                     
                     // Store important user data
                     if let fireUser = Auth.auth().currentUser {
-                        Global.databaseRef.child("users").child(fireUser.uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                            let value = snapshot.value as? NSDictionary
-                            let firstName = value?["firstName"] as? String ?? ""
-                            let lastName = value?["lastName"] as? String ?? ""
-                            let email = value?["email"] as? String ?? ""
-                            Global.localUser = LocalUser(firstName: firstName,
-                                                    lastName: lastName,
-                                                    email: email)
-                            ImageManager.fetchImageFromFirebase(forUser: fireUser, profilePicture: true)
-                            
-                            // Store user credentials in keychain
-                            let credentials = Credentials(email: accessEmail, password: accessPassword)
-                            KeychainManager.storeCredentials(credentials: credentials)
-                            
-                        }) { (error) in
-                            print(error.localizedDescription)
-                        }
+                        SessionManager.populateLocalUser(withFireUser: fireUser)
                     }
                     
                     // Show guests inside

@@ -157,7 +157,7 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
                     if pickingProfile {
                         
                         // Upload and update meta
-                        ImageManager.postImageToFirebase(forUser: user, image: image)
+                        ImageManager.postImageToFirebase(forFireUser: user, image: image)
                         
                         // Update local user object
                         locUser.profilePicture = image
@@ -171,7 +171,7 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
                     } else if pickingBackground {
                         
                         // Upload and update meta
-                        ImageManager.postBackgroundImageToFirebase(forUser: user, image: image)
+                        ImageManager.postBackgroundImageToFirebase(forFireUser: user, image: image)
                         
                         // Update local user object
                         locUser.backgroundPicture = image
@@ -207,30 +207,30 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     
     func setupView() {
         
-        if let user = Global.localUser {
+        if let localUser = Global.localUser {
             
-            userPortraitView.image = user.profilePicture.circleMasked
+            userPortraitView.image = localUser.profilePicture.circleMasked
             
             userBgImageView.image = #imageLiteral(resourceName: "placeholder")
             userBgImageView.contentMode = .scaleAspectFill
             userBgImageView.clipsToBounds = true
             
-            nameLabel.text = user.fullName
-            bioTextView.text = user.bio
+			nameLabel.text = localUser.fullName
+			bioTextView.text = localUser.bio
             
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "dd MMM yyyy"
             dateFormatter.locale = Locale.init(identifier: "es_ES")
-            antiquityLabel.text = "Miembro desde " + dateFormatter.string(from: user.memberSince)
+            antiquityLabel.text = "Miembro desde " + dateFormatter.string(from: localUser.dateCreated)
             
-            if let city = user.city, let state = user.state {
+            if let city = localUser.city, let state = localUser.state {
                 cityLabel.text = city + ", " + state
             } else {
                 cityLabel.text = "Ubicación desconocida"
             }
             
-            if let numberOfCampaigns = user.numberOfCampaigns { amountOfDonationsLabel.text = numberOfCampaigns.description + " campañas apoyadas" }
-            if let achievements = user.achievements { achievementTitleLabel.text = "Reconocimientos (\(achievements.count))" }
+			amountOfDonationsLabel.text = localUser.backedCampaigns.count.description + " campañas apoyadas"
+            if let achievements = localUser.achievements { achievementTitleLabel.text = "Reconocimientos (\(achievements.count))" }
         }
     }
     

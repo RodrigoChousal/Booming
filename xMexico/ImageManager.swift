@@ -12,7 +12,7 @@ import FirebaseUI
 
 class ImageManager {
     
-    static func postImageToFirebase(forUser fireUser: User, image: UIImage) {
+	static func postImageToFirebase(forFireUser fireUser: User, image: UIImage) {
         let imageData = UIImagePNGRepresentation(image)
         let imagePath = "userPictures/" + fireUser.uid + "/" + "userProfile.png"
         let metadata = StorageMetadata()
@@ -26,7 +26,7 @@ class ImageManager {
         }
     }
     
-    static func postBackgroundImageToFirebase(forUser fireUser: User, image: UIImage) {
+    static func postBackgroundImageToFirebase(forFireUser fireUser: User, image: UIImage) {
         let imageData = UIImagePNGRepresentation(image)
         let imagePath = "userBackgrounds/" + fireUser.uid + "/" + "userBackground.png"
         let metadata = StorageMetadata()
@@ -46,7 +46,7 @@ class ImageManager {
             }.resume()
     }
     
-    static func fetchImageFromFirebase(forUser fireUser: User, profilePicture: Bool) {
+    static func fetchImageFromFirebase(forFireUser fireUser: User, profilePicture: Bool) {
         // Check if profile picture or not, and make reference appropriately
         var imgRef = StorageReference()
         if profilePicture {
@@ -71,11 +71,11 @@ class ImageManager {
                         print("Download Finished")
                         DispatchQueue.main.async() {
                             image = UIImage(data: data)!
-                            if let user = Global.localUser {
+                            if let localUser = Global.localUser {
                                 if profilePicture {
-                                    user.profilePicture = image
+                                    localUser.profilePicture = image
                                 } else {
-                                    user.backgroundPicture = image
+                                    localUser.backgroundPicture = image
                                 }
                             }
                         }

@@ -20,7 +20,7 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var contributeBottomView: UIView!
     @IBOutlet weak var contributeFullControlView: UIView!
     
-    var campaign = Campaign()
+	var campaign: Campaign!
     var photoGallery = [UIImage]()
     var galleryController = GalleryVC()
     
@@ -51,7 +51,7 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
         }
         
         nameLabel.text = campaign.name
-        descTextView.text = campaign.desc
+        descTextView.text = campaign.description
         
         NotificationCenter.default.addObserver(self, selector: #selector(CampaignVC.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(CampaignVC.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)

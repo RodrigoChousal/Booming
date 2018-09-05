@@ -136,7 +136,7 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
             let lastName = self.lastNameField.text!
             let email = self.emailField.text!
             let password = self.passwordField.text!
-            
+			
             Auth.auth().createUser(withEmail: email, password: password) { (authResult, error) in
                 
                 // Store user credentials in keychain
@@ -148,28 +148,17 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
                     // Store details locally:
                     Global.localUser = LocalUser(firstName: firstName,
                                                  lastName: lastName,
-                                                 email: email)
-                    if let user = Global.localUser {
-                        user.profilePicture = img
-                        user.backgroundPicture = #imageLiteral(resourceName: "placeholder")
+                                                 email: email,
+												 dateCreated: Date(),
+												 backedCampaigns: [BackedCampaign]())
+                    if let localUser = Global.localUser {
+                        localUser.profilePicture = img
+						localUser.backgroundPicture = #imageLiteral(resourceName: "placeholder") // TODO: Make background image placeholder
                     }
                     
                     // Store details in d cloud:
                     if let localUser = Global.localUser {
-                        ImageManager.postImageToFirebase(forUser: fireUser, image: img)
-                        ImageManager.postBackgroundImageToFirebase(forUser: fireUser, image: #imageLiteral(resourceName: "placeholder"))
-                        Global.databaseRef.child("users")
-                            .child(fireUser.uid)
-                            .setValue(["email" : localUser.email,
-                                       "firstName" : localUser.firstName,
-                                       "lastName" : localUser.lastName,
-                                       "bio" : localUser.bio ?? "",
-                                       "city" : localUser.city ?? "",
-                                       "state" : localUser.state ?? "",
-                                       "numberOfCampaigns" : localUser.numberOfCampaigns?.description ?? "0",
-                                       "memberSince" : localUser.memberSince.description])
-                        let changeRequest = fireUser.createProfileChangeRequest()
-                        changeRequest.displayName = firstName + " " + lastName
+                        SessionManager.populate(fireUser: fireUser, withLocalUser: localUser)
                     }
                     
                     // We're done

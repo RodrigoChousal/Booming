@@ -17,12 +17,19 @@ class Global {
 }
 
 class Campaign {
-    
-	var name: String = ""
-    var desc: String = ""
-    var date: String = ""
-    var contact: String = ""
-	var supporters: [LocalUser] = [LocalUser]()
+	
+	var uniqueID: String
+	var name: String
+    var description: String
+	var objective: String
+	var dateCreated: Date
+	var contact: Contact
+	var fundsNeeded: Int //TODO: Make class with currency property
+	var status: Status
+	
+	var fundsAcquired: Int = 0
+	
+	var supporters: [User]?
     
     var image: UIImage = UIImage()
     var imageURL: URL?
@@ -32,24 +39,46 @@ class Campaign {
     
     var gallery = [UIImage]()
     var galleryImageURLs = [URL]()
-    
-    convenience init(name: String, desc: String, contact: String) {
-        self.init()
-        self.name = name
-        self.desc = desc
-        self.contact = contact
-    }
+	
+	enum Status: String {
+		case ONGOING = "En progreso"
+		case CANCELED = "Cancelada"
+		case COMPLETED = "Completada"
+		case UNKNOWN = "Unknown"
+	}
+	
+	init(uniqueID: String, status: Status, name: String, description: String, objective: String, dateCreated: Date, contact: Contact, fundsNeeded: Int) {
+		self.uniqueID = uniqueID
+		self.status = status
+		self.name = name
+		self.description = description
+		self.objective = objective
+		self.dateCreated = dateCreated
+		self.contact = contact
+		self.fundsNeeded = fundsNeeded
+	}
 }
 
 class BackedCampaign: Campaign {
-	var contributionAmount: Int = 0
-	var status: String = "status"
+	var amountContributed: Int
+	var dateContributed: Date
+	init(campaign: Campaign, amountContributed: Int, dateContributed: Date) {
+		self.amountContributed = amountContributed
+		self.dateContributed = dateContributed
+		super.init(uniqueID: campaign.uniqueID, status: campaign.status, name: campaign.name, description: campaign.description, objective: campaign.objective, dateCreated: campaign.dateCreated, contact: campaign.contact, fundsNeeded: campaign.fundsNeeded)
+	}
 }
 
-class LimitedCampaign: Campaign {
-    var goal: Int = 0
-    var progress: Int = 0
-    var expenseList: String = ""
+class Contact {
+	var email: String
+	var name: String
+	var cell: String
+	
+	init(email: String, name: String, cell: String) {
+		self.email = email
+		self.name = name
+		self.cell = cell
+	}
 }
 
 class LocalUser {
@@ -59,13 +88,14 @@ class LocalUser {
     var lastName: String
     var fullName: String { return firstName + " " + lastName }
     var email: String
-    var memberSince: Date = Date()
-    var profilePicture: UIImage = #imageLiteral(resourceName: "placeholder")
-	var backedCampaigns: [BackedCampaign] = [BackedCampaign]()
+    var dateCreated: Date
+	var backedCampaigns: [BackedCampaign]
+	
+	// Obligatory properties with default values
+	var profilePicture: UIImage = #imageLiteral(resourceName: "placeholder")
     
-    // Optional data
+    // Optional properties (set later in Settings VC)
     var backgroundPicture: UIImage?
-    var numberOfCampaigns: Int?
     var city: String?
     var state: String?
     var bio: String?
@@ -77,10 +107,12 @@ class LocalUser {
         lastName = fullNameArr.joined(separator: " ")
     }
     
-    init(firstName: String, lastName: String, email: String) {
+	init(firstName: String, lastName: String, email: String, dateCreated: Date, backedCampaigns: [BackedCampaign]) {
         self.firstName = firstName
         self.lastName = lastName
         self.email = email
+		self.dateCreated = dateCreated
+		self.backedCampaigns = backedCampaigns
     }
 }
 

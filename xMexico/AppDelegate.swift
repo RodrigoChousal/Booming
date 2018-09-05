@@ -21,6 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let credentials = KeychainManager.fetchCredentials()
         
         Auth.auth().signIn(withEmail: credentials.email, password: credentials.password) { (dataResult, error) in
+			print("ATTEMPTED SIGN IN WITH CREDENTIALS:")
 			print(credentials.email)
 			print(credentials.password)
             
@@ -37,23 +38,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 self.window?.makeKeyAndVisible()
                 
             } else { // Login successful
-                
                 print("User has been successfully signed in to Firebase")
                  
                 // Store important user data
                 if let fireUser = Auth.auth().currentUser {
-                    Global.databaseRef.child("users").child(fireUser.uid).observe(DataEventType.value, with: { (snapshot) in
-                        let value = snapshot.value as? NSDictionary
-                        let firstName = value?["firstName"] as? String ?? ""
-                        let lastName = value?["lastName"] as? String ?? ""
-                        let email = value?["email"] as? String ?? ""
-                        Global.localUser = LocalUser(firstName: firstName,
-                                                     lastName: lastName,
-                                                     email: email)
-                        ImageManager.fetchImageFromFirebase(forUser: fireUser, profilePicture: true)
-                    }) { (error) in
-                        print("ERROR:" + error.localizedDescription)
-                    }
+					SessionManager.populateLocalUser(withFireUser: fireUser)
                 }
                 
                 // Show user to AccessVC with automatic access

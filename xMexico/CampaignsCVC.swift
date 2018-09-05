@@ -117,7 +117,7 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
             cell.nameLabel.backgroundColor = .clear
             cell.nameLabel.sizeToFit()
             
-            cell.infoLabel.text = "Desde " + campaignList[indexPath.row].date
+            cell.infoLabel.text = "Desde " + campaignList[indexPath.row].dateCreated.description
             cell.infoLabel.backgroundColor = .clear
             cell.infoLabel.sizeToFit()
         }
@@ -185,7 +185,7 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     }
     
     // MARK: - Helper Methods
-    
+	
     func downloadCampaignData() {
         var campaignCount = 0
         Global.databaseRef.child("campaigns").observeSingleEvent(of: .value) { (listSnapshot) in
@@ -193,23 +193,9 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
                 campaignCount = campaignsArray.count
                 for i in 0...(campaignCount - 1) {
                     Global.databaseRef.child("campaigns").child(String(i)).observeSingleEvent(of: .value, with: { (campaignSnapshot) in
-                        if let campaignMeta = campaignSnapshot.value as? NSDictionary {
-                            let campaign = Campaign(name: campaignMeta.value(forKey: "nombre") as! String,
-                                                    desc: campaignMeta.value(forKey: "desc") as! String,
-                                                    contact: campaignMeta.value(forKey: "apoyo") as! String)
-                            campaign.date = campaignMeta.value(forKey: "fecha") as! String
-                            campaign.image = #imageLiteral(resourceName: "placeholder")
-                            campaign.imageURL = URL(string: campaignMeta.value(forKey: "logo_170x224") as! String)
-                            campaign.circularImageURL = URL(string: campaignMeta.value(forKey: "logo_142x142") as! String)
-                            if let picURLs = campaignMeta.value(forKey: "photo_gallery") as? NSArray {
-                                for value in picURLs {
-                                    if let str = value as? String {
-                                        if let url = URL(string: str) {
-                                            campaign.galleryImageURLs.append(url)
-                                        }
-                                    }
-                                }
-                            }
+                        if let campaignDictionary = campaignSnapshot.value as? NSDictionary {
+							
+							let campaign = DatabaseManager.validCampaign(fromDictionary: campaignDictionary)
                             campaignList.append(campaign)
                             print("Appended new campaign to internal list.")
                             
@@ -323,7 +309,7 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
             collectionView?.reloadData()
             
         case 1:
-            campaignList = campaignList.sorted(by: { $0.date < $1.date })
+            campaignList = campaignList.sorted(by: { $0.dateCreated < $1.dateCreated })
             collectionView?.reloadData()
             
         case 2:

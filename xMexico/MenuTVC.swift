@@ -31,8 +31,8 @@ class MenuTVC: UITableViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if let locUser = Global.localUser {
-            userPictureView.image = locUser.profilePicture.circleMasked
+        if let localUser = Global.localUser {
+            userPictureView.image = localUser.profilePicture.circleMasked
         }
     }
 

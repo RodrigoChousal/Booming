@@ -43,8 +43,8 @@ class BackedCampaignsTVC: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BackedCampaignCell", for: indexPath) as! BackedCampaignTVCell
 		cell.nameLabel.text = self.backedCampaigns[indexPath.row].name
-		cell.amountLabel.text = self.backedCampaigns[indexPath.row].contributionAmount.description
-		cell.statusLabel.text = self.backedCampaigns[indexPath.row].status
+		cell.amountLabel.text = self.backedCampaigns[indexPath.row].amountContributed.description
+		cell.statusLabel.text = self.backedCampaigns[indexPath.row].status.rawValue
         return cell
     }
 	

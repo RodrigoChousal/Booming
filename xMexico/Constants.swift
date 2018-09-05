@@ -9,8 +9,5 @@
 import Foundation
 
 struct Constants {
-    
-    static let gistURL = "https://gist.githubusercontent.com/RodrigoChousal/3315106139da2dc0dab26b454c693a31/raw/"
     static let appID = Bundle.main.bundleIdentifier!
-    static let newConstant = 0
 }
