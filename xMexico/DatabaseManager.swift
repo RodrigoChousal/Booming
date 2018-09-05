@@ -15,7 +15,8 @@ class DatabaseManager {
 		var uploadable = NSArray()
 		for backedCampaign in backedCampaignsArray { // FIXME: How do I know uniqueID?
 			let uploadableDictionary = ["amount_contributed" : backedCampaign.amountContributed,
-										"date_contributed" : backedCampaign.dateContributed] as [String : Any]
+										"date_contributed" : backedCampaign.dateContributed,
+										"campaign_id" : backedCampaign.campaignID] as [String : Any]
 			uploadable = uploadable.adding(uploadableDictionary) as NSArray
 		}
 		return uploadable
@@ -51,12 +52,13 @@ class DatabaseManager {
 		let dateContributed = validDate(fromString: backedCampaignDictionary.value(forKey: "date_contributed") as! String)
 		let backedCampaign = BackedCampaign(campaign: campaign,
 											amountContributed: amountContributed,
-											dateContributed: dateContributed)
+											dateContributed: dateContributed,
+											campaignID: campaign.uniqueID)
 		return backedCampaign
 	}
 	
 	static func validCampaign(fromDictionary dictionary: NSDictionary) -> Campaign {
-		let campaign = Campaign(uniqueID: dictionary.value(forKey: "uniqueID") as! String, // FIXME: This is wrong...
+		let campaign = Campaign(uniqueID: dictionary.value(forKey: "uniqueID") as! String, // FIXME: This is crashing because not using Firestore yet...
 			status: validStatus(fromString: dictionary.value(forKey: "status") as! String),
 			name: dictionary.value(forKey: "nombre") as! String,
 			description: dictionary.value(forKey: "description") as! String,

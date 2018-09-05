@@ -62,9 +62,11 @@ class Campaign {
 class BackedCampaign: Campaign {
 	var amountContributed: Int
 	var dateContributed: Date
-	init(campaign: Campaign, amountContributed: Int, dateContributed: Date) {
+	var campaignID: String
+	init(campaign: Campaign, amountContributed: Int, dateContributed: Date, campaignID: String) {
 		self.amountContributed = amountContributed
 		self.dateContributed = dateContributed
+		self.campaignID = campaignID
 		super.init(uniqueID: campaign.uniqueID, status: campaign.status, name: campaign.name, description: campaign.description, objective: campaign.objective, dateCreated: campaign.dateCreated, contact: campaign.contact, fundsNeeded: campaign.fundsNeeded)
 	}
 }
