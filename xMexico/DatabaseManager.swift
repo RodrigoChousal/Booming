@@ -47,7 +47,7 @@ class DatabaseManager {
 	
 	static func validBackedCampaign(fromDictionary dictionary: NSDictionary) -> BackedCampaign {
 		
-		let campaign = validCampaign(fromDictionary: dictionary)
+		let campaign = validCampaign(withID: dictionary.value(forKey: "campaign_id") as! String, fromDictionary: dictionary)
 		let amountContributed = validFunds(fromString: dictionary.value(forKey: "amount_contributed") as! String)
 		let dateContributed = validDate(fromString: dictionary.value(forKey: "date_contributed") as! String)
 		let backedCampaign = BackedCampaign(campaign: campaign,
@@ -57,11 +57,11 @@ class DatabaseManager {
 		return backedCampaign
 	}
 	
-	static func validCampaign(fromDictionary dictionary: NSDictionary) -> Campaign {
+	static func validCampaign(withID campaignID: String, fromDictionary dictionary: NSDictionary) -> Campaign {
 		print(dictionary)
-		let campaign = Campaign(uniqueID: dictionary.value(forKey: "unique_id") as! String, // FIXME: This is crashing because not using Firestore yet...
+		let campaign = Campaign(uniqueID: campaignID,
 			status: validStatus(fromString: dictionary.value(forKey: "status") as! String),
-			name: dictionary.value(forKey: "nombre") as! String,
+			name: dictionary.value(forKey: "name") as! String,
 			description: dictionary.value(forKey: "description") as! String,
 			objective: dictionary.value(forKey: "objective") as! String,
 			dateCreated: validDate(fromString: dictionary.value(forKey: "date_created") as! String),
@@ -79,7 +79,6 @@ class DatabaseManager {
 				}
 			}
 		}
-		
 		return campaign
 	}
 	

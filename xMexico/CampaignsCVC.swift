@@ -8,33 +8,21 @@
 
 import UIKit
 
-private let reuseIdentifier = "CampaignCell"
-private var campaignList = [Campaign]()
-
 class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableViewDataSource {
         
     @IBOutlet weak var menuButton: UIBarButtonItem!
-    
+	
+	var isLoading = false
     var campaignImages = [UIImage]()
-    var isLoading = false
     var topFilter = UIButton(type: .system)
     var shadowView = UIView()
     var optionsTableView = UITableView(frame: CGRect(x: 0, y: -200, width: UIScreen.main.bounds.width, height: 200), style: .plain)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-//        if skippedLogin {
-//            let delayView = UIImageView(frame: view.frame) // delays for didFinishLaunching to find user profile
-//            delayView.image = #imageLiteral(resourceName: "launch")
-//            
-//            navigationController?.view.addSubview(delayView)
-//            animateCircularMask(view: delayView)
-//        }
-        
+		
         // Makes space for filter button
         collectionView?.frame = CGRect(x: collectionView!.frame.origin.x, y: (collectionView?.frame.origin.y)! + 44, width: (collectionView?.frame.width)!, height: (collectionView?.frame.height)! - 44)
-        
         setupFilterButton()
         view.addSubview(topFilter)
         
@@ -42,9 +30,16 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
         optionsTableView.delegate = self
         optionsTableView.dataSource = self
         
-        if campaignList.count == 0 {
-            isLoading = true
-            downloadCampaignData()
+        if Global.campaignList.count == 0 {
+			self.isLoading = true
+			SessionManager.downloadCampaignData(toList: Global.campaignList) {
+				self.isLoading = false
+				print("reloading CVC with data: ")
+				print(Global.campaignList.description)
+				print(Global.campaignList[0].name)
+				self.loadCampaignImages()
+				self.collectionView?.reloadData()
+			}
         }
         
         navigationController?.navigationBar.titleTextAttributes =
@@ -76,10 +71,10 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
             let cell = sender as! CampaignCell
             let indexPath = collectionView?.indexPath(for: cell)
             let campaignDetailVC = segue.destination as! CampaignVC
-            campaignDetailVC.campaign = campaignList[(indexPath?.row)!]
+            campaignDetailVC.campaign = Global.campaignList[(indexPath?.row)!]
         } else if segue.identifier == "FindCampaignSegue" {
             let searchVC = segue.destination as! SearchTableViewController
-            searchVC.campaignsArray = campaignList
+            searchVC.campaignsArray = Global.campaignList
         }
     }
 
@@ -94,12 +89,12 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
         if isLoading {
             return 4
         } else {
-            return campaignList.count
+            return Global.campaignList.count
         }
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! CampaignCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CampaignCell", for: indexPath) as! CampaignCell
         
         if isLoading { // Show template cell
             cell.imageView.image = #imageLiteral(resourceName: "placeholder")
@@ -111,13 +106,13 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
             cell.infoLabel.frame = CGRect(x: cell.infoLabel.frame.origin.x, y: cell.infoLabel.frame.origin.y, width: cell.infoLabel.frame.width, height: 15)
             
         } else { // Load content into cell
-            cell.imageView.image = campaignList[indexPath.row].image
+            cell.imageView.image = Global.campaignList[indexPath.row].image
             
-            cell.nameLabel.text = campaignList[indexPath.row].name
+            cell.nameLabel.text = Global.campaignList[indexPath.row].name
             cell.nameLabel.backgroundColor = .clear
             cell.nameLabel.sizeToFit()
             
-            cell.infoLabel.text = "Desde " + campaignList[indexPath.row].dateCreated.description
+            cell.infoLabel.text = "Desde " + Global.campaignList[indexPath.row].dateCreated.description
             cell.infoLabel.backgroundColor = .clear
             cell.infoLabel.sizeToFit()
         }
@@ -185,42 +180,10 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     }
     
     // MARK: - Helper Methods
-	
-    func downloadCampaignData() {
-        var campaignCount = 0
-		
-		// FIXME: To migrate campaign downloading to Firestore,
-		// might need to create new collection of "IDs" containing a document that lists
-		// all campaign IDs for iteration
-		Global.databaseRef.child("campaigns").observeSingleEvent(of: .value) { (listSnapshot) in
-            if let campaignsArray = listSnapshot.value as? NSArray  {
-                campaignCount = campaignsArray.count
-                for i in 0...(campaignCount - 1) {
-                    Global.databaseRef.child("campaigns").child(String(i)).observeSingleEvent(of: .value, with: { (campaignSnapshot) in
-                        if let campaignDictionary = campaignSnapshot.value as? NSDictionary {
-							
-							let campaign = DatabaseManager.validCampaign(fromDictionary: campaignDictionary)
-                            campaignList.append(campaign)
-                            print("Appended new campaign to internal list.")
-                            
-                            // Uses downloaded Firebase data, needs full campaignList before execution
-                            DispatchQueue.global(qos: .background).async {
-                                self.loadCampaignImages()
-                            }
-                            self.isLoading = false
-                            self.collectionView?.reloadData()
-                        }
-                    })
-                }
-            } else {
-                print("Invalid campaigns array.")
-            }
-        }
-    }
     
     func loadCampaignImages() {
         
-        for campaign in campaignList {
+        for campaign in Global.campaignList {
             
             let data = try? Data(contentsOf: campaign.imageURL!)
             
@@ -309,47 +272,25 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
         
         switch kind {
         case 0:
-            campaignList = campaignList.sorted(by: { $0.name < $1.name })
+            Global.campaignList = Global.campaignList.sorted(by: { $0.name < $1.name })
             collectionView?.reloadData()
             
         case 1:
-            campaignList = campaignList.sorted(by: { $0.dateCreated < $1.dateCreated })
+            Global.campaignList = Global.campaignList.sorted(by: { $0.dateCreated < $1.dateCreated })
             collectionView?.reloadData()
             
         case 2:
-            campaignList = campaignList.sorted(by: { $0.name > $1.name })
+            Global.campaignList = Global.campaignList.sorted(by: { $0.name > $1.name })
             collectionView?.reloadData()
             
         case 3:
-            campaignList = campaignList.sorted(by: { $0.name > $1.name })
+            Global.campaignList = Global.campaignList.sorted(by: { $0.name > $1.name })
             collectionView?.reloadData()
             
         default:
-            campaignList = campaignList.sorted(by: { $0.name > $1.name })
+            Global.campaignList = Global.campaignList.sorted(by: { $0.name > $1.name })
             collectionView?.reloadData()
             
         }
     }
-//    
-//    func animateCircularMask(view: UIImageView) {
-//        
-//        let viewDiagonal = sqrt(view.frame.height * view.frame.height + view.frame.width * view.frame.width)
-//        let circleRadius = viewDiagonal/2
-//        
-//        let circle = UIView(frame: CGRect(x: 0, y: 0, width: viewDiagonal, height: viewDiagonal))
-//        circle.backgroundColor = UIColor.yellow
-//        circle.layer.cornerRadius = circleRadius
-//        circle.layer.borderWidth = 2.0
-//        circle.layer.borderColor = UIColor.red.cgColor
-//        
-//        circle.center = view.center
-//        
-//        view.mask = circle
-//        
-//        UIView.animate(withDuration: 0.3, delay: 0.01, options: .curveLinear, animations: {
-//            circle.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
-//        }, completion: { (Bool) in
-//            view.removeFromSuperview()
-//        })
-//    }
 }

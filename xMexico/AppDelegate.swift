@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FirebaseFirestore
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,32 +16,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
-        FirebaseApp.configure()
 		
-		try? KeychainManager.deleteCredentials(credentials: Credentials(email: "rch@gmail.com", password: "testing123"))
-        
+		self.setupFirebase()
+		
         let credentials = KeychainManager.fetchCredentials()
         
         Auth.auth().signIn(withEmail: credentials.email, password: credentials.password) { (dataResult, error) in
-			print("ATTEMPTED SIGN IN WITH CREDENTIALS:")
-			print(credentials.email)
-			print(credentials.password)
-            
+
             if let error = error { // No credentials
                 print("Credentials are not valid, first time signing in...")
                 print(error)
                 
                 // Show user to AccessVC without automatic access
-                self.window = UIWindow(frame: UIScreen.main.bounds)
-                let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                let accessVC = mainStoryboard.instantiateViewController(withIdentifier: "AccessViewController") as! AccessViewController
-                accessVC.newUser = true
-                self.window?.rootViewController = accessVC
-                self.window?.makeKeyAndVisible()
+                self.grantAccess(newUser: true)
                 
             } else { // Login successful
-                print("User has been successfully signed in to Firebase")
+                print("Returning user has been successfully signed in to Firebase")
                  
                 // Store important user data
                 if let fireUser = Auth.auth().currentUser {
@@ -48,18 +39,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
                 
                 // Show user to AccessVC with automatic access
-                self.window = UIWindow(frame: UIScreen.main.bounds)
-                let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                let accessVC = mainStoryboard.instantiateViewController(withIdentifier: "AccessViewController") as! AccessViewController
-                accessVC.newUser = false
-                self.window?.rootViewController = accessVC
-                self.window?.makeKeyAndVisible()
+				self.grantAccess(newUser: false)
             }
         }
-        
-        // set common text attributes
-//        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font : UIFont(name: "Avenir-light", size: 15)!], for: .normal)
-//        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "Cancelar"
         
         return true
     }
@@ -86,6 +68,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 
     }
-
+	
+	// MARK: - Helper Methods
+	
+	func setupFirebase() {
+		FirebaseApp.configure()
+		let db = Firestore.firestore()
+		let settings = db.settings
+		settings.areTimestampsInSnapshotsEnabled = true
+		db.settings = settings
+	}
+	
+	func grantAccess(newUser: Bool) {
+		self.window = UIWindow(frame: UIScreen.main.bounds)
+		let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+		let accessVC = mainStoryboard.instantiateViewController(withIdentifier: "AccessViewController") as! AccessViewController
+		accessVC.newUser = newUser
+		self.window?.rootViewController = accessVC
+		self.window?.makeKeyAndVisible()
+	}
 }
 

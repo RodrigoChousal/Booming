@@ -28,7 +28,7 @@
 		<key>BoringSSL.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>10</integer>
+			<integer>9</integer>
 		</dict>
 		<key>FirebaseAuth.xcscheme</key>
 		<dict>

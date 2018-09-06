@@ -11,6 +11,25 @@ import Firebase
 
 class SessionManager {
 	
+	// MARK: - UP ☁️
+	
+	static func populateFireUser(fireUser: User, withLocalUser localUser: LocalUser) {
+		Global.usersCollectionRef.addDocument(data: ["email" : localUser.email,
+													 "first_name" : localUser.firstName,
+													 "last_name" : localUser.lastName,
+													 "date_created" : localUser.dateCreated.description,
+													 "bio" : localUser.bio ?? "",
+													 "city" : localUser.city ?? "",
+													 "state" : localUser.state ?? "",
+													 "backed_campaigns" : DatabaseManager.uploadableBackedCampaigns(fromArray: localUser.backedCampaigns)])
+		let changeRequest = fireUser.createProfileChangeRequest()
+		changeRequest.displayName = localUser.firstName + " " + localUser.lastName
+		ImageManager.postImageToFirebase(forFireUser: fireUser, image: localUser.profilePicture)
+		ImageManager.postBackgroundImageToFirebase(forFireUser: fireUser, image: localUser.backgroundPicture!)
+	}
+	
+	// MARK: - DOWN ☔️
+	
 	static func populateLocalUser(withFireUser fireUser: User) {
 		Global.usersCollectionRef.document(fireUser.uid).getDocument { (document, error) in
 			if let value = document?.data() as NSDictionary? {
@@ -36,18 +55,21 @@ class SessionManager {
 		}
 	}
 	
-	static func populate(fireUser: User, withLocalUser localUser: LocalUser) {
-		Global.usersCollectionRef.addDocument(data: ["email" : localUser.email,
-													 "first_name" : localUser.firstName,
-													 "last_name" : localUser.lastName,
-													 "date_created" : localUser.dateCreated.description,
-													 "bio" : localUser.bio ?? "",
-													 "city" : localUser.city ?? "",
-													 "state" : localUser.state ?? "",
-													 "backed_campaigns" : DatabaseManager.uploadableBackedCampaigns(fromArray: localUser.backedCampaigns)])
-		let changeRequest = fireUser.createProfileChangeRequest()
-		changeRequest.displayName = localUser.firstName + " " + localUser.lastName
-		ImageManager.postImageToFirebase(forFireUser: fireUser, image: localUser.profilePicture)
-		ImageManager.postBackgroundImageToFirebase(forFireUser: fireUser, image: localUser.backgroundPicture!)
+	static func downloadCampaignData(toList campaignList: [Campaign], completion: @escaping () -> Void) {
+		Global.campaignsCollectionRef.getDocuments { (querySnapshot, error) in
+			if let error = error {
+				print("Error getting documents: \(error)")
+			} else {
+				for document in querySnapshot!.documents {
+					if let campaignDictionary = document.data() as NSDictionary? {
+						let campaign = DatabaseManager.validCampaign(withID: document.documentID, fromDictionary: campaignDictionary)
+						Global.campaignList.append(campaign)
+						print("Appended campaign to global campaign list")
+						// Use to update necessary views
+						completion()
+					}
+				}
+			}
+		}
 	}
 }

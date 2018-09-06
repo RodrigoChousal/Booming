@@ -13,9 +13,13 @@ import FirebaseFirestore
 
 class Global {
     static var localUser: LocalUser? // Optional because users can enter as visitors
+	static var campaignList = [Campaign]()
+
+	// Realtime Database
     static let databaseRef = Database.database().reference()
     static let storageRef = Storage.storage().reference()
 	
+	// Cloud Firestore
 	static let usersCollectionRef = Firestore.firestore().collection("users")
 	static let campaignsCollectionRef = Firestore.firestore().collection("campaigns")
 }

@@ -158,7 +158,7 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
                     
                     // Store details in d cloud:
                     if let localUser = Global.localUser {
-                        SessionManager.populate(fireUser: fireUser, withLocalUser: localUser)
+						SessionManager.populateFireUser(fireUser: fireUser, withLocalUser: localUser)
                     }
                     
                     // We're done
@@ -255,28 +255,14 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
     }
     
     @objc func keyboardWillShow(notification: NSNotification) {
-        
-//        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-//            if !keyboardVisible {
-////                self.view.frame.origin.y -= keyboardSize.height
-//            }
-//        }
-        
         keyboardVisible = true
     }
     
     @objc func keyboardWillHide(notification: NSNotification) {
-//        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-//            if keyboardVisible {
-////                self.view.frame.origin.y += keyboardSize.height
-//            }
-//        }
-        
         keyboardVisible = false
     }
     
     @objc func hideKeyboard() {
-        
         if keyboardVisible {
             self.view.endEditing(true)
             keyboardVisible = false
