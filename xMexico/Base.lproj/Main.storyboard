@@ -1297,6 +1297,20 @@
                                                 <color key="textColor" red="0.20389494299888611" green="0.2039368748664856" blue="0.20389235019683838" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q6N-AD-gcZ">
+                                                <rect key="frame" x="263" y="248" width="96" height="30"/>
+                                                <color key="backgroundColor" red="0.19457113682510696" green="0.19649758372436543" blue="0.19649758372436543" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" secondItem="Q6N-AD-gcZ" secondAttribute="height" multiplier="16:5" id="49y-vs-PGV"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="14"/>
+                                                <state key="normal" title="Preguntas?">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="questionPressed:" destination="mbN-Kj-aoh" eventType="touchUpInside" id="4ag-Ys-hyH"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
@@ -1308,10 +1322,13 @@
                                             <constraint firstItem="Ty4-TR-Xgo" firstAttribute="firstBaseline" secondItem="Ip7-ya-YAp" secondAttribute="firstBaseline" id="IDm-Tf-IPk"/>
                                             <constraint firstItem="Ty4-TR-Xgo" firstAttribute="baseline" secondItem="Ip7-ya-YAp" secondAttribute="baseline" id="IYb-z4-9kJ"/>
                                             <constraint firstItem="fpU-LS-BMd" firstAttribute="leading" secondItem="mQE-Is-E7G" secondAttribute="leading" constant="152" id="Iqm-X8-0Dz"/>
+                                            <constraint firstItem="ff6-US-4AI" firstAttribute="top" secondItem="Q6N-AD-gcZ" secondAttribute="bottom" constant="30.670000000000002" id="Iqv-Fx-jhQ"/>
                                             <constraint firstItem="AOb-Be-hDy" firstAttribute="top" secondItem="hoI-cy-VeH" secondAttribute="bottom" constant="8" id="KeO-Qr-mo3"/>
                                             <constraint firstItem="ff6-US-4AI" firstAttribute="leading" secondItem="mQE-Is-E7G" secondAttribute="leading" id="My6-CZ-2pM"/>
                                             <constraint firstItem="hoI-cy-VeH" firstAttribute="top" secondItem="mQE-Is-E7G" secondAttribute="top" constant="16" id="OVw-1w-BXy"/>
                                             <constraint firstItem="fpU-LS-BMd" firstAttribute="baseline" secondItem="Ty4-TR-Xgo" secondAttribute="baseline" id="OvI-9C-v3g"/>
+                                            <constraint firstItem="Q6N-AD-gcZ" firstAttribute="top" secondItem="AOb-Be-hDy" secondAttribute="bottom" constant="12.33" id="RlO-u4-fXG"/>
+                                            <constraint firstAttribute="trailing" secondItem="Q6N-AD-gcZ" secondAttribute="trailing" constant="16" id="RpQ-Dy-hIe"/>
                                             <constraint firstItem="Ty4-TR-Xgo" firstAttribute="top" secondItem="AOb-Be-hDy" secondAttribute="bottom" constant="8" id="S0m-hA-f9A"/>
                                             <constraint firstItem="ff6-US-4AI" firstAttribute="top" secondItem="Ty4-TR-Xgo" secondAttribute="bottom" constant="25" id="UyB-NC-hQp"/>
                                             <constraint firstItem="fpU-LS-BMd" firstAttribute="firstBaseline" secondItem="j69-Ln-rn9" secondAttribute="firstBaseline" id="ZMM-vA-bDq"/>
@@ -1321,6 +1338,7 @@
                                             <constraint firstItem="fpU-LS-BMd" firstAttribute="firstBaseline" secondItem="Ip7-ya-YAp" secondAttribute="firstBaseline" id="cTt-kA-TUV"/>
                                             <constraint firstItem="Ty4-TR-Xgo" firstAttribute="top" secondItem="AOb-Be-hDy" secondAttribute="bottom" constant="8" id="d4b-gB-wHt"/>
                                             <constraint firstItem="Ty4-TR-Xgo" firstAttribute="baseline" secondItem="fpU-LS-BMd" secondAttribute="baseline" id="d71-ML-vsE"/>
+                                            <constraint firstItem="Q6N-AD-gcZ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="mQE-Is-E7G" secondAttribute="leading" constant="20" symbolic="YES" id="gxU-HX-Vc2"/>
                                             <constraint firstItem="AOb-Be-hDy" firstAttribute="top" secondItem="hoI-cy-VeH" secondAttribute="bottom" constant="8" id="hkW-2j-6Fb"/>
                                             <constraint firstItem="Ty4-TR-Xgo" firstAttribute="firstBaseline" secondItem="fpU-LS-BMd" secondAttribute="firstBaseline" id="m9t-QM-qFE"/>
                                             <constraint firstItem="ff6-US-4AI" firstAttribute="top" secondItem="Ty4-TR-Xgo" secondAttribute="bottom" constant="25" id="mIk-nN-kpd"/>
@@ -1396,6 +1414,7 @@
                         <outlet property="expensesTextView" destination="Mv3-5V-VOf" id="y8t-o8-Nxd"/>
                         <outlet property="iconView" destination="hoI-cy-VeH" id="MVO-3E-vav"/>
                         <outlet property="nameLabel" destination="UkY-td-nb1" id="h3V-Ko-hwf"/>
+                        <outlet property="questionsButton" destination="mQE-Is-E7G" id="mgV-bg-BCD"/>
                         <outlet property="scrollView" destination="6rU-Vr-7yf" id="Vqw-Qe-X5w"/>
                     </connections>
                 </viewController>

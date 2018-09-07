@@ -17,7 +17,9 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var descTextView: UITextView!
     @IBOutlet weak var expensesTextView: UITextView!
 
-    @IBOutlet weak var contributeBottomView: UIView!
+	@IBOutlet weak var questionsButton: UIView!
+	
+	@IBOutlet weak var contributeBottomView: UIView!
     @IBOutlet weak var contributeFullControlView: UIView!
     
 	var campaign: Campaign!
@@ -112,7 +114,11 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
     
     // MARK: - Action Methods
     
-    @IBAction func showContribute(_ sender: Any) {
+	@IBAction func questionPressed(_ sender: Any) {
+		print("Tengo una pregunta!")
+	}
+	
+	@IBAction func showContribute(_ sender: Any) {
         
         contributeFullControlView.alpha = 1.0
         contributeBottomView.alpha = 0.0
