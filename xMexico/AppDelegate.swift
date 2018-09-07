@@ -19,8 +19,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
 		self.setupFirebase()
 		
+//		try? KeychainManager.deleteCredentials(credentials: KeychainManager.fetchCredentials())
+		
         let credentials = KeychainManager.fetchCredentials()
-        
+		
         Auth.auth().signIn(withEmail: credentials.email, password: credentials.password) { (dataResult, error) in
 
             if let error = error { // No credentials

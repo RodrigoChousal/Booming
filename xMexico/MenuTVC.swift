@@ -45,9 +45,10 @@ class MenuTVC: UITableViewController {
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if segue.identifier == "BackedCampaignsSegue" {
-			let destination = segue.destination as! BackedCampaignsTVC
+			let destination = segue.destination as! UINavigationController
 			if let localUser = Global.localUser {
-				destination.backedCampaigns = localUser.backedCampaigns
+				let backedVC = destination.topViewController as! BackedCampaignsTVC
+				backedVC.loadBackedCampaigns(forLocalUser: localUser)
 			}
 		}
     }

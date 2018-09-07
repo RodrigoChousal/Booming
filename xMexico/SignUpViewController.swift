@@ -142,7 +142,7 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
                 // Store user credentials in keychain
                 let credentials = Credentials(email: email, password: password)
                 KeychainManager.storeCredentials(credentials: credentials)
-                
+				
                 if let fireUser = Auth.auth().currentUser, let img = self.chosenImage {
                     
                     // Store details locally:

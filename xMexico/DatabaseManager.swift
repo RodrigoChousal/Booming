@@ -16,7 +16,7 @@ class DatabaseManager {
 		for backedCampaign in backedCampaignsArray { // FIXME: How do I know uniqueID?
 			let uploadableDictionary = ["amount_contributed" : backedCampaign.amountContributed,
 										"date_contributed" : backedCampaign.dateContributed,
-										"campaign_id" : backedCampaign.campaignID] as [String : Any]
+										"campaign_id" : backedCampaign.parentID] as [String : Any]
 			uploadable = uploadable.adding(uploadableDictionary) as NSArray
 		}
 		return uploadable
@@ -46,27 +46,25 @@ class DatabaseManager {
 	// MARK: - Native-to-Custom Class
 	
 	static func validBackedCampaign(fromDictionary dictionary: NSDictionary) -> BackedCampaign {
-		
-		let campaign = validCampaign(withID: dictionary.value(forKey: "campaign_id") as! String, fromDictionary: dictionary)
-		let amountContributed = validFunds(fromString: dictionary.value(forKey: "amount_contributed") as! String)
-		let dateContributed = validDate(fromString: dictionary.value(forKey: "date_contributed") as! String)
-		let backedCampaign = BackedCampaign(campaign: campaign,
-											amountContributed: amountContributed,
+		let amountContributed = validFunds(fromString: dictionary.value(forKey: "contribution_amount") as! String)
+		let dateContributed = validDate(fromString: dictionary.value(forKey: "contribution_date") as! String)
+		let parentID = dictionary.value(forKey: "campaign_id") as! String
+		let backedCampaign = BackedCampaign(amountContributed: amountContributed,
 											dateContributed: dateContributed,
-											campaignID: campaign.uniqueID)
+											parentID: parentID)
 		return backedCampaign
 	}
 	
 	static func validCampaign(withID campaignID: String, fromDictionary dictionary: NSDictionary) -> Campaign {
 		print(dictionary)
 		let campaign = Campaign(uniqueID: campaignID,
-			status: validStatus(fromString: dictionary.value(forKey: "status") as! String),
-			name: dictionary.value(forKey: "name") as! String,
-			description: dictionary.value(forKey: "description") as! String,
-			objective: dictionary.value(forKey: "objective") as! String,
-			dateCreated: validDate(fromString: dictionary.value(forKey: "date_created") as! String),
-			contact: validContact(fromDictionary: dictionary.value(forKey: "contact") as! NSDictionary),
-			fundsNeeded: validFunds(fromString: dictionary.value(forKey: "funds_needed") as! String))
+								status: validStatus(fromString: dictionary.value(forKey: "status") as! String),
+								name: dictionary.value(forKey: "name") as! String,
+								description: dictionary.value(forKey: "description") as! String,
+								objective: dictionary.value(forKey: "objective") as! String,
+								dateCreated: validDate(fromString: dictionary.value(forKey: "date_created") as! String),
+								contact: validContact(fromDictionary: dictionary.value(forKey: "contact") as! NSDictionary),
+								fundsNeeded: validFunds(fromString: dictionary.value(forKey: "funds_needed") as! String))
 		campaign.image = #imageLiteral(resourceName: "placeholder")
 		campaign.imageURL = URL(string: dictionary.value(forKey: "logo_170x224") as! String)
 		campaign.circularImageURL = URL(string: dictionary.value(forKey: "logo_142x142") as! String)

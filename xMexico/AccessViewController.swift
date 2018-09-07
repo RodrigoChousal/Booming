@@ -41,10 +41,8 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
         if !newUser {
             print("User appears to be signed in...")
             // Show guests inside
-            DispatchQueue.main.async { // animation onoff detona crash en otra cosa.. checar
-                //                UIView.setAnimationsEnabled(false)
+            DispatchQueue.main.async {
                 self.performSegue(withIdentifier: "AccessGranted", sender: self)
-                //                UIView.setAnimationsEnabled(true)
             }
         } else {
             print("User appears to not be signed in yet...")

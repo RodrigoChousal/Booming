@@ -66,7 +66,6 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
         if segue.identifier == "ShowCampaignSegue" {
             let cell = sender as! CampaignCell
             let indexPath = collectionView?.indexPath(for: cell)
@@ -173,9 +172,7 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     // MARK: - UITableView Delegate
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         tableView.deselectRow(at: indexPath, animated: true)
-        
         self.sort(by: indexPath.row)
     }
     

@@ -9,14 +9,14 @@
 import UIKit
 
 class BackedCampaignsTVC: UITableViewController {
-
-	var backedCampaigns = [BackedCampaign]()
+	
+	var backedCampaignsList = [BackedCampaign]()
 	
     @IBOutlet weak var menuButton: UIBarButtonItem!
     
 	override func viewDidLoad() {
         super.viewDidLoad()
-        
+		
         if revealViewController() != nil {
             menuButton.target = self.revealViewController()
             menuButton.action = #selector((SWRevealViewController.revealToggleMenu) as (SWRevealViewController) -> (Any?) -> Void) as Selector
@@ -37,14 +37,17 @@ class BackedCampaignsTVC: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.backedCampaigns.count
+		print(self.backedCampaignsList.count.description + " BACKED CAMPAIGNS")
+        return self.backedCampaignsList.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BackedCampaignCell", for: indexPath) as! BackedCampaignTVCell
-		cell.nameLabel.text = self.backedCampaigns[indexPath.row].name
-		cell.amountLabel.text = self.backedCampaigns[indexPath.row].amountContributed.description
-		cell.statusLabel.text = self.backedCampaigns[indexPath.row].status.rawValue
+		if let parentCampaign = self.backedCampaignsList[indexPath.row].parentCampaign {
+			cell.nameLabel.text = parentCampaign.name
+			cell.statusLabel.text = parentCampaign.status.rawValue
+			cell.amountLabel.text = self.backedCampaignsList[indexPath.row].amountContributed.description
+		}
         return cell
     }
 	
@@ -62,4 +65,12 @@ class BackedCampaignsTVC: UITableViewController {
     }
     */
 
+	// MARK: - Helper Methods
+	
+	func loadBackedCampaigns(forLocalUser localUser: LocalUser) {
+		SessionManager.downloadBackedCampaignData(fromLocalUser: localUser, completion: {
+			self.backedCampaignsList = localUser.backedCampaigns
+			self.tableView.reloadData()
+		})
+	}
 }

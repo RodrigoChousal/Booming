@@ -14,14 +14,15 @@ class SessionManager {
 	// MARK: - UP ☁️
 	
 	static func populateFireUser(fireUser: User, withLocalUser localUser: LocalUser) {
-		Global.usersCollectionRef.addDocument(data: ["email" : localUser.email,
-													 "first_name" : localUser.firstName,
-													 "last_name" : localUser.lastName,
-													 "date_created" : localUser.dateCreated.description,
-													 "bio" : localUser.bio ?? "",
-													 "city" : localUser.city ?? "",
-													 "state" : localUser.state ?? "",
-													 "backed_campaigns" : DatabaseManager.uploadableBackedCampaigns(fromArray: localUser.backedCampaigns)])
+		Global.usersCollectionRef.document(fireUser.uid).setData(["email" : localUser.email,
+																  "first_name" : localUser.firstName,
+																  "last_name" : localUser.lastName,
+																  "date_created" : localUser.dateCreated.description,
+																  "bio" : localUser.bio ?? "",
+																  "city" : localUser.city ?? "",
+																  "state" : localUser.state ?? "",
+																  "achievements" : localUser.achievements ?? [Achievement](), // TODO: uploadableAchievements
+																  "backed_campaigns" : DatabaseManager.uploadableBackedCampaigns(fromArray: localUser.backedCampaigns)])
 		let changeRequest = fireUser.createProfileChangeRequest()
 		changeRequest.displayName = localUser.firstName + " " + localUser.lastName
 		ImageManager.postImageToFirebase(forFireUser: fireUser, image: localUser.profilePicture)
@@ -40,6 +41,8 @@ class SessionManager {
 				let backedCampaignsDictionaries = value["backed_campaigns"] as? NSArray ?? NSArray()
 				var backedCampaigns = [BackedCampaign]()
 				for backedCampaignDictionary in backedCampaignsDictionaries {
+					print("BACKED DICTIONARY ")
+					print(backedCampaignDictionary)
 					backedCampaigns.append(DatabaseManager.validBackedCampaign(fromDictionary: backedCampaignDictionary as! NSDictionary))
 				}
 				Global.localUser = LocalUser(firstName: firstName,
@@ -68,6 +71,18 @@ class SessionManager {
 						// Use to update necessary views
 						completion()
 					}
+				}
+			}
+		}
+	}
+	
+	static func downloadBackedCampaignData(fromLocalUser localUser: LocalUser, completion: @escaping () -> Void) {
+		for backedCampaign in localUser.backedCampaigns {
+			Global.campaignsCollectionRef.document(backedCampaign.parentID).getDocument { (document, error) in
+				if let campaignDictionary = document?.data() as NSDictionary? {
+					let campaign = DatabaseManager.validCampaign(withID: backedCampaign.parentID, fromDictionary: campaignDictionary)
+					backedCampaign.parentCampaign = campaign
+					completion()
 				}
 			}
 		}
