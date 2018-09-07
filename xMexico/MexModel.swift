@@ -38,21 +38,31 @@ class Campaign {
 	var fundsAcquired: Int = 0
 	
 	var supporters: [User]?
-    
+	
+	// TODO: Main
     var image: UIImage = UIImage()
     var imageURL: URL?
-    
+	
+	// TODO: Thumb
     var circularImage: UIImage = UIImage()
     var circularImageURL: URL?
-    
+	
+	// TODO: Gallery
     var gallery = [UIImage]()
     var galleryImageURLs = [URL]()
+	var galleryImageFileNames = [String]()
 	
 	enum Status: String {
 		case ONGOING = "EnProgreso"
 		case CANCELED = "Cancelada"
 		case COMPLETED = "Completada"
 		case UNKNOWN = "Unknown"
+	}
+	
+	enum ImageType: String {
+		case MAIN = "Main"
+		case THUMB = "Thumb"
+		case GALLERY = "Gallery"
 	}
 	
 	init(uniqueID: String, status: Status, name: String, description: String, objective: String, dateCreated: Date, contact: Contact, fundsNeeded: Int) {

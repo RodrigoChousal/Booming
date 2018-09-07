@@ -11,7 +11,9 @@ import Firebase
 import FirebaseUI
 
 class ImageManager {
-    
+	
+	// MARK: - UP ☁️
+
 	static func postImageToFirebase(forFireUser fireUser: User, image: UIImage) {
         let imageData = UIImagePNGRepresentation(image)
         let imagePath = "userPictures/" + fireUser.uid + "/" + "userProfile.png"
@@ -39,7 +41,9 @@ class ImageManager {
                 }
         }
     }
-    
+	
+	// MARK: - DOWN ☔️
+	
     static func getDataFromUrl(url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
         URLSession.shared.dataTask(with: url) { data, response, error in
             completion(data, response, error)
@@ -50,9 +54,9 @@ class ImageManager {
         // Check if profile picture or not, and make reference appropriately
         var imgRef = StorageReference()
         if profilePicture {
-            imgRef = Global.storageRef.child("userPictures/" + fireUser.uid + "/" + "userProfile.png")
+            imgRef = Global.storageRef.child("userPictures/" + fireUser.uid + "/userProfile.png")
         } else {
-            imgRef = Global.storageRef.child("userPictures/" + fireUser.uid + "/" + "userBackground.png")
+            imgRef = Global.storageRef.child("userPictures/" + fireUser.uid + "/userBackground.png")
         }
         
         var image = UIImage()
@@ -84,4 +88,41 @@ class ImageManager {
             }
         }
     }
+	
+	static func fetchCampaignImageFromFirebase(forCampaign campaign: Campaign, kind: Campaign.ImageType, galleryFileName: String?, completion: @escaping (UIImage) -> Void) {
+		var imgRef: StorageReference
+		switch kind {
+			case .MAIN: imgRef = Global.storageRef.child("campaignPictures/" + campaign.uniqueID + "/main.png")
+			case .THUMB: imgRef = Global.storageRef.child("campaignPictures/" + campaign.uniqueID + "/thumb.png")
+			case .GALLERY: imgRef = Global.storageRef.child("campaignPictures/" + campaign.uniqueID + "/gallery/\(galleryFileName!)") // TODO: Implement
+		}
+		
+		var image = UIImage()
+		imgRef.downloadURL { (url, error) in
+			if let error = error {
+				print(error.localizedDescription)
+			} else {
+				if let imageUrl = url {
+					print("Download Started")
+					getDataFromUrl(url: imageUrl, completion: { (data, response, error) in
+						guard let data = data, error == nil else { return }
+						print(response?.suggestedFilename ?? imageUrl.lastPathComponent)
+						print("Download Finished")
+						DispatchQueue.main.async {
+							image = UIImage(data: data)!
+							completion(image)
+						}
+					})
+				}
+			}
+		}
+	}
 }
+
+
+
+
+
+
+
+

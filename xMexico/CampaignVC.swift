@@ -47,11 +47,15 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
         
         contributeBottomView.alpha = 1.0
         contributeFullControlView.alpha = 0.0
-        
-        DispatchQueue.global(qos: .background).async {
-            self.loadCampaignImages()
-        }
-        
+		
+		if campaign.gallery.count == 0 {
+			DispatchQueue.global(qos: .background).async {
+				self.loadCampaignImages()
+			}
+		} else {
+			displayCampaignImages()
+		}
+		
         nameLabel.text = campaign.name
         descTextView.text = campaign.description
         
@@ -155,45 +159,55 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
     // MARK: - Helper Methods
     
     func loadCampaignImages() { // maybe reload data as images load, instead of waiting for all
+		
+		ImageManager.fetchCampaignImageFromFirebase(forCampaign: campaign, kind: .MAIN, galleryFileName: nil) { (img) in
+			self.campaign.image = img
+			self.displayCampaignImages()
+		}
+		
+		ImageManager.fetchCampaignImageFromFirebase(forCampaign: campaign, kind: .THUMB, galleryFileName: nil) { (img) in
+			if let maskedImage = img.circleMasked {
+				self.campaign.circularImage = maskedImage
+				self.displayCampaignImages()
+			}
+		}
+		
+		for fileName in campaign.galleryImageFileNames {
+			ImageManager.fetchCampaignImageFromFirebase(forCampaign: campaign, kind: .GALLERY, galleryFileName: fileName) { (img) in
+				self.campaign.gallery.append(img)
+				self.displayCampaignImages()
+			}
+		}		
         
-        let data = try? Data(contentsOf: campaign.circularImageURL!)
-        
-        if let image = UIImage(data: data!) {
-            campaign.circularImage = image
-            
-            DispatchQueue.main.sync {
-                self.displayCampaignImages()
-            }
-        }
-        
-        for url in campaign.galleryImageURLs {
-            // FIXME: Use ImageManager and change image URLs in Firebase to Firebase URLs
-            
-            print("unpacking url: \(url)")
-            
-            let data = try? Data(contentsOf: url)
-            
-            if let image = UIImage(data: data!) {
-                campaign.gallery.append(image)
-                print("appended image: \(image) to gallery, count at \(campaign.gallery.count)")
-            }
-            
-            DispatchQueue.main.sync {
-                self.displayCampaignImages()
-            }
-        }
+//        let data = try? Data(contentsOf: campaign.circularImageURL!)
+//
+//        if let image = UIImage(data: data!) {
+//            campaign.circularImage = image
+//
+//            DispatchQueue.main.sync {
+//                self.displayCampaignImages()
+//            }
+//        }
+//
+//        for url in campaign.galleryImageURLs {
+//            // FIXME: Use ImageManager and change image URLs in Firebase to Firebase URLs
+//
+//            let data = try? Data(contentsOf: url)
+//
+//            if let image = UIImage(data: data!) {
+//                campaign.gallery.append(image)
+//            }
+//
+//            DispatchQueue.main.sync {
+//                self.displayCampaignImages()
+//            }
+//        }
     }
     
     func displayCampaignImages() {
-        
         iconView.image = campaign.circularImage
-        
         photoGallery = campaign.gallery
         galleryController.photoGallery = self.photoGallery
-        
-        print("")
-        print("reloading data...")
-        
         galleryController.galleryCollectionView.reloadData()
     }
     

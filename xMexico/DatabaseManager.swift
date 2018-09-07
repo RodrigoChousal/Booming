@@ -68,12 +68,10 @@ class DatabaseManager {
 		campaign.image = #imageLiteral(resourceName: "placeholder")
 		campaign.imageURL = URL(string: dictionary.value(forKey: "logo_170x224") as! String)
 		campaign.circularImageURL = URL(string: dictionary.value(forKey: "logo_142x142") as! String)
-		if let picURLs = dictionary.value(forKey: "photo_gallery") as? NSArray {
-			for value in picURLs {
-				if let str = value as? String {
-					if let url = URL(string: str) {
-						campaign.galleryImageURLs.append(url)
-					}
+		if let imageFileNames = dictionary.value(forKey: "photo_gallery") as? NSArray {
+			for fileName in imageFileNames {
+				if let str = fileName as? String {
+					campaign.galleryImageFileNames.append(str)
 				}
 			}
 		}
