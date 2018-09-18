@@ -14,8 +14,8 @@ class DatabaseManager {
 	static func uploadableBackedCampaigns(fromArray backedCampaignsArray: [BackedCampaign]) -> NSArray {
 		var uploadable = NSArray()
 		for backedCampaign in backedCampaignsArray { // FIXME: How do I know uniqueID?
-			let uploadableDictionary = ["amount_contributed" : backedCampaign.amountContributed,
-										"date_contributed" : backedCampaign.dateContributed,
+			let uploadableDictionary = ["amount_contributed" : backedCampaign.amountContributed.description, // FIXME: Consider changing to Int and Date (supported)
+										"date_contributed" : backedCampaign.dateContributed.description,
 										"campaign_id" : backedCampaign.parentID] as [String : Any]
 			uploadable = uploadable.adding(uploadableDictionary) as NSArray
 		}
@@ -46,8 +46,9 @@ class DatabaseManager {
 	// MARK: - Native-to-Custom Class
 	
 	static func validBackedCampaign(fromDictionary dictionary: NSDictionary) -> BackedCampaign {
-		let amountContributed = validFunds(fromString: dictionary.value(forKey: "contribution_amount") as! String)
-		let dateContributed = validDate(fromString: dictionary.value(forKey: "contribution_date") as! String)
+		print(dictionary)
+		let amountContributed = validFunds(fromString: dictionary.value(forKey: "amount_contributed") as! String)
+		let dateContributed = validDate(fromString: dictionary.value(forKey: "date_contributed") as! String)
 		let parentID = dictionary.value(forKey: "campaign_id") as! String
 		let backedCampaign = BackedCampaign(amountContributed: amountContributed,
 											dateContributed: dateContributed,
@@ -65,9 +66,7 @@ class DatabaseManager {
 								dateCreated: validDate(fromString: dictionary.value(forKey: "date_created") as! String),
 								contact: validContact(fromDictionary: dictionary.value(forKey: "contact") as! NSDictionary),
 								fundsNeeded: validFunds(fromString: dictionary.value(forKey: "funds_needed") as! String))
-		campaign.image = #imageLiteral(resourceName: "placeholder")
-		campaign.imageURL = URL(string: dictionary.value(forKey: "logo_170x224") as! String)
-		campaign.circularImageURL = URL(string: dictionary.value(forKey: "logo_142x142") as! String)
+		campaign.mainImage = #imageLiteral(resourceName: "placeholder")
 		if let imageFileNames = dictionary.value(forKey: "photo_gallery") as? NSArray {
 			for fileName in imageFileNames {
 				if let str = fileName as? String {

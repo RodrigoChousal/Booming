@@ -34,13 +34,16 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     let imagePicker = UIImagePickerController()
     var pickingProfile = false
     var pickingBackground = false
+	var bgImageStandardHeight = CGFloat()
     
     var collectionViewOffset = CGFloat(0)
-    var userBgHeight = CGFloat(0)
     var noAchievementsLabel = UILabel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+		
+		NotificationCenter.default.addObserver(self, selector: #selector(reloadImages), name: .profileImageFinished, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(reloadImages), name: .backgroundImageFinished, object: nil)
         
         imagePicker.delegate = self
         scrollView.delegate = self
@@ -50,9 +53,12 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         navigationController?.navigationBar.titleTextAttributes =
             [NSAttributedStringKey.foregroundColor: UIColor.black,
              NSAttributedStringKey.font: UIFont(name: "Avenir-Medium", size: 17)!]
-        
-        userBgHeight = userBgImageView.frame.height
-        
+		
+		// TEST ONLY
+		if let localUser = Global.localUser {
+			localUser.achievements = [Achievement(), Achievement()]
+		}
+		
         setupMenu()
         setupView()
     }
@@ -69,28 +75,17 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
-        if let achievements = Global.localUser?.achievements {
-            
-            if achievements.count == 0 {
-                let visibleHeight = (scrollView.frame.height - achievementCollectionHeaderView.frame.origin.y - achievementCollectionHeaderView.frame.height)
-                let labelHeight = CGFloat(50)
-                let labelInset = CGFloat(10)
-                noAchievementsLabel = UILabel(frame: CGRect(x: labelInset, y: 0, width: UIScreen.main.bounds.width - labelInset*2, height: labelHeight))
-                noAchievementsLabel.frame.origin.y = visibleHeight/2 - labelHeight
-                noAchievementsLabel.textAlignment = .center
-                noAchievementsLabel.numberOfLines = 0
-                noAchievementsLabel.text = "Apoya una campaña para obtener tu primer reconocimiento!"
-                noAchievementsLabel.font = UIFont(name: "Avenir-Medium", size: 14)
-                noAchievementsLabel.textColor = .white
-                collectionView.addSubview(noAchievementsLabel)
-                return 0
-            } else {
-                noAchievementsLabel.removeFromSuperview()
-                return achievements.count
-            }
-        }
-        return 0
+		
+		if let achievements = Global.localUser?.achievements {
+			
+			if achievements.count == 0 {
+				return 0
+			} else {
+				return achievements.count
+			}
+		}
+		
+		return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -117,9 +112,8 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         let stretchFactor = 1 + abs(scrollView.contentOffset.y / scrollView.frame.height)
         
         if scrollView.contentOffset.y < 0 {
-            
             userBgImageView.transform = CGAffineTransform(scaleX: stretchFactor, y: stretchFactor)
-            userBgImageView.frame = CGRect(x: userBgImageView.frame.origin.x, y: scrollView.contentOffset.y, width: userBgImageView.frame.width, height: self.userBgHeight - scrollView.contentOffset.y)
+            userBgImageView.frame = CGRect(x: userBgImageView.frame.origin.x, y: scrollView.contentOffset.y, width: userBgImageView.frame.width, height: self.bgImageStandardHeight - scrollView.contentOffset.y)
         }
     }
     
@@ -155,31 +149,44 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
             if let user = Auth.auth().currentUser {
                 if let locUser = Global.localUser {
                     if pickingProfile {
-                        
+                        self.view.showLoadingIndicator(withMessage: "Actualizando su foto...")
                         // Upload and update meta
-                        ImageManager.postImageToFirebase(forFireUser: user, image: image)
+						ImageManager.postImageToFirebase(forFireUser: user, image: image, completion: { error in
+							self.view.stopLoadingIndicator()
+							if let err = error {
+								SCLAlertView().showWarning("Ups!", subTitle: err.localizedDescription)
+							} else {
+								// Update local user object
+								locUser.profilePicture = image
+								
+								// Update view
+								DispatchQueue.main.async {
+									self.userPortraitView.image = image.circleMasked
+								}
+							}
+							return
+						})
                         
-                        // Update local user object
-                        locUser.profilePicture = image
-                        
-                        // Update view
-                        DispatchQueue.main.async {
-                            self.userPortraitView.image = image.circleMasked
-                        }
                         pickingProfile = false
                         
                     } else if pickingBackground {
-                        
+                        self.view.showLoadingIndicator(withMessage: "Actualizando su foto...")
                         // Upload and update meta
-                        ImageManager.postBackgroundImageToFirebase(forFireUser: user, image: image)
-                        
-                        // Update local user object
-                        locUser.backgroundPicture = image
-                        
-                        // Update view
-                        DispatchQueue.main.async {
-                            self.userBgImageView.image = image
-                        }
+						ImageManager.postBackgroundImageToFirebase(forFireUser: user, image: image, completion: { error in
+							self.view.stopLoadingIndicator()
+							if let err = error {
+								SCLAlertView().showWarning("Ups!", subTitle: err.localizedDescription)
+							} else {
+								// Update local user object
+								locUser.backgroundPicture = image
+								
+								// Update view
+								DispatchQueue.main.async {
+									self.userBgImageView.image = image
+								}
+							}
+						})
+						
                         pickingBackground = false
                     }
                 }
@@ -205,15 +212,16 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         }
     }
     
-    func setupView() {
+	func setupView() {
         
         if let localUser = Global.localUser {
             
             userPortraitView.image = localUser.profilePicture.circleMasked
             
-            userBgImageView.image = #imageLiteral(resourceName: "placeholder")
+            userBgImageView.image = localUser.backgroundPicture
             userBgImageView.contentMode = .scaleAspectFill
             userBgImageView.clipsToBounds = true
+			bgImageStandardHeight = userBgImageView.frame.height
             
 			nameLabel.text = localUser.fullName
 			bioTextView.text = localUser.bio
@@ -230,34 +238,35 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
             }
             
 			amountOfDonationsLabel.text = localUser.backedCampaigns.count.description + " campañas apoyadas"
-            if let achievements = localUser.achievements { achievementTitleLabel.text = "Reconocimientos (\(achievements.count))" }
+			
+            if let achievements = localUser.achievements {
+				achievementTitleLabel.text = "Reconocimientos (\(achievements.count))"
+				if achievements.count == 0 {
+					let visibleHeight = (scrollView.frame.height - achievementCollectionHeaderView.frame.origin.y - achievementCollectionHeaderView.frame.height)
+					let labelHeight = CGFloat(50)
+					let labelInset = CGFloat(10)
+					noAchievementsLabel = UILabel(frame: CGRect(x: labelInset, y: 0, width: UIScreen.main.bounds.width - labelInset*2, height: labelHeight))
+					noAchievementsLabel.frame.origin.y = visibleHeight/2 - labelHeight
+					noAchievementsLabel.textAlignment = .center
+					noAchievementsLabel.numberOfLines = 0
+					noAchievementsLabel.text = "Apoya una campaña para obtener tu primer reconocimiento!"
+					noAchievementsLabel.font = UIFont(name: "Avenir-Medium", size: 14)
+					noAchievementsLabel.textColor = .white
+					achievementCollectionView.addSubview(noAchievementsLabel)
+				} else {
+					noAchievementsLabel.removeFromSuperview()
+				}
+			}
         }
     }
-    
-    func updateUserMeta(imageURL: String, deleteHash: String, key: String) {
-        
-//        let keychain = A0SimpleKeychain(service: "Auth0")
-//        if let idToken = keychain.string(forKey: "id_token") {
-//            
-//            let metaKey = key + "_url"
-//            
-//            Auth0
-//                .users(token: idToken)
-//                .patch(userProfile.id, userMetadata: [metaKey: imageURL,
-//                                                      metaKey + "_deleteHash": deleteHash])
-//                .start { result in
-//                    switch result {
-//                    case .success( _):
-//                        print("Successfully updated user meta.")
-//                        
-//                    case .failure(let error):
-//                        print("Failed to update user meta: \(error)")
-//                        SCLAlertView().showError("Lo sentimos", subTitle: "No podemos guardar tu imagen en este momento")
-//                    }
-//            }
-//        }
-    }
-    
+	
+	@objc func reloadImages() {
+		if let localUser = Global.localUser {
+			userPortraitView.image = localUser.profilePicture.circleMasked
+			userBgImageView.image = localUser.backgroundPicture
+		}
+	}
+	
     func animatePressedView(view: UIView) {
         UIView.animate(withDuration: 0.2, animations: { 
             view.alpha = 0.5

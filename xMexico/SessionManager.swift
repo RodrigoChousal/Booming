@@ -14,19 +14,40 @@ class SessionManager {
 	// MARK: - UP ☁️
 	
 	static func populateFireUser(fireUser: User, withLocalUser localUser: LocalUser) {
-		Global.usersCollectionRef.document(fireUser.uid).setData(["email" : localUser.email,
-																  "first_name" : localUser.firstName,
-																  "last_name" : localUser.lastName,
-																  "date_created" : localUser.dateCreated.description,
-																  "bio" : localUser.bio ?? "",
-																  "city" : localUser.city ?? "",
-																  "state" : localUser.state ?? "",
-																  "achievements" : localUser.achievements ?? [Achievement](), // TODO: uploadableAchievements
-																  "backed_campaigns" : DatabaseManager.uploadableBackedCampaigns(fromArray: localUser.backedCampaigns)])
+		Global.usersCollectionRef.document(fireUser.uid)
+			.setData(["email" : localUser.email,
+					  "first_name" : localUser.firstName,
+					  "last_name" : localUser.lastName,
+					  "date_created" : localUser.dateCreated.description,
+					  "bio" : localUser.bio ?? "",
+					  "city" : localUser.city ?? "",
+					  "state" : localUser.state ?? "",
+					  "achievements" : localUser.achievements ?? [Achievement](), // TODO: uploadableAchievements
+					  "backed_campaigns" : DatabaseManager.uploadableBackedCampaigns(fromArray: localUser.backedCampaigns)])
 		let changeRequest = fireUser.createProfileChangeRequest()
 		changeRequest.displayName = localUser.firstName + " " + localUser.lastName
-		ImageManager.postImageToFirebase(forFireUser: fireUser, image: localUser.profilePicture)
-		ImageManager.postBackgroundImageToFirebase(forFireUser: fireUser, image: localUser.backgroundPicture!)
+		ImageManager.postImageToFirebase(forFireUser: fireUser, image: localUser.profilePicture, completion: nil)
+		ImageManager.postBackgroundImageToFirebase(forFireUser: fireUser, image: localUser.backgroundPicture!, completion: nil)
+	}
+	
+	static func updateFireUser(fireUser: User, withLocalUser localUser: LocalUser) {
+				Global.usersCollectionRef.document(fireUser.uid)
+					.updateData(["email" : localUser.email,
+								 "first_name" : localUser.firstName,
+								 "last_name" : localUser.lastName,
+								 "date_created" : localUser.dateCreated.description,
+								 "bio" : localUser.bio ?? "",
+								 "city" : localUser.city ?? "",
+								 "state" : localUser.state ?? "",
+								 // "achievements" : localUser.achievements ?? [Achievement](), // TODO: uploadableAchievements
+								 "backed_campaigns" : DatabaseManager.uploadableBackedCampaigns(fromArray: localUser.backedCampaigns)
+				]) { err in
+					if let err = err {
+						print("Error updating document: \(err)")
+					} else {
+						print("Document successfully updated")
+					}
+				}
 	}
 	
 	// MARK: - DOWN ☔️
@@ -41,8 +62,6 @@ class SessionManager {
 				let backedCampaignsDictionaries = value["backed_campaigns"] as? NSArray ?? NSArray()
 				var backedCampaigns = [BackedCampaign]()
 				for backedCampaignDictionary in backedCampaignsDictionaries {
-					print("BACKED DICTIONARY ")
-					print(backedCampaignDictionary)
 					backedCampaigns.append(DatabaseManager.validBackedCampaign(fromDictionary: backedCampaignDictionary as! NSDictionary))
 				}
 				Global.localUser = LocalUser(firstName: firstName,

@@ -15,10 +15,10 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var iconView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var descTextView: UITextView!
-    @IBOutlet weak var expensesTextView: UITextView!
-
+	@IBOutlet weak var fundsAcquiredLabel: UILabel!
+	@IBOutlet weak var fundsNeededLabel: UILabel!
+	@IBOutlet weak var expensesTextView: UITextView!
 	@IBOutlet weak var questionsButton: UIView!
-	
 	@IBOutlet weak var contributeBottomView: UIView!
     @IBOutlet weak var contributeFullControlView: UIView!
     
@@ -33,31 +33,10 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
         super.viewDidLoad()
         
         scrollView.delegate = self
-        
-        navigationItem.title = campaign.name
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        
-        descTextView.isScrollEnabled = false
-        descTextView.sizeToFit()
-        
-        darkView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height))
-        darkView.backgroundColor = .black
-        darkView.alpha = 0.0
-        contentView.addSubview(darkView)
-        
-        contributeBottomView.alpha = 1.0
-        contributeFullControlView.alpha = 0.0
 		
-		if campaign.gallery.count == 0 {
-			DispatchQueue.global(qos: .background).async {
-				self.loadCampaignImages()
-			}
-		} else {
-			displayCampaignImages()
-		}
-		
-        nameLabel.text = campaign.name
-        descTextView.text = campaign.description
+		populateAllFields()
+		setupViews()
+		setupCampaignImages()
         
         NotificationCenter.default.addObserver(self, selector: #selector(CampaignVC.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(CampaignVC.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
@@ -107,13 +86,13 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
-        let isBottom = (contentView.frame.height - scrollView.contentOffset.y) <= (scrollView.frame.height)
-                
-        if isBottom {
-//            contributeBottomView.layer.shadowOpacity = 0.0
-        } else {
-//            contributeBottomView.layer.shadowOpacity = 1.0
-        }
+//        let isBottom = (contentView.frame.height - scrollView.contentOffset.y) <= (scrollView.frame.height)
+		
+//        if isBottom {
+////            contributeBottomView.layer.shadowOpacity = 0.0
+//        } else {
+////            contributeBottomView.layer.shadowOpacity = 1.0
+//        }
     }
     
     // MARK: - Action Methods
@@ -157,17 +136,53 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
     }
     
     // MARK: - Helper Methods
+	
+	func populateAllFields() {
+		navigationItem.title = campaign.name
+		navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+		
+		nameLabel.text = campaign.name
+		descTextView.text = campaign.description
+		fundsNeededLabel.text = campaign.fundsNeeded.description + " apoyado"
+		fundsAcquiredLabel.text = campaign.fundsAcquired.description + " meta"
+	}
+	
+	func setupViews() {
+		descTextView.isScrollEnabled = false
+		descTextView.sizeToFit()
+		
+		questionsButton.layer.cornerRadius = 8.0
+		questionsButton.clipsToBounds = true
+		
+		darkView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height))
+		darkView.backgroundColor = .black
+		darkView.alpha = 0.0
+		contentView.addSubview(darkView)
+		
+		contributeBottomView.alpha = 1.0
+		contributeFullControlView.alpha = 0.0
+	}
+	
+	func setupCampaignImages() {
+		if campaign.gallery.count == 0 {
+			DispatchQueue.global(qos: .background).async {
+				self.loadCampaignImages()
+			}
+		} else {
+			displayCampaignImages()
+		}
+	}
     
     func loadCampaignImages() { // maybe reload data as images load, instead of waiting for all
 		
 		ImageManager.fetchCampaignImageFromFirebase(forCampaign: campaign, kind: .MAIN, galleryFileName: nil) { (img) in
-			self.campaign.image = img
+			self.campaign.mainImage = img
 			self.displayCampaignImages()
 		}
 		
 		ImageManager.fetchCampaignImageFromFirebase(forCampaign: campaign, kind: .THUMB, galleryFileName: nil) { (img) in
 			if let maskedImage = img.circleMasked {
-				self.campaign.circularImage = maskedImage
+				self.campaign.thumbnailImage = maskedImage
 				self.displayCampaignImages()
 			}
 		}
@@ -178,34 +193,10 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 				self.displayCampaignImages()
 			}
 		}		
-        
-//        let data = try? Data(contentsOf: campaign.circularImageURL!)
-//
-//        if let image = UIImage(data: data!) {
-//            campaign.circularImage = image
-//
-//            DispatchQueue.main.sync {
-//                self.displayCampaignImages()
-//            }
-//        }
-//
-//        for url in campaign.galleryImageURLs {
-//            // FIXME: Use ImageManager and change image URLs in Firebase to Firebase URLs
-//
-//            let data = try? Data(contentsOf: url)
-//
-//            if let image = UIImage(data: data!) {
-//                campaign.gallery.append(image)
-//            }
-//
-//            DispatchQueue.main.sync {
-//                self.displayCampaignImages()
-//            }
-//        }
     }
     
     func displayCampaignImages() {
-        iconView.image = campaign.circularImage
+        iconView.image = campaign.thumbnailImage
         photoGallery = campaign.gallery
         galleryController.photoGallery = self.photoGallery
         galleryController.galleryCollectionView.reloadData()

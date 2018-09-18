@@ -24,30 +24,21 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
     var buttonsViewPadding = CGFloat()
     var blurEffectView = UIView()
     var keyboardVisible = false
-    var presentedFromLogout = false
-    
+	
     var newUser = true
         
     override func viewWillAppear(_ animated: Bool) {
         UIApplication.shared.statusBarStyle = .lightContent
-        
+		
+		self.view.hide(duration: 2.0)
+		
         NotificationCenter.default.addObserver(self, selector: #selector(AccessViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(AccessViewController.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if !newUser {
-            print("User appears to be signed in...")
-            // Show guests inside
-            DispatchQueue.main.async {
-                self.performSegue(withIdentifier: "AccessGranted", sender: self)
-            }
-        } else {
-            print("User appears to not be signed in yet...")
-        }
-        
+		
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(AccessViewController.hideKeyboard)))
         
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(self.backPressed(_:)))
@@ -57,29 +48,12 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
         let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(self.showLoginForm(_:)))
         swipeLeft.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(swipeLeft)
-                
-        if !presentedFromLogout {
-            
-            let delayView = UIImageView(frame: view.frame) // delays for didFinishLaunching to find user profile
-            delayView.image = #imageLiteral(resourceName: "launch")
-            view.addSubview(delayView)
-            
-            Timer.scheduledTimer(withTimeInterval: 6.0, repeats: false) { (Timer) in
-                self.animateCircularMask(view: delayView)
-            }
-        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         
         blurEffectView.alpha = 0
         buttonsViewPadding = buttonsView.frame.origin.x
-        
-        if presentedFromLogout {
-            emailField.text = ""
-            passwordField.text = ""
-            hideKeyboard()
-        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -98,12 +72,6 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-    }
-    
-    @IBAction func unwindToAccessVC(segue: UIStoryboardSegue) {
-        if let sourceViewController = segue.source as? MenuTVC {
-            presentedFromLogout = sourceViewController.didLogout
-        }
     }
     
     // MARK: - Login Controls

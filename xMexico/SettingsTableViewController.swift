@@ -23,7 +23,7 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
     
     var keyboardVisible = false
     var successfulSave = false
-    
+	
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -92,19 +92,24 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
     @IBAction func save(_ sender: Any) {
         // Hide keyboard and save changes
         upperView.endEditing(true)
-        saveSettings()
+		view.showLoadingIndicator(withMessage: "Guardando...")
+		let success = saveSettings {
+			print("here i am")
+			self.view.stopLoadingIndicator()
+		}
+		if success {
+			self.dismiss(animated: true, completion: nil)
+		}
     }
     
-    func saveSettings() {
-        
-        view.showLoadingIndicator(withMessage: "Guardando...")
+	func saveSettings(completion: @escaping () -> ()) -> Bool {
         
         // Check for empty fields
         for field in [firstNameField, lastNameField, emailField, cityField, stateField] {
             if field?.text == "" {
                 SCLAlertView().showWarning("Disculpa la molestia", subTitle: "Favor de no dejar ningun campo en blanco")
-                view.stopLoadingIndicator()
-                return
+				completion()
+                return false
             }
         }
         
@@ -119,13 +124,11 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
             localUser.state = stateField.text!
             
             // In d cloud
-            fireUser.createProfileChangeRequest().displayName = localUser.fullName
-            Global.databaseRef.child("users/\(fireUser.uid)/firstName").setValue(localUser.firstName)
-            Global.databaseRef.child("users/\(fireUser.uid)/lastName").setValue(localUser.lastName)
-            Global.databaseRef.child("users/\(fireUser.uid)/bio").setValue(localUser.bio)
-            Global.databaseRef.child("users/\(fireUser.uid)/city").setValue(localUser.city)
-            Global.databaseRef.child("users/\(fireUser.uid)/state").setValue(localUser.state)
+			SessionManager.updateFireUser(fireUser: fireUser, withLocalUser: localUser)
+			
+			completion()
         }
+		return true
     }
     
     // MARK: - Table View Delegate
@@ -136,29 +139,7 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
         print("I felt that press")
         
         if indexPath.row == 5 { // logout cell index path
-            
-            print("Attempting sign out...")
-            
-            if let currentWindow = UIApplication.shared.keyWindow {
-                currentWindow.showLoadingIndicator(withMessage: "Cerrando sesión")
-                
-                if let _ = try? Auth.auth().signOut() {
-                    currentWindow.stopLoadingIndicator()
-                    print("Successfully signed out")
-                    // Purge keychain access
-                    if let _ = try? KeychainManager.deleteCredentials(credentials: KeychainManager.fetchCredentials()) {
-                        print("Successfully deleted credentials in Keychain")
-                    } else {
-                        print("Something went wrong deleting credentials in Keychain")
-                    }
-                    self.navigationController?.popToRootViewController(animated: true)
-                    
-                } else {
-                    currentWindow.stopLoadingIndicator()
-                    print("Something went wrong")
-                    SCLAlertView().showWarning("Lo sentimos!", subTitle: "Intenta cerrar sesión en otro momento.")
-                }
-            }
+			self.logOut()
         }
     }
     
@@ -191,6 +172,29 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
     }
     
     // MARK: - Helper methods
+	
+	func logOut() {
+		print("Attempting sign out...")
+		if let currentWindow = UIApplication.shared.keyWindow {
+			currentWindow.showLoadingIndicator(withMessage: "Cerrando sesión")
+			if let _ = try? Auth.auth().signOut() {
+				currentWindow.stopLoadingIndicator()
+				print("Successfully signed out")
+				// Purge keychain access
+				if let _ = try? KeychainManager.deleteCredentials(credentials: KeychainManager.fetchCredentials()) {
+					print("Successfully deleted credentials in Keychain")
+				} else {
+					print("Something went wrong deleting credentials in Keychain")
+				}
+				self.navigationController?.popToRootViewController(animated: true)
+				
+			} else {
+				currentWindow.stopLoadingIndicator()
+				print("Something went wrong")
+				SCLAlertView().showWarning("Lo sentimos!", subTitle: "Intenta cerrar sesión en otro momento.")
+			}
+		}
+	}
     
     func fillTextFields() {
         if let user = Global.localUser {

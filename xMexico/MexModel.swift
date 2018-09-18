@@ -39,17 +39,9 @@ class Campaign {
 	
 	var supporters: [User]?
 	
-	// TODO: Main
-    var image: UIImage = UIImage()
-    var imageURL: URL?
-	
-	// TODO: Thumb
-    var circularImage: UIImage = UIImage()
-    var circularImageURL: URL?
-	
-	// TODO: Gallery
+	var mainImage: UIImage = UIImage()
+    var thumbnailImage: UIImage = UIImage()
     var gallery = [UIImage]()
-    var galleryImageURLs = [URL]()
 	var galleryImageFileNames = [String]()
 	
 	enum Status: String {

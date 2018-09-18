@@ -11,7 +11,6 @@ import UIKit
 class MenuTVC: UITableViewController {
     
     var indicatorView = UIView()
-    var didLogout = false
 
     @IBOutlet weak var userCell: UITableViewCell!
     @IBOutlet weak var accountTitleLabel: UILabel!
@@ -50,6 +49,10 @@ class MenuTVC: UITableViewController {
 				let backedVC = destination.topViewController as! BackedCampaignsTVC
 				backedVC.loadBackedCampaigns(forLocalUser: localUser)
 			}
+		} else if segue.identifier == "CampaignsSegue" {
+			let destination = segue.destination as! UINavigationController
+			let campaignsCVC = destination.topViewController as! CampaignsCVC
+			campaignsCVC.fromMenu = true
 		}
     }
     

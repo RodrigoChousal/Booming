@@ -14,7 +14,7 @@ class ImageManager {
 	
 	// MARK: - UP ☁️
 
-	static func postImageToFirebase(forFireUser fireUser: User, image: UIImage) {
+	static func postImageToFirebase(forFireUser fireUser: User, image: UIImage, completion: ((Error?) -> Void)?) {
         let imageData = UIImagePNGRepresentation(image)
         let imagePath = "userPictures/" + fireUser.uid + "/" + "userProfile.png"
         let metadata = StorageMetadata()
@@ -23,22 +23,28 @@ class ImageManager {
             .putData(imageData!, metadata: metadata) { (metadata, error) in
                 if let error = error {
                     print("Error uploading: \(error)")
+					if let cmp = completion { cmp(error) }
                     return
-                }
+				} else {
+					if let cmp = completion { cmp(nil) }
+				}
         }
     }
     
-    static func postBackgroundImageToFirebase(forFireUser fireUser: User, image: UIImage) {
+    static func postBackgroundImageToFirebase(forFireUser fireUser: User, image: UIImage, completion: ((Error?) -> Void)?) {
         let imageData = UIImagePNGRepresentation(image)
-        let imagePath = "userBackgrounds/" + fireUser.uid + "/" + "userBackground.png"
+        let imagePath = "userPictures/" + fireUser.uid + "/" + "userBackground.png"
         let metadata = StorageMetadata()
         metadata.contentType = "image/png"
         Global.storageRef.child(imagePath)
             .putData(imageData!, metadata: metadata) { (metadata, error) in
                 if let error = error {
                     print("Error uploading: \(error)")
+					if let cmp = completion { cmp(error) }
                     return
-                }
+				} else {
+					if let cmp = completion { cmp(nil) }
+				}
         }
     }
 	
@@ -51,6 +57,7 @@ class ImageManager {
     }
     
     static func fetchImageFromFirebase(forFireUser fireUser: User, profilePicture: Bool) {
+		
         // Check if profile picture or not, and make reference appropriately
         var imgRef = StorageReference()
         if profilePicture {
@@ -78,8 +85,10 @@ class ImageManager {
                             if let localUser = Global.localUser {
                                 if profilePicture {
                                     localUser.profilePicture = image
+									NotificationCenter.default.post(Notification(name: .profileImageFinished))
                                 } else {
                                     localUser.backgroundPicture = image
+									NotificationCenter.default.post(Notification(name: .backgroundImageFinished))
                                 }
                             }
                         }
@@ -118,11 +127,3 @@ class ImageManager {
 		}
 	}
 }
-
-
-
-
-
-
-
-

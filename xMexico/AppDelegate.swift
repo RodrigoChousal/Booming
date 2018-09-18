@@ -17,9 +17,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 		
-		self.setupFirebase()
+		delayPresentation()
 		
-//		try? KeychainManager.deleteCredentials(credentials: KeychainManager.fetchCredentials())
+		setupFirebase()
 		
         let credentials = KeychainManager.fetchCredentials()
 		
@@ -81,13 +81,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		db.settings = settings
 	}
 	
+	func delayPresentation() {
+		window = UIWindow(frame: UIScreen.main.bounds)
+		window?.rootViewController = UIStoryboard(name: "LaunchScreen", bundle: nil).instantiateInitialViewController()
+		window?.makeKeyAndVisible()
+	}
+	
 	func grantAccess(newUser: Bool) {
-		self.window = UIWindow(frame: UIScreen.main.bounds)
 		let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
 		let accessVC = mainStoryboard.instantiateViewController(withIdentifier: "AccessViewController") as! AccessViewController
-		accessVC.newUser = newUser
 		self.window?.rootViewController = accessVC
-		self.window?.makeKeyAndVisible()
+		if !newUser {
+			accessVC.performSegue(withIdentifier: "AccessGrantedNoAnimation", sender: self)
+		}
 	}
 }
 

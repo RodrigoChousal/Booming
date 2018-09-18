@@ -12,6 +12,7 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
         
     @IBOutlet weak var menuButton: UIBarButtonItem!
 	
+	var fromMenu = false
 	var isLoading = false
     var campaignImages = [UIImage]()
     var topFilter = UIButton(type: .system)
@@ -21,6 +22,10 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
 		
+		if !fromMenu {
+			self.navigationController?.view.hide(duration: 1.0)
+		}
+
         // Makes space for filter button
         collectionView?.frame = CGRect(x: collectionView!.frame.origin.x, y: (collectionView?.frame.origin.y)! + 44, width: (collectionView?.frame.width)!, height: (collectionView?.frame.height)! - 44)
         setupFilterButton()
@@ -34,17 +39,13 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
 			self.isLoading = true
 			SessionManager.downloadCampaignData(toList: Global.campaignList) {
 				self.isLoading = false
-				print("reloading CVC with data: ")
-				print(Global.campaignList.description)
-				print(Global.campaignList[0].name)
 				self.loadCampaignImages()
 				self.collectionView?.reloadData()
 			}
         }
         
-        navigationController?.navigationBar.titleTextAttributes =
-            [NSAttributedStringKey.foregroundColor: UIColor.black,
-             NSAttributedStringKey.font: UIFont(name: "Avenir-Medium", size: 17)!]
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.black,
+																   NSAttributedStringKey.font: UIFont(name: "Avenir-Medium", size: 17)!]
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil) // Back button w/o title in campaign details
         
         if revealViewController() != nil {
@@ -60,21 +61,23 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-     }
+	}
     
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "ShowCampaignSegue" {
-            let cell = sender as! CampaignCell
-            let indexPath = collectionView?.indexPath(for: cell)
-            let campaignDetailVC = segue.destination as! CampaignVC
-            campaignDetailVC.campaign = Global.campaignList[(indexPath?.row)!]
-        } else if segue.identifier == "FindCampaignSegue" {
-            let searchVC = segue.destination as! SearchTableViewController
-            searchVC.campaignsArray = Global.campaignList
-        }
+		if !isLoading {
+			if segue.identifier == "ShowCampaignSegue" {
+				let cell = sender as! CampaignCell
+				let indexPath = collectionView?.indexPath(for: cell)
+				let campaignDetailVC = segue.destination as! CampaignVC
+				campaignDetailVC.campaign = Global.campaignList[(indexPath?.row)!]
+			} else if segue.identifier == "FindCampaignSegue" {
+				let searchVC = segue.destination as! SearchTableViewController
+				searchVC.campaignsArray = Global.campaignList
+			}
+		}
     }
 
     // MARK: - UICollectionViewDataSource
@@ -105,7 +108,7 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
             cell.infoLabel.frame = CGRect(x: cell.infoLabel.frame.origin.x, y: cell.infoLabel.frame.origin.y, width: cell.infoLabel.frame.width, height: 15)
             
         } else { // Load content into cell
-            cell.imageView.image = Global.campaignList[indexPath.row].image
+            cell.imageView.image = Global.campaignList[indexPath.row].mainImage
             
             cell.nameLabel.text = Global.campaignList[indexPath.row].name
             cell.nameLabel.backgroundColor = .clear
@@ -179,19 +182,12 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     // MARK: - Helper Methods
     
     func loadCampaignImages() {
-        
         for campaign in Global.campaignList {
-            
-            let data = try? Data(contentsOf: campaign.imageURL!)
-            
-            if let image = UIImage(data: data!) {
-                campaign.image = image
-                self.campaignImages.append(image)
-            }
-        }
-        
-        DispatchQueue.main.async {
-            self.collectionView?.reloadData()
+			ImageManager.fetchCampaignImageFromFirebase(forCampaign: campaign, kind: .MAIN, galleryFileName: nil) { (img) in
+				campaign.mainImage = img
+				self.campaignImages.append(img)
+				self.collectionView?.reloadData()
+			}
         }
     }
     
