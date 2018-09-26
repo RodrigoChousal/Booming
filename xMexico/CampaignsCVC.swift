@@ -26,8 +26,6 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
 			self.navigationController?.view.hide(duration: 1.0)
 		}
 
-        // Makes space for filter button
-        collectionView?.frame = CGRect(x: collectionView!.frame.origin.x, y: (collectionView?.frame.origin.y)! + 44, width: (collectionView?.frame.width)!, height: (collectionView?.frame.height)! - 44)
         setupFilterButton()
         view.addSubview(topFilter)
         
@@ -192,7 +190,11 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     }
     
     func setupFilterButton() {
+		
         topFilter.addTarget(self, action: #selector(CampaignsCVC.filterTapped(_:)), for: .touchDown)
+		
+		// Makes space for filter button
+		collectionView?.frame = CGRect(x: collectionView!.frame.origin.x, y: (collectionView?.frame.origin.y)! + 44, width: (collectionView?.frame.width)!, height: (collectionView?.frame.height)! - 44)
         
         topFilter.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 44)
         topFilter.backgroundColor = UIColor(red: 250/255, green: 250/255, blue: 250/255, alpha: 1.0)

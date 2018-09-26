@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class CampaignVC: UIViewController, UIScrollViewDelegate {
     
@@ -16,32 +17,28 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var descTextView: UITextView!
 	@IBOutlet weak var fundsAcquiredLabel: UILabel!
-	@IBOutlet weak var fundsNeededLabel: UILabel!
 	@IBOutlet weak var expensesTextView: UITextView!
 	@IBOutlet weak var questionsButton: UIView!
 	@IBOutlet weak var contributeBottomView: UIView!
-    @IBOutlet weak var contributeFullControlView: UIView!
-    
+	@IBOutlet weak var addToPortfolioButton: UIButton!
+	
 	var campaign: Campaign!
     var photoGallery = [UIImage]()
     var galleryController = GalleryVC()
+	
+	var inPortfolio = false
     
     var darkView = UIView()
     var keyboardVisible = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        scrollView.delegate = self
+		
+		scrollView.delegate = self
 		
 		populateAllFields()
 		setupViews()
 		setupCampaignImages()
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(CampaignVC.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(CampaignVC.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(CampaignVC.hideKeyboard)))
-        
     }
     
     override func viewDidLayoutSubviews() {
@@ -82,27 +79,37 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
         print("Share Mail")
     }
     
-    // MARK: - UIScrollView Delegate
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        
-//        let isBottom = (contentView.frame.height - scrollView.contentOffset.y) <= (scrollView.frame.height)
-		
-//        if isBottom {
-////            contributeBottomView.layer.shadowOpacity = 0.0
-//        } else {
-////            contributeBottomView.layer.shadowOpacity = 1.0
-//        }
-    }
-    
     // MARK: - Action Methods
     
 	@IBAction func questionPressed(_ sender: Any) {
 		print("Tengo una pregunta!")
 	}
 	
+	@IBAction func addToPortfolioPressed(_ sender: Any) {
+		if let localUser = Global.localUser, let fireUser = Auth.auth().currentUser {
+			if inPortfolio {
+				addToPortfolioButton.setImage(UIImage(named: "add_campaign_button"), for: .normal)
+				var count = 0
+				var index = 0
+				for backedCampaign in localUser.backedCampaigns {
+					if backedCampaign.parentID == self.campaign.uniqueID {
+						index = count
+					}
+					count += 1
+				}
+				localUser.backedCampaigns.remove(at: index)
+				SessionManager.updateFireUser(fireUser: fireUser, withLocalUser: localUser)
+				self.inPortfolio = false
+			} else {
+				addToPortfolioButton.setImage(UIImage(named: "in_portfolio_button"), for: .normal)
+				let backedCampaign = BackedCampaign(amountContributed: 0, dateContributed: Date(), parentID: self.campaign.uniqueID)
+				localUser.backedCampaigns.append(backedCampaign)
+				SessionManager.updateFireUser(fireUser: fireUser, withLocalUser: localUser)
+				self.inPortfolio = true
+			}
+		}
+	}
 	
-    
     // MARK: - Helper Methods
 	
 	func populateAllFields() {
@@ -111,8 +118,6 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 		
 		nameLabel.text = campaign.name
 		descTextView.text = campaign.description
-		fundsNeededLabel.text = campaign.fundsNeeded.description + " apoyado"
-		fundsAcquiredLabel.text = campaign.fundsAcquired.description + " meta"
 	}
 	
 	func setupViews() {
@@ -127,8 +132,14 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 		darkView.alpha = 0.0
 		contentView.addSubview(darkView)
 		
-		contributeBottomView.alpha = 1.0
-		contributeFullControlView.alpha = 0.0
+		if let localUser = Global.localUser {
+			for backedCampaign in localUser.backedCampaigns {
+				if backedCampaign.parentID == self.campaign.uniqueID {
+					addToPortfolioButton.setImage(UIImage(named: "in_portfolio_button"), for: .normal)
+					self.inPortfolio = true
+				}
+			}
+		}
 	}
 	
 	func setupCampaignImages() {
@@ -168,65 +179,5 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
         photoGallery = campaign.gallery
         galleryController.photoGallery = self.photoGallery
         galleryController.galleryCollectionView.reloadData()
-    }
-    
-    @objc func keyboardWillShow(notification: NSNotification) {
-        
-        // Disable scrolling
-        self.scrollView.isScrollEnabled = false
-        
-        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            
-            print(keyboardSize.height.description)
-            
-            if !keyboardVisible {
-                print(keyboardSize.height.description)
-                self.contributeFullControlView.frame.origin.y -= keyboardSize.height
-                
-                // Darken rest of view
-                darkView.alpha = 0.6
-                
-            }
-            
-            keyboardVisible = true
-        }
-    }
-    
-    @objc func keyboardWillHide(notification: NSNotification) {
-        
-        // Enable scrolling
-        self.scrollView.isScrollEnabled = true
-        
-        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            
-            if keyboardVisible {
-                print(keyboardSize.height.description)
-                self.contributeFullControlView.frame.origin.y += keyboardSize.height
-            }
-            
-            // Remove dark view
-            darkView.alpha = 0.0
-        }
-        
-        keyboardVisible = false
-    }
-    
-    @objc func hideKeyboard() {
-        
-        if keyboardVisible {
-            self.view.endEditing(true)
-            keyboardVisible = false
-        }
-    }
-    
-    @objc func showConfirmation() {
-        
-        view.showLoadingIndicator(withMessage: "Procesando su contribuición...")
-        
-        Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { (Timer) in
-            self.view.stopLoadingIndicator()
-            SCLAlertView().showSuccess("Gracias!", subTitle: "Su pago ha sido procesado exitosamente.")
-        }
-        
     }
 }
