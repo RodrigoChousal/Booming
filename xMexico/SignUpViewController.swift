@@ -8,12 +8,11 @@
 
 import UIKit
 import Firebase
+import FirebaseAuth
 import FirebaseStorage
 
 class SignUpViewController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
-    
-    @IBOutlet weak var bgImageView: UIImageView!
-    
+	
     @IBOutlet weak var formContentView: UIView!
     @IBOutlet weak var firstNameField: UITextField!
     @IBOutlet weak var lastNameField: UITextField!
@@ -21,7 +20,6 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
     @IBOutlet weak var passwordField: UITextField!
     @IBOutlet weak var showPasswordButton: UIButton!
     
-    @IBOutlet weak var payPalButton: UIButton!
     @IBOutlet weak var chooseImageButton: UIButton!
     @IBOutlet weak var pageController: SegmentedControl!
 
@@ -29,44 +27,22 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
     var imagePicker = UIImagePickerController()
     var chosenImage: UIImage?
     
-    override func viewWillAppear(_ animated: Bool) {
-        UIApplication.shared.statusBarStyle = .lightContent
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         NotificationCenter.default.addObserver(self, selector: #selector(SignUpViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(SignUpViewController.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SignUpViewController.hideKeyboard)))
-        
-        blurScreen()
-        
+		
         imagePicker.delegate = self
         pageController.addTarget(self, action: #selector(self.segmentedControlValueChanged), for: .allEvents)
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        bgImageView.alpha = 1.0
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        UIApplication.shared.statusBarStyle = .default
-    }
-
+	
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    
-
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    }
 
     @IBAction func cancel(_ sender: Any) {
-//        view.resignFirstResponder()
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -95,10 +71,6 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
         if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.savedPhotosAlbum){
             self.present(picker, animated: true, completion: nil)
         }
-    }
-    
-    @IBAction func selectPayment(_ sender: Any) {
-
     }
     
     @IBAction func finishSignUp(_ sender: Any) {
@@ -194,12 +166,6 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
         picker.dismiss(animated: true, completion: { () -> Void in })
     }
     
-    // MARK: - FuturePaymentsDelegate
-    
-    @IBAction func authorizeFuturePaymentsAction(_ sender: AnyObject) {
-
-    }
-    
     // MARK: - Helper Methods
     
     @objc func segmentedControlValueChanged() {
@@ -213,16 +179,6 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
         default:
             changeFormContent(toIndex: 0)
         }
-    }
-    
-    func blurScreen() {
-        let blurEffect = UIBlurEffect(style: .dark)
-        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.frame = view.bounds
-        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        view.addSubview(blurEffectView)
-        view.sendSubview(toBack: blurEffectView)
-        view.sendSubview(toBack: bgImageView)
     }
     
     func changeFormContent(toIndex index: Int) {
@@ -268,21 +224,4 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
             keyboardVisible = false
         }
     }
-    
-    func showSuccess() {
-        
-        view.showLoadingIndicator(withMessage: "Verificando...")
-        
-        Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { (Timer) in
-            self.view.stopLoadingIndicator()
-            self.payPalButton.setTitle("", for: .normal)
-            self.payPalButton.setBackgroundImage(#imageLiteral(resourceName: "success"), for: .normal)
-            self.payPalButton.frame.size.width = 128
-            self.payPalButton.frame.size.height = 128
-            self.payPalButton.center.x = self.view.frame.size.width/2
-            self.payPalButton.center.y -= 35
-        }
-        
-    }
-
 }

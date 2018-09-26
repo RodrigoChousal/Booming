@@ -59,30 +59,20 @@ class MenuTVC: UITableViewController {
     // MARK: - UITableViewDelegate
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         tableView.deselectRow(at: indexPath, animated: true)
-        
         if indexPath.row == 0 { // User VC
             
-        } else if indexPath.row == 1 { // Campaigns VC
-                        
-        } else if indexPath.row == 2 { // Backed Campaigns VC
-            
-        } else if indexPath.row == 3 { // Proposal VC
-            
-		} else { // Mission VC
-			
-		}
+        }
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.row == 0 { // userCell is usually taller
-            
+        if indexPath.row == 0 { // userCell is taller
             if isVisitor {
                 return 54
             }
             return 125
         }
+		
         return 54 // menu item cells
     }
     

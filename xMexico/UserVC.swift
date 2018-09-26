@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FirebaseAuth
 
 private let reuseIdentifier = "AchievementCell"
 

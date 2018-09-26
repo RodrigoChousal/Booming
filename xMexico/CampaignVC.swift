@@ -101,39 +101,7 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 		print("Tengo una pregunta!")
 	}
 	
-	@IBAction func showContribute(_ sender: Any) {
-        
-        contributeFullControlView.alpha = 1.0
-        contributeBottomView.alpha = 0.0
-        
-        let displacement = contributeFullControlView.frame.height - contributeBottomView.frame.height
-        
-        // Animate slide-up
-        UIView.animate(withDuration: 0.3, animations: {
-            self.contributeFullControlView.center.y -= displacement
-        }) { (true) in
-            // Make scroll view fit new content view position
-            self.scrollView.frame.size.height -= displacement
-            print(self.contributeFullControlView.frame.origin.y.description)
-        }
-    }
-    
-    func hideContributionVC() {
-        
-        let displacement = contributeFullControlView.frame.height - contributeBottomView.frame.height
-        
-        // Make scroll view fit new content view position
-        self.scrollView.frame.size.height += displacement
-        
-        // Animate slide-down
-        UIView.animate(withDuration: 0.3, animations: {
-            self.contributeFullControlView.center.y += displacement
-        }) { (true) in
-            self.contributeBottomView.alpha = 1.0
-            self.contributeFullControlView.alpha = 0.0
-            print(self.contributeFullControlView.frame.origin.y.description)
-        }
-    }
+	
     
     // MARK: - Helper Methods
 	

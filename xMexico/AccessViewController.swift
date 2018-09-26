@@ -9,27 +9,24 @@
 import UIKit
 import Firebase
 import FirebaseStorage
+import FirebaseAuth
 import FirebaseUI
 
 var isVisitor = false
 
 class AccessViewController: UIViewController, UITextFieldDelegate {
     
-    @IBOutlet weak var titleImageView: UIImageView!
     @IBOutlet weak var buttonsView: UIView!
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
     @IBOutlet weak var showPasswordButton: UIButton!
 
     var buttonsViewPadding = CGFloat()
-    var blurEffectView = UIView()
     var keyboardVisible = false
 	
     var newUser = true
         
     override func viewWillAppear(_ animated: Bool) {
-        UIApplication.shared.statusBarStyle = .lightContent
-		
 		self.view.hide(duration: 2.0)
 		
         NotificationCenter.default.addObserver(self, selector: #selector(AccessViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
@@ -51,14 +48,10 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        
-        blurEffectView.alpha = 0
-        buttonsViewPadding = buttonsView.frame.origin.x
+		buttonsViewPadding = buttonsView.frame.origin.x
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        UIApplication.shared.statusBarStyle = .default
-        
         NotificationCenter.default.removeObserver(self)
     }
 
@@ -66,14 +59,7 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-
-    // MARK: - Navigation
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
-    }
-    
+	
     // MARK: - Login Controls
     
     @IBAction func showLoginForm(_ sender: Any) {
@@ -159,21 +145,8 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
         isVisitor = true
     }
     
-    @IBAction func signUp(_ sender: Any) {
-        
-    }
-    
     // MARK: - Helper Methods
-    
-    func blurScreen() {
-        let blurEffect = UIBlurEffect(style: .dark)
-        blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.frame = view.bounds
-        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        blurEffectView.alpha = 1.0
-        view.addSubview(blurEffectView)
-    }
-    
+	
     @objc func keyboardWillShow(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             if !keyboardVisible {
@@ -198,27 +171,4 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
             keyboardVisible = false
         }
     }
-
-    func animateCircularMask(view: UIImageView) {
-        
-        let viewDiagonal = sqrt(view.frame.height * view.frame.height + view.frame.width * view.frame.width)
-        let circleRadius = viewDiagonal/2
-        
-        let circle = UIView(frame: CGRect(x: 0, y: 0, width: viewDiagonal, height: viewDiagonal))
-        circle.backgroundColor = UIColor.yellow
-        circle.layer.cornerRadius = circleRadius
-        circle.layer.borderWidth = 2.0
-        circle.layer.borderColor = UIColor.red.cgColor
-        
-        circle.center = view.center
-        
-        view.mask = circle
-
-        UIView.animate(withDuration: 0.5, delay: 0.01, options: .curveLinear, animations: {
-            circle.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
-        }, completion: { (Bool) in
-            view.removeFromSuperview()
-        })
-    }
 }
-

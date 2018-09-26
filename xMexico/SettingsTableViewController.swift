@@ -56,18 +56,16 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
         fillTextFields()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        UIApplication.shared.statusBarStyle = .default
-        
+    override func viewWillAppear(_ animated: Bool) {        
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
         fillTextFields()
     }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        UIApplication.shared.statusBarStyle = .default
-    }
+	
+	override var preferredStatusBarStyle: UIStatusBarStyle {
+		return .default
+	}
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
