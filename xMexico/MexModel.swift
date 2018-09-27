@@ -33,6 +33,7 @@ class Campaign {
 	var dateCreated: Date
 	var contact: Contact
 	var fundsNeeded: Int //TODO: Make class with currency property
+	var numberOfBackers: Int
 	var status: Status
 	
 	var fundsAcquired: Int = 0
@@ -57,7 +58,7 @@ class Campaign {
 		case GALLERY = "Gallery"
 	}
 	
-	init(uniqueID: String, status: Status, name: String, description: String, objective: String, dateCreated: Date, contact: Contact, fundsNeeded: Int) {
+	init(uniqueID: String, status: Status, name: String, description: String, objective: String, dateCreated: Date, contact: Contact, numberOfBackers: Int, fundsNeeded: Int) {
 		self.uniqueID = uniqueID
 		self.status = status
 		self.name = name
@@ -65,6 +66,7 @@ class Campaign {
 		self.objective = objective
 		self.dateCreated = dateCreated
 		self.contact = contact
+		self.numberOfBackers = numberOfBackers
 		self.fundsNeeded = fundsNeeded
 	}
 }

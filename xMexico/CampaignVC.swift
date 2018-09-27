@@ -62,59 +62,78 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
             galleryController.photoGallery = self.photoGallery
         }
     }
+	
+	// MARK: - Action Methods
 
     @IBAction func shareFacebook(_ sender: Any) {
-		let alert = AtomicAlertView(title: "Facebook", link: "http://www.apple.com")
+		let alert = AtomicAlertView(title: "Facebook", message: "http://www.apple.com", link: true)
 		alert.show(animated: true)
     }
     
     @IBAction func shareTwitter(_ sender: Any) {
-		let alert = AtomicAlertView(title: "Twitter", link: "http://www.apple.com")
+		let alert = AtomicAlertView(title: "Twitter", message: "http://www.apple.com", link: true)
 		alert.show(animated: true)
     }
     
     @IBAction func shareWhatsapp(_ sender: Any) {
-		let alert = AtomicAlertView(title: "WhatsApp", link: "http://www.apple.com")
+		let alert = AtomicAlertView(title: "WhatsApp", message: "http://www.apple.com", link: true)
 		alert.show(animated: true)
     }
     
     @IBAction func shareMail(_ sender: Any) {
-		let alert = AtomicAlertView(title: "Mail", link: "http://www.apple.com")
+		let alert = AtomicAlertView(title: "Mail", message: "http://www.apple.com", link: true)
 		alert.show(animated: true)
     }
     
-    // MARK: - Action Methods
-    
 	@IBAction func questionPressed(_ sender: Any) {
-		print("Tengo una pregunta!")
+		let alert = AtomicAlertView(title: "Contestamos tus preguntas!", message: self.campaign.contact.email, link: true)
+		alert.show(animated: true)
 	}
 	
 	@IBAction func addToPortfolioPressed(_ sender: Any) {
 		if let localUser = Global.localUser, let fireUser = Auth.auth().currentUser {
 			if inPortfolio {
-				addToPortfolioButton.setImage(UIImage(named: "add_campaign_button"), for: .normal)
-				var count = 0
-				var index = 0
-				for backedCampaign in localUser.backedCampaigns {
-					if backedCampaign.parentID == self.campaign.uniqueID {
-						index = count
-					}
-					count += 1
-				}
-				localUser.backedCampaigns.remove(at: index)
-				SessionManager.updateFireUser(fireUser: fireUser, withLocalUser: localUser)
+				self.addToPortfolioButton.setImage(UIImage(named: "add_campaign_button"), for: .normal)
+				self.addToUserPortfolio(localUser: localUser, fireUser: fireUser)
 				self.inPortfolio = false
+				self.campaign.numberOfBackers -= 1
+				let alertView = AtomicAlertView(title: campaign.name, message: "Nos gustaría saber por qué hemos perdido tu apoyo", link: false)
+				alertView.show(animated: true)
 			} else {
-				addToPortfolioButton.setImage(UIImage(named: "in_portfolio_button"), for: .normal)
-				let backedCampaign = BackedCampaign(amountContributed: 0, dateContributed: Date(), parentID: self.campaign.uniqueID)
-				localUser.backedCampaigns.append(backedCampaign)
-				SessionManager.updateFireUser(fireUser: fireUser, withLocalUser: localUser)
+				self.addToPortfolioButton.setImage(UIImage(named: "in_portfolio_button"), for: .normal)
+				self.removeFromUserPortfolio(localUser: localUser, fireUser: fireUser)
 				self.inPortfolio = true
+				self.campaign.numberOfBackers += 1
+				let alertView = AtomicAlertView(title: campaign.name, message: "Gracias por agregarnos a tu portafolio", link: false)
+				alertView.show(animated: true)
+			}
+			self.fundsAcquiredLabel.text = self.campaign.numberOfBackers.description
+			DispatchQueue.global(qos: .background).async {
+				DatabaseManager.updateCampaignBackers(campaign: self.campaign)
 			}
 		}
 	}
 	
     // MARK: - Helper Methods
+	
+	func addToUserPortfolio(localUser: LocalUser, fireUser: User) {
+		var count = 0
+		var index = 0
+		for backedCampaign in localUser.backedCampaigns {
+			if backedCampaign.parentID == self.campaign.uniqueID {
+				index = count
+			}
+			count += 1
+		}
+		localUser.backedCampaigns.remove(at: index)
+		SessionManager.updateFireUser(fireUser: fireUser, withLocalUser: localUser)
+	}
+	
+	func removeFromUserPortfolio(localUser: LocalUser, fireUser: User) {
+		let backedCampaign = BackedCampaign(amountContributed: 0, dateContributed: Date(), parentID: self.campaign.uniqueID)
+		localUser.backedCampaigns.append(backedCampaign)
+		SessionManager.updateFireUser(fireUser: fireUser, withLocalUser: localUser)
+	}
 	
 	func populateAllFields() {
 		navigationItem.title = campaign.name
@@ -122,6 +141,7 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 		
 		nameLabel.text = campaign.name
 		descTextView.text = campaign.description
+		fundsAcquiredLabel.text = campaign.numberOfBackers.description
 	}
 	
 	func setupViews() {

@@ -36,9 +36,9 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
         if Global.campaignList.count == 0 {
 			self.isLoading = true
 			SessionManager.downloadCampaignData(toList: Global.campaignList) {
-				self.isLoading = false
 				self.loadCampaignImages()
 				self.collectionView?.reloadData()
+				self.isLoading = false
 			}
         }
         
@@ -59,6 +59,7 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		
 	}
     
     // MARK: - Navigation

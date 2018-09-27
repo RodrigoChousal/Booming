@@ -22,6 +22,19 @@ class DatabaseManager {
 		return uploadable
 	}
 	
+	// MARK: - Other
+	
+	static func updateCampaignBackers(campaign: Campaign) {
+		Global.campaignsCollectionRef.document(campaign.uniqueID)
+			.updateData(["number_of_backers" : campaign.numberOfBackers.description ]) { err in
+				if let err = err {
+					print("Error updating document: \(err)")
+				} else {
+					print("Document successfully updated")
+				}
+		}
+	}
+	
 	// MARK: - String-to-Native Class
 	
 	static func validDate(fromString dateString: String) -> Date {
@@ -32,6 +45,14 @@ class DatabaseManager {
 		} else {
 			print("ERROR! Date was not valid, returned error value: " + Date().description)
 			return Date()
+		}
+	}
+	
+	static func validNumberOfBackers(fromString backersString: String) -> Int {
+		if let backers = Int(backersString) {
+			return backers
+		} else {
+			return 0
 		}
 	}
 	
@@ -65,6 +86,7 @@ class DatabaseManager {
 								objective: dictionary.value(forKey: "objective") as! String,
 								dateCreated: validDate(fromString: dictionary.value(forKey: "date_created") as! String),
 								contact: validContact(fromDictionary: dictionary.value(forKey: "contact") as! NSDictionary),
+								numberOfBackers: validNumberOfBackers(fromString: dictionary.value(forKey: "number_of_backers") as! String),
 								fundsNeeded: validFunds(fromString: dictionary.value(forKey: "funds_needed") as! String))
 		campaign.mainImage = #imageLiteral(resourceName: "placeholder")
 		if let imageFileNames = dictionary.value(forKey: "photo_gallery") as? NSArray {

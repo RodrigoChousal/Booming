@@ -45,8 +45,6 @@ class BackedCampaignsTVC: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BackedCampaignCell", for: indexPath) as! BackedCampaignTVCell
 		if let parentCampaign = self.backedCampaignsList[indexPath.row].parentCampaign {
 			cell.nameLabel.text = parentCampaign.name
-			cell.statusLabel.text = parentCampaign.status.rawValue
-			cell.amountLabel.text = self.backedCampaignsList[indexPath.row].amountContributed.description
 		}
         return cell
     }
@@ -55,15 +53,20 @@ class BackedCampaignsTVC: UITableViewController {
 		tableView.deselectRow(at: indexPath, animated: true)
 	}
 
-    /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+		if segue.identifier == "ShowBackedCampaignSegue" {
+			let cell = sender as! BackedCampaignTVCell
+			if let indexPath = tableView?.indexPath(for: cell) {
+				if let campaign = backedCampaignsList[indexPath.row].parentCampaign {
+					let campaignDetailVC = segue.destination as! CampaignVC
+					campaignDetailVC.campaign = campaign
+				}
+			}
+		}
     }
-    */
 
 	// MARK: - Helper Methods
 	
