@@ -64,19 +64,23 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
     }
 
     @IBAction func shareFacebook(_ sender: Any) {
-        print("Share Facebook")
+		let alert = AtomicAlertView(title: "Facebook", link: "http://www.apple.com")
+		alert.show(animated: true)
     }
     
     @IBAction func shareTwitter(_ sender: Any) {
-        print("Share Twitter")
+		let alert = AtomicAlertView(title: "Twitter", link: "http://www.apple.com")
+		alert.show(animated: true)
     }
     
     @IBAction func shareWhatsapp(_ sender: Any) {
-        print("Share Whatsapp")
+		let alert = AtomicAlertView(title: "WhatsApp", link: "http://www.apple.com")
+		alert.show(animated: true)
     }
     
     @IBAction func shareMail(_ sender: Any) {
-        print("Share Mail")
+		let alert = AtomicAlertView(title: "Mail", link: "http://www.apple.com")
+		alert.show(animated: true)
     }
     
     // MARK: - Action Methods
