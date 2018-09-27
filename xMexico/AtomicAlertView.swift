@@ -12,9 +12,11 @@ class AtomicAlertView: UIView {
 	
 	var backgroundView = UIView()
 	var dialogView = UIView()
+	var linkIdentity = String()
 	
 	convenience init(title: String, link: String) {
 		self.init(frame: UIScreen.main.bounds)
+		self.linkIdentity = link
 		initialize(title: title, link: link)
 	}
 	
@@ -26,10 +28,12 @@ class AtomicAlertView: UIView {
 		super.init(coder: aDecoder)
 	}
 	
-	func initialize(title: String, link: String){
+	func initialize(title: String, link: String) {
 		
 		// Constants
 		let viewPadding = CGFloat(32)
+		let verticalPadding = CGFloat(8)
+		var currentY = verticalPadding
 		
 		dialogView.clipsToBounds = true
 		
@@ -41,18 +45,20 @@ class AtomicAlertView: UIView {
 		
 		let dialogViewWidth = frame.width - (viewPadding * 2)
 		
-		let titleLabel = UILabel(frame: CGRect(x: 8, y: 8, width: dialogViewWidth-16, height: 30))
+		let titleLabel = UILabel(frame: CGRect(x: 8, y: currentY, width: dialogViewWidth-16, height: 30))
 		titleLabel.text = title
 		titleLabel.textAlignment = .center
 		dialogView.addSubview(titleLabel)
 		
+		currentY += verticalPadding + titleLabel.frame.height
 		let separatorLineView = UIView()
-		separatorLineView.frame.origin = CGPoint(x: 0, y: titleLabel.frame.height + 8)
+		separatorLineView.frame.origin = CGPoint(x: 0, y: currentY)
 		separatorLineView.frame.size = CGSize(width: dialogViewWidth, height: 1)
 		separatorLineView.backgroundColor = UIColor.groupTableViewBackground
 		dialogView.addSubview(separatorLineView)
 		
-		let linkTextField = UITextField(frame: CGRect(x: 8, y: 8 + titleLabel.frame.height + 8 + separatorLineView.frame.height + 8, width: dialogViewWidth - 16, height: 30))
+		currentY += verticalPadding + separatorLineView.frame.height
+		let linkTextField = UITextField(frame: CGRect(x: 8, y: currentY, width: dialogViewWidth - 16, height: 30))
 		linkTextField.backgroundColor = .gray
 		linkTextField.text = link
 		linkTextField.textColor = .white
@@ -60,13 +66,34 @@ class AtomicAlertView: UIView {
 		linkTextField.textAlignment = .center
 		dialogView.addSubview(linkTextField)
 		
-		let dialogViewHeight = titleLabel.frame.height + 8 + separatorLineView.frame.height + 8 + linkTextField.frame.height + 16
+		currentY += verticalPadding + linkTextField.frame.height
+		let separatorLineView2 = UIView()
+		separatorLineView2.frame.origin = CGPoint(x: 0, y: currentY)
+		separatorLineView2.frame.size = CGSize(width: dialogViewWidth, height: 1)
+		separatorLineView2.backgroundColor = UIColor.groupTableViewBackground
+		dialogView.addSubview(separatorLineView2)
 		
+		// Copy link to clipboard
+		currentY += verticalPadding + separatorLineView2.frame.height
+		let copyButton = UIButton(type: .system)
+		copyButton.frame = CGRect(x: 8, y: currentY, width: dialogViewWidth-16, height: 30)
+		copyButton.setTitle("COPY", for: .normal)
+		copyButton.backgroundColor = .red
+		copyButton.addTarget(self, action: #selector(copyPressed), for: .touchUpInside)
+		dialogView.addSubview(copyButton)
+		
+		let dialogViewHeight = currentY + copyButton.frame.height + 16
 		dialogView.frame.origin = CGPoint(x: 32, y: frame.height)
 		dialogView.frame.size = CGSize(width: frame.width-64, height: dialogViewHeight)
 		dialogView.backgroundColor = UIColor.white
 		dialogView.layer.cornerRadius = 6
 		addSubview(dialogView)
+	}
+	
+	@objc func copyPressed(sender: UIButton) {
+		UIPasteboard.general.string = self.linkIdentity
+		sender.setTitle("Link copied to clipboard", for: .normal)
+		sender.isEnabled = false
 	}
 	
 	func show(animated: Bool) {
