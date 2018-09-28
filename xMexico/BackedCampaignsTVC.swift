@@ -13,6 +13,10 @@ class BackedCampaignsTVC: UITableViewController {
 	var backedCampaignsList = [BackedCampaign]()
 	
     @IBOutlet weak var menuButton: UIBarButtonItem!
+	
+	override func viewWillAppear(_ animated: Bool) {
+		tableView.reloadData()
+	}
     
 	override func viewDidLoad() {
         super.viewDidLoad()

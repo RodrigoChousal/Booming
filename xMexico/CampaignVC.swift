@@ -66,51 +66,69 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 	// MARK: - Action Methods
 
     @IBAction func shareFacebook(_ sender: Any) {
-		let alert = AtomicAlertView(title: "Facebook", message: "http://www.apple.com", link: true)
-		alert.show(animated: true)
+		let copyAlert = AtomicAlertView(title: "Facebook", linkForCopy: "http://www.apple.com")
+		copyAlert.show(animated: true)
     }
     
     @IBAction func shareTwitter(_ sender: Any) {
-		let alert = AtomicAlertView(title: "Twitter", message: "http://www.apple.com", link: true)
-		alert.show(animated: true)
+		let copyAlert = AtomicAlertView(title: "Twitter", linkForCopy: "http://www.apple.com")
+		copyAlert.show(animated: true)
     }
     
     @IBAction func shareWhatsapp(_ sender: Any) {
-		let alert = AtomicAlertView(title: "WhatsApp", message: "http://www.apple.com", link: true)
-		alert.show(animated: true)
+		let copyAlert = AtomicAlertView(title: "WhatsApp", linkForCopy: "http://www.apple.com")
+		copyAlert.show(animated: true)
     }
     
     @IBAction func shareMail(_ sender: Any) {
-		let alert = AtomicAlertView(title: "Mail", message: "http://www.apple.com", link: true)
-		alert.show(animated: true)
+		let copyAlert = AtomicAlertView(title: "Mail", linkForCopy: "http://www.apple.com")
+		copyAlert.show(animated: true)
     }
     
 	@IBAction func questionPressed(_ sender: Any) {
-		let alert = AtomicAlertView(title: "Contestamos tus preguntas!", message: self.campaign.contact.email, link: true)
-		alert.show(animated: true)
+		let copyAlert = AtomicAlertView(title: "Contestamos tus preguntas!", linkForCopy: "http://www.apple.com")
+		copyAlert.show(animated: true)
 	}
 	
 	@IBAction func addToPortfolioPressed(_ sender: Any) {
-		if let localUser = Global.localUser, let fireUser = Auth.auth().currentUser {
-			if inPortfolio {
-				self.addToPortfolioButton.setImage(UIImage(named: "add_campaign_button"), for: .normal)
-				self.addToUserPortfolio(localUser: localUser, fireUser: fireUser)
-				self.inPortfolio = false
-				self.campaign.numberOfBackers -= 1
-				let alertView = AtomicAlertView(title: campaign.name, message: "Nos gustaría saber por qué hemos perdido tu apoyo", link: false)
-				alertView.show(animated: true)
-			} else {
+		if inPortfolio {
+			let acceptButton = UIButton(type: .system)
+			acceptButton.setTitle("SI", for: .normal)
+			acceptButton.addTarget(self, action: #selector(removeFromPortfolio), for: .touchUpInside)
+			let rejectButton = UIButton(type: .system)
+			rejectButton.setTitle("NO", for: .normal)
+			let alertView = AtomicAlertView(title: campaign.name, message: "Deseas retirar tu apoyo?", actionButtons: [acceptButton, rejectButton])
+			alertView.show(animated: true)
+		} else {
+			if let localUser = Global.localUser, let fireUser = Auth.auth().currentUser {
 				self.addToPortfolioButton.setImage(UIImage(named: "in_portfolio_button"), for: .normal)
 				self.removeFromUserPortfolio(localUser: localUser, fireUser: fireUser)
 				self.inPortfolio = true
 				self.campaign.numberOfBackers += 1
-				let alertView = AtomicAlertView(title: campaign.name, message: "Gracias por agregarnos a tu portafolio", link: false)
+				
+				let alertView = AtomicAlertView(title: campaign.name, message: "Gracias por agregarnos a tu portafolio")
 				alertView.show(animated: true)
+			} else {
+				// TODO: Presentar Lo sentimos, hubo un problema agregando a tu lista
 			}
-			self.fundsAcquiredLabel.text = self.campaign.numberOfBackers.description
-			DispatchQueue.global(qos: .background).async {
-				DatabaseManager.updateCampaignBackers(campaign: self.campaign)
-			}
+			
+		}
+		self.fundsAcquiredLabel.text = self.campaign.numberOfBackers.description
+		DispatchQueue.global(qos: .background).async {
+			DatabaseManager.updateCampaignBackers(campaign: self.campaign)
+		}
+	}
+	
+	// MARK: - Atomic Alert Helper Methods
+	
+	@objc func removeFromPortfolio() {
+		if let localUser = Global.localUser, let fireUser = Auth.auth().currentUser {
+			self.addToPortfolioButton.setImage(UIImage(named: "add_campaign_button"), for: .normal)
+			self.addToUserPortfolio(localUser: localUser, fireUser: fireUser)
+			self.inPortfolio = false
+			self.campaign.numberOfBackers -= 1
+		} else {
+			// TODO: Presentar Lo sentimos, hubo un problema quitando de tu lista
 		}
 	}
 	

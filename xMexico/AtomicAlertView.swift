@@ -12,12 +12,76 @@ class AtomicAlertView: UIView {
 	
 	var backgroundView = UIView()
 	var dialogView = UIView()
-	var linkIdentity = String()
 	
-	convenience init(title: String, message: String, link: Bool) {
+	var title: String = String()
+	var message: String = String()
+	var actionButtons: [UIButton] = [UIButton]()
+	
+	// Constants
+	let horizontalPaddingOut = CGFloat(32)
+	let horizontalPaddingIn = CGFloat(16)
+	let verticalPaddingIn = CGFloat(8)
+	let dialogViewWidth = UIScreen.main.bounds.width - CGFloat(64) // TODO: Hate hardcoded values
+	let dialogSubviewHeight = CGFloat(30)
+	
+	// Layout Helper
+	var currentY = CGFloat(8)
+	
+	convenience init(title: String, message: String) {
+		
 		self.init(frame: UIScreen.main.bounds)
-		self.linkIdentity = message
-		initialize(title: title, message: message, link: link)
+		
+		self.title = title
+		self.message = message
+		
+		let okButton = UIButton(type: .system)
+		okButton.setTitle("OK", for: .normal)
+		okButton.addTarget(self, action: #selector(dismiss), for: .touchUpInside)
+		
+		setupBackgroundView()
+		setupTitle()
+		insertSeparator()
+		setupMessage()
+		insertSeparator()
+		setupButtons(actionButtons: [okButton])
+		setupDialogView(withHeight: currentY)
+	}
+	
+	convenience init(title: String, linkForCopy link: String) {
+		
+		self.init(frame: UIScreen.main.bounds)
+		
+		self.title = title
+		self.message = link
+		
+		let copyButton = UIButton(type: .system)
+		copyButton.setTitle("COPY", for: .normal)
+		copyButton.addTarget(self, action: #selector(copyMessage), for: .touchUpInside)
+		
+		setupBackgroundView()
+		setupTitle()
+		insertSeparator()
+		setupLink()
+		insertSeparator()
+		setupButtons(actionButtons: [copyButton])
+		setupDialogView(withHeight: currentY)
+	}
+	
+	convenience init(title: String, message: String, actionButtons: [UIButton]) {
+		
+		self.init(frame: UIScreen.main.bounds)
+		
+		self.title = title
+		self.message = message
+		self.actionButtons = actionButtons
+		
+		setupBackgroundView()
+		setupTitle()
+		insertSeparator()
+		setupMessage()
+		insertSeparator()
+		setupButtons(actionButtons: actionButtons)
+		setupDialogView(withHeight: currentY)
 	}
 	
 	override init(frame: CGRect) {
@@ -28,74 +92,21 @@ class AtomicAlertView: UIView {
 		super.init(coder: aDecoder)
 	}
 	
-	func initialize(title: String, message: String, link: Bool) {
-		
-		// Constants
-		let viewPadding = CGFloat(32)
-		let verticalPadding = CGFloat(8)
-		var currentY = verticalPadding
-		
-		dialogView.clipsToBounds = true
-		
+	// MARK: - Helper Methods
+	
+	func setupBackgroundView() {
+		// Encompasses whole screen, to darken screen when presented
 		backgroundView.frame = frame
 		backgroundView.backgroundColor = UIColor.black
 		backgroundView.alpha = 0.6
-		backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTappedOnBackgroundView)))
+		backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismiss)))
 		addSubview(backgroundView)
-		
-		let dialogViewWidth = frame.width - (viewPadding * 2)
-		
-		let titleLabel = UILabel(frame: CGRect(x: 8, y: currentY, width: dialogViewWidth-16, height: 30))
-		titleLabel.text = title
-		titleLabel.textAlignment = .center
-		dialogView.addSubview(titleLabel)
-		
-		currentY += verticalPadding + titleLabel.frame.height
-		let separatorLineView = UIView()
-		separatorLineView.frame.origin = CGPoint(x: 0, y: currentY)
-		separatorLineView.frame.size = CGSize(width: dialogViewWidth, height: 1)
-		separatorLineView.backgroundColor = UIColor.groupTableViewBackground
-		dialogView.addSubview(separatorLineView)
-		
-		currentY += verticalPadding + separatorLineView.frame.height
-		let heightOfNext = CGFloat(30)
-		if link {
-			let linkTextField = UITextField(frame: CGRect(x: 8, y: currentY, width: dialogViewWidth - 16, height: heightOfNext))
-			linkTextField.backgroundColor = .gray
-			linkTextField.text = message
-			linkTextField.textColor = .white
-			linkTextField.font = UIFont(name: "Menlo-Regular", size: 16)
-			linkTextField.textAlignment = .center
-			dialogView.addSubview(linkTextField)
-		} else {
-			let messageLabel = UILabel(frame: CGRect(x: 8, y: currentY, width: dialogViewWidth - 16, height: heightOfNext))
-			messageLabel.text = message
-			messageLabel.textAlignment = .center
-			dialogView.addSubview(messageLabel)
-		}
-		
-		currentY += verticalPadding + heightOfNext
-		let separatorLineView2 = UIView()
-		separatorLineView2.frame.origin = CGPoint(x: 0, y: currentY)
-		separatorLineView2.frame.size = CGSize(width: dialogViewWidth, height: 1)
-		separatorLineView2.backgroundColor = UIColor.groupTableViewBackground
-		dialogView.addSubview(separatorLineView2)
-		
-		// Copy link to clipboard
-		currentY += verticalPadding + separatorLineView2.frame.height
-		let actionButton = UIButton(type: .system)
-		actionButton.frame = CGRect(x: 8, y: currentY, width: dialogViewWidth-16, height: 30)
-		if link {
-			actionButton.setTitle("COPY", for: .normal)
-			actionButton.backgroundColor = .red
-			actionButton.addTarget(self, action: #selector(copyPressed), for: .touchUpInside)
-		} else {
-			actionButton.setTitle("OK", for: .normal)
-			actionButton.addTarget(self, action: #selector(dismiss), for: .touchUpInside)
-		}
-		dialogView.addSubview(actionButton)
-		
-		let dialogViewHeight = currentY + actionButton.frame.height + 16
+	}
+	
+	func setupDialogView(withHeight height: CGFloat) {
+		// Begins below view, ready for animation
+		let dialogViewHeight = height
+		dialogView.clipsToBounds = true
 		dialogView.frame.origin = CGPoint(x: 32, y: frame.height)
 		dialogView.frame.size = CGSize(width: frame.width-64, height: dialogViewHeight)
 		dialogView.backgroundColor = UIColor.white
@@ -103,11 +114,72 @@ class AtomicAlertView: UIView {
 		addSubview(dialogView)
 	}
 	
-	@objc func copyPressed(sender: UIButton) {
-		UIPasteboard.general.string = self.linkIdentity
+	func setupTitle() {
+		let titleLabel = UILabel(frame: CGRect(x: 0, y: currentY, width: dialogViewWidth, height: dialogSubviewHeight))
+		titleLabel.text = self.title
+		titleLabel.textAlignment = .center
+		dialogView.addSubview(titleLabel)
+		
+		currentY += titleLabel.frame.height + verticalPaddingIn
+	}
+	
+	func insertSeparator() {
+		let separatorLineView = UIView(frame: CGRect(x: 0, y: currentY, width: dialogViewWidth, height: 1))
+		separatorLineView.backgroundColor = UIColor.groupTableViewBackground
+		dialogView.addSubview(separatorLineView)
+		
+		currentY += separatorLineView.frame.height + verticalPaddingIn
+	}
+	
+	func setupMessage() {
+		let messageLabel = UILabel(frame: CGRect(x: 0, y: currentY, width: dialogViewWidth, height: dialogSubviewHeight))
+		messageLabel.text = message
+		messageLabel.textAlignment = .center
+		dialogView.addSubview(messageLabel)
+		
+		currentY += messageLabel.frame.height + verticalPaddingIn
+	}
+	
+	func setupLink() {
+		let linkTextField = UITextField(frame: CGRect(x: 0, y: currentY, width: dialogViewWidth, height: dialogSubviewHeight))
+		linkTextField.backgroundColor = .gray
+		linkTextField.text = message
+		linkTextField.textColor = .white
+		linkTextField.font = UIFont(name: "Menlo-Regular", size: 16)
+		linkTextField.textAlignment = .center
+		dialogView.addSubview(linkTextField)
+		
+		currentY += linkTextField.frame.height + verticalPaddingIn
+	}
+	
+	func setupButtons(actionButtons: [UIButton]) {
+		let actionsContainerView = UIView(frame: CGRect(x: 0, y: currentY, width: dialogViewWidth, height: CGFloat(actionButtons.count) * dialogSubviewHeight))
+		for button in actionButtons {
+			button.addTarget(self, action: #selector(dismiss), for: .touchUpInside)
+			actionsContainerView.addSubview(button)
+		}
+		if actionButtons.count == 2 {
+			actionButtons[0].frame = CGRect(x: 0, y: 0, width: dialogViewWidth/2, height: dialogSubviewHeight)
+			actionButtons[1].frame = CGRect(x: dialogViewWidth/2, y: 0, width: dialogViewWidth/2, height: dialogSubviewHeight)
+		} else {
+			var dynamicHeight = CGFloat(0)
+			for button in actionButtons {
+				button.frame = CGRect(x: 0, y: 0, width: dialogViewWidth, height: dialogSubviewHeight)
+				dynamicHeight += dialogSubviewHeight
+			}
+		}
+		dialogView.addSubview(actionsContainerView)
+		
+		currentY += actionsContainerView.frame.height + verticalPaddingIn
+	}
+	
+	@objc func copyMessage(sender: UIButton) {
+		UIPasteboard.general.string = self.message
 		sender.setTitle("Link copied to clipboard", for: .normal)
 		sender.isEnabled = false
 	}
+	
+	// MARK: - Presentation & Dismissal
 	
 	func show(animated: Bool) {
 		self.backgroundView.alpha = 0
@@ -141,9 +213,5 @@ class AtomicAlertView: UIView {
 		}, completion: { (completed) in
 			self.removeFromSuperview()
 		})
-	}
-	
-	@objc func didTappedOnBackgroundView(){
-		dismiss()
 	}
 }
