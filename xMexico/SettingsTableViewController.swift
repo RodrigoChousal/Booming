@@ -145,7 +145,15 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
     }
     
     // MARK: - Text View Delegate
-    
+	
+	func textViewDidBeginEditing(_ textView: UITextView) {
+		let currentTextColor = textView.textColor
+		if currentTextColor != .black {
+			textView.text = ""
+			textView.textColor = .black
+		}
+	}
+	
     func textViewDidChange(_ textView: UITextView) {
         saveButton.isEnabled = true
         saveButton.style = .done
