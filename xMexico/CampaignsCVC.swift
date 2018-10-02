@@ -22,6 +22,12 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
 		
+		if #available(iOS 11.0, *) {
+			self.navigationController?.navigationBar.prefersLargeTitles = true
+		} else {
+			// Fallback on earlier versions
+		}
+		
 		if !fromMenu {
 			self.navigationController?.view.hide(duration: 1.0)
 		}

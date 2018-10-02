@@ -93,11 +93,14 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
         upperView.endEditing(true)
 		view.showLoadingIndicator(withMessage: "Guardando...")
 		let success = saveSettings {
-			print("here i am")
 			self.view.stopLoadingIndicator()
 		}
+		
 		if success {
+			NotificationCenter.default.post(name: .userSettingsDidChange, object: nil)
 			self.dismiss(animated: true, completion: nil)
+		} else {
+			// TODO: Present an alert view
 		}
     }
     
@@ -133,10 +136,9 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
     // MARK: - Table View Delegate
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		
         tableView.deselectRow(at: indexPath, animated: true)
-        
-        print("I felt that press")
-        
+		
         if indexPath.row == 5 { // logout cell index path
 			self.logOut()
         }

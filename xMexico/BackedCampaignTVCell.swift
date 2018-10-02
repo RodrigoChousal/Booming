@@ -10,12 +10,14 @@ import UIKit
 
 class BackedCampaignTVCell: UITableViewCell {
 
+	@IBOutlet weak var campaignImage: UIImageView!
 	@IBOutlet weak var nameLabel: UILabel!
 	@IBOutlet weak var favoriteButton: UIButton!
 	
 	override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+		nameLabel.font = UIFont(name: "Avenir-Heavy", size: CGFloat(20))
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

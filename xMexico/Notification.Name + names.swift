@@ -11,4 +11,7 @@ import Foundation
 extension Notification.Name {
 	static let profileImageFinished = Notification.Name("profileImageFinished")
 	static let backgroundImageFinished = Notification.Name("backgroundImageFinished")
+
+	static let portfolioDidChange = Notification.Name("portfolioDidChange")
+	static let userSettingsDidChange = Notification.Name("userSettingsDidChange")
 }

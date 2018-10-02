@@ -39,10 +39,11 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     
     var collectionViewOffset = CGFloat(0)
     var noAchievementsLabel = UILabel()
-    
+	
     override func viewDidLoad() {
         super.viewDidLoad()
 		
+		NotificationCenter.default.addObserver(self, selector: #selector(setupView), name: .userSettingsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(reloadImages), name: .profileImageFinished, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(reloadImages), name: .backgroundImageFinished, object: nil)
         
@@ -107,11 +108,15 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        
+		
+		print(self.scrollView.contentOffset)
+		
+		
         // TODO: Animated blur effect
         
         let stretchFactor = 1 + abs(scrollView.contentOffset.y / scrollView.frame.height)
-        
+		print(navigationController?.navigationBar.frame.height)
+		
         if scrollView.contentOffset.y < 0 {
             userBgImageView.transform = CGAffineTransform(scaleX: stretchFactor, y: stretchFactor)
             userBgImageView.frame = CGRect(x: userBgImageView.frame.origin.x, y: scrollView.contentOffset.y, width: userBgImageView.frame.width, height: self.bgImageStandardHeight - scrollView.contentOffset.y)
@@ -213,8 +218,10 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         }
     }
     
-	func setupView() {
-        
+	@objc func setupView() {
+		
+		self.extendedLayoutIncludesOpaqueBars = true
+		
         if let localUser = Global.localUser {
             
             userPortraitView.image = localUser.profilePicture.circleMasked

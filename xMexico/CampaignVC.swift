@@ -94,7 +94,7 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 		if inPortfolio {
 			let acceptButton = UIButton(type: .system)
 			acceptButton.setTitle("SI", for: .normal)
-			acceptButton.addTarget(self, action: #selector(removeFromPortfolio), for: .touchUpInside)
+			acceptButton.addTarget(self, action: #selector(removeFromPortfolioPressed), for: .touchUpInside)
 			let rejectButton = UIButton(type: .system)
 			rejectButton.setTitle("NO", for: .normal)
 			let alertView = AtomicAlertView(title: campaign.name, message: "Deseas retirar tu apoyo?", actionButtons: [acceptButton, rejectButton])
@@ -102,10 +102,9 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 		} else {
 			if let localUser = Global.localUser, let fireUser = Auth.auth().currentUser {
 				self.addToPortfolioButton.setImage(UIImage(named: "in_portfolio_button"), for: .normal)
-				self.removeFromUserPortfolio(localUser: localUser, fireUser: fireUser)
+				self.addToUserPortfolio(localUser: localUser, fireUser: fireUser)
 				self.inPortfolio = true
 				self.campaign.numberOfBackers += 1
-				
 				let alertView = AtomicAlertView(title: campaign.name, message: "Gracias por agregarnos a tu portafolio")
 				alertView.show(animated: true)
 			} else {
@@ -121,10 +120,10 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 	
 	// MARK: - Atomic Alert Helper Methods
 	
-	@objc func removeFromPortfolio() {
+	@objc func removeFromPortfolioPressed() {
 		if let localUser = Global.localUser, let fireUser = Auth.auth().currentUser {
 			self.addToPortfolioButton.setImage(UIImage(named: "add_campaign_button"), for: .normal)
-			self.addToUserPortfolio(localUser: localUser, fireUser: fireUser)
+			self.removeFromUserPortfolio(localUser: localUser, fireUser: fireUser)
 			self.inPortfolio = false
 			self.campaign.numberOfBackers -= 1
 		} else {
@@ -135,6 +134,14 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
     // MARK: - Helper Methods
 	
 	func addToUserPortfolio(localUser: LocalUser, fireUser: User) {
+		let backedCampaign = BackedCampaign(amountContributed: 0, dateContributed: Date(), parentID: self.campaign.uniqueID)
+		localUser.backedCampaigns.append(backedCampaign)
+		print("CAMPAIGN ADDED TO PORTFOLIO")
+		SessionManager.updateFireUser(fireUser: fireUser, withLocalUser: localUser)
+		NotificationCenter.default.post(name: .portfolioDidChange, object: nil)
+	}
+	
+	func removeFromUserPortfolio(localUser: LocalUser, fireUser: User) {
 		var count = 0
 		var index = 0
 		for backedCampaign in localUser.backedCampaigns {
@@ -144,13 +151,9 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 			count += 1
 		}
 		localUser.backedCampaigns.remove(at: index)
+		print("CAMPAIGN REMOVED FROM PORTFOLIO")
 		SessionManager.updateFireUser(fireUser: fireUser, withLocalUser: localUser)
-	}
-	
-	func removeFromUserPortfolio(localUser: LocalUser, fireUser: User) {
-		let backedCampaign = BackedCampaign(amountContributed: 0, dateContributed: Date(), parentID: self.campaign.uniqueID)
-		localUser.backedCampaigns.append(backedCampaign)
-		SessionManager.updateFireUser(fireUser: fireUser, withLocalUser: localUser)
+		NotificationCenter.default.post(name: .portfolioDidChange, object: nil)
 	}
 	
 	func populateAllFields() {
@@ -159,7 +162,7 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 		
 		nameLabel.text = campaign.name
 		descTextView.text = campaign.description
-		fundsAcquiredLabel.text = campaign.numberOfBackers.description
+		fundsAcquiredLabel.text = campaign.numberOfBackers.description + " apoyan"
 	}
 	
 	func setupViews() {
@@ -185,12 +188,11 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 	}
 	
 	func setupCampaignImages() {
+		displayCampaignImages()
 		if campaign.gallery.count == 0 {
 			DispatchQueue.global(qos: .background).async {
 				self.loadCampaignImages()
 			}
-		} else {
-			displayCampaignImages()
 		}
 	}
     

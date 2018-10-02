@@ -21,6 +21,8 @@ class MenuTVC: UITableViewController {
         
     override func viewDidLoad() {
         super.viewDidLoad()
+		
+		NotificationCenter.default.addObserver(self, selector: #selector(setupView), name: .userSettingsDidChange, object: nil)
         
         self.revealViewController().rearViewRevealWidth = 200
         self.revealViewController().rearViewRevealDisplacement = 0
@@ -48,6 +50,7 @@ class MenuTVC: UITableViewController {
 			if let localUser = Global.localUser {
 				let backedVC = destination.topViewController as! BackedCampaignsTVC
 				backedVC.loadBackedCampaigns(forLocalUser: localUser)
+				backedVC.loadBackedCampaignImages()
 			}
 		} else if segue.identifier == "CampaignsSegue" {
 			let destination = segue.destination as! UINavigationController
@@ -78,10 +81,8 @@ class MenuTVC: UITableViewController {
     
     // MARK: - Helper Methods
     
-    func setupView() {
-        
-        print("Setting up view in menu...")
-    
+    @objc func setupView() {
+		
         if !isVisitor {
             DispatchQueue.main.async {
                 if let user = Global.localUser {

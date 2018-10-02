@@ -13,13 +13,17 @@ class BackedCampaignsTVC: UITableViewController {
 	var backedCampaignsList = [BackedCampaign]()
 	
     @IBOutlet weak var menuButton: UIBarButtonItem!
-	
-	override func viewWillAppear(_ animated: Bool) {
-		tableView.reloadData()
-	}
-    
+		
 	override func viewDidLoad() {
         super.viewDidLoad()
+
+		NotificationCenter.default.addObserver(self, selector: #selector(portfolioDidChange), name: .portfolioDidChange, object: nil)
+		
+		if #available(iOS 11.0, *) {
+			self.navigationController?.navigationBar.prefersLargeTitles = true
+		} else {
+			// Fallback on earlier versions
+		}
 		
         if revealViewController() != nil {
             menuButton.target = self.revealViewController()
@@ -41,7 +45,6 @@ class BackedCampaignsTVC: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		print(self.backedCampaignsList.count.description + " BACKED CAMPAIGNS")
         return self.backedCampaignsList.count
     }
 
@@ -49,6 +52,7 @@ class BackedCampaignsTVC: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BackedCampaignCell", for: indexPath) as! BackedCampaignTVCell
 		if let parentCampaign = self.backedCampaignsList[indexPath.row].parentCampaign {
 			cell.nameLabel.text = parentCampaign.name
+			cell.campaignImage.image = parentCampaign.thumbnailImage
 		}
         return cell
     }
@@ -71,13 +75,37 @@ class BackedCampaignsTVC: UITableViewController {
 			}
 		}
     }
+	
+	// MARK: - Selectors
+	
+	@objc func portfolioDidChange() {
+		if let localUser = Global.localUser {
+			self.backedCampaignsList = localUser.backedCampaigns
+			self.tableView.reloadData()
+		}
+	}
 
 	// MARK: - Helper Methods
 	
 	func loadBackedCampaigns(forLocalUser localUser: LocalUser) {
 		SessionManager.downloadBackedCampaignData(fromLocalUser: localUser, completion: {
 			self.backedCampaignsList = localUser.backedCampaigns
+			self.loadBackedCampaignImages()
 			self.tableView.reloadData()
 		})
+	}
+	
+	func loadBackedCampaignImages() {
+		for backedCampaign in backedCampaignsList {
+			if let parentCampaign = backedCampaign.parentCampaign {
+				ImageManager.fetchCampaignImageFromFirebase(forCampaign: parentCampaign, kind: .THUMB, galleryFileName: nil) { (img) in
+					parentCampaign.thumbnailImage = img
+					self.tableView.reloadData()
+				}
+			} else {
+				print("IS AN ORPHAN :(")
+			}
+		}
+		
 	}
 }
