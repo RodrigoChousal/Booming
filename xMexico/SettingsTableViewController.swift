@@ -145,7 +145,7 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
     }
     
     // MARK: - Text View Delegate
-	
+		
 	func textViewDidBeginEditing(_ textView: UITextView) {
 		let currentTextColor = textView.textColor
 		if currentTextColor != .black {
@@ -161,6 +161,7 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
+			view.endEditing(true)
             return false
         } else {
             return true

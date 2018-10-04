@@ -22,12 +22,6 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		if #available(iOS 11.0, *) {
-			self.navigationController?.navigationBar.prefersLargeTitles = true
-		} else {
-			// Fallback on earlier versions
-		}
-		
 		if !fromMenu {
 			self.navigationController?.view.hide(duration: 1.0)
 		}
@@ -49,7 +43,7 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
         }
         
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.black,
-																   NSAttributedStringKey.font: UIFont(name: "Avenir-Medium", size: 17)!]
+																   NSAttributedStringKey.font: UIFont(name: "Avenir-Black", size: 22)!]
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil) // Back button w/o title in campaign details
         
         if revealViewController() != nil {

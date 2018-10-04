@@ -13,14 +13,16 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
     
     @IBOutlet weak var contentView: UIView!
     @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var iconView: UIImageView!
-    @IBOutlet weak var nameLabel: UILabel!
+	@IBOutlet weak var missionContainerView: UIView!
+	@IBOutlet weak var missionTextView: UITextView!
+	@IBOutlet weak var iconContainerView: UIView!
+	@IBOutlet weak var headerContainerView: UIView!
+	@IBOutlet weak var shareButton: UIButton!
+	@IBOutlet weak var iconView: UIImageView!
     @IBOutlet weak var descTextView: UITextView!
 	@IBOutlet weak var fundsAcquiredLabel: UILabel!
-	@IBOutlet weak var expensesTextView: UITextView!
-	@IBOutlet weak var questionsButton: UIView!
-	@IBOutlet weak var contributeBottomView: UIView!
 	@IBOutlet weak var addToPortfolioButton: UIButton!
+	@IBOutlet weak var questionsButton: UIButton!
 	
 	var campaign: Campaign!
     var photoGallery = [UIImage]()
@@ -33,9 +35,9 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-		
+				
 		scrollView.delegate = self
-		
+				
 		populateAllFields()
 		setupViews()
 		setupCampaignImages()
@@ -63,25 +65,24 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
         }
     }
 	
+	// MARK: - Scroll View Delegate
+	
+	func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		if scrollView.contentOffset.y < 0 {
+			let newHeight = headerContainerView.frame.origin.y + scrollView.contentOffset.y*(-1)
+			let newY = scrollView.contentOffset.y
+			resizeMission(newHeight: newHeight, newY: newY)
+			
+		} else {
+			let newHeight = headerContainerView.frame.origin.y
+			resizeMission(newHeight: newHeight, newY: CGFloat(0))
+		}
+	}
+	
 	// MARK: - Action Methods
 
-    @IBAction func shareFacebook(_ sender: Any) {
+    @IBAction func sharePressed(_ sender: Any) {
 		let copyAlert = AtomicAlertView(title: "Facebook", linkForCopy: "http://www.apple.com")
-		copyAlert.show(animated: true)
-    }
-    
-    @IBAction func shareTwitter(_ sender: Any) {
-		let copyAlert = AtomicAlertView(title: "Twitter", linkForCopy: "http://www.apple.com")
-		copyAlert.show(animated: true)
-    }
-    
-    @IBAction func shareWhatsapp(_ sender: Any) {
-		let copyAlert = AtomicAlertView(title: "WhatsApp", linkForCopy: "http://www.apple.com")
-		copyAlert.show(animated: true)
-    }
-    
-    @IBAction func shareMail(_ sender: Any) {
-		let copyAlert = AtomicAlertView(title: "Mail", linkForCopy: "http://www.apple.com")
 		copyAlert.show(animated: true)
     }
     
@@ -105,6 +106,7 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 				self.addToUserPortfolio(localUser: localUser, fireUser: fireUser)
 				self.inPortfolio = true
 				self.campaign.numberOfBackers += 1
+				self.fundsAcquiredLabel.text = self.campaign.numberOfBackers.description
 				let alertView = AtomicAlertView(title: campaign.name, message: "Gracias por agregarnos a tu portafolio")
 				alertView.show(animated: true)
 			} else {
@@ -112,7 +114,6 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 			}
 			
 		}
-		self.fundsAcquiredLabel.text = self.campaign.numberOfBackers.description
 		DispatchQueue.global(qos: .background).async {
 			DatabaseManager.updateCampaignBackers(campaign: self.campaign)
 		}
@@ -126,6 +127,7 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 			self.removeFromUserPortfolio(localUser: localUser, fireUser: fireUser)
 			self.inPortfolio = false
 			self.campaign.numberOfBackers -= 1
+			self.fundsAcquiredLabel.text = self.campaign.numberOfBackers.description
 		} else {
 			// TODO: Presentar Lo sentimos, hubo un problema quitando de tu lista
 		}
@@ -136,7 +138,6 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 	func addToUserPortfolio(localUser: LocalUser, fireUser: User) {
 		let backedCampaign = BackedCampaign(amountContributed: 0, dateContributed: Date(), parentID: self.campaign.uniqueID)
 		localUser.backedCampaigns.append(backedCampaign)
-		print("CAMPAIGN ADDED TO PORTFOLIO")
 		SessionManager.updateFireUser(fireUser: fireUser, withLocalUser: localUser)
 		NotificationCenter.default.post(name: .portfolioDidChange, object: nil)
 	}
@@ -151,18 +152,24 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 			count += 1
 		}
 		localUser.backedCampaigns.remove(at: index)
-		print("CAMPAIGN REMOVED FROM PORTFOLIO")
 		SessionManager.updateFireUser(fireUser: fireUser, withLocalUser: localUser)
 		NotificationCenter.default.post(name: .portfolioDidChange, object: nil)
+	}
+	
+	func resizeMission(newHeight: CGFloat, newY: CGFloat) {
+		if scrollView.contentOffset.y <= 0 {
+			missionContainerView.frame = CGRect(x: 0, y: newY, width: missionContainerView.frame.width, height: newHeight)
+			missionTextView.font = UIFont(name: "Avenir-Oblique", size: 14 + scrollView.contentOffset.y*(-0.07))
+			missionTextView.frame = CGRect(x: missionTextView.frame.origin.x, y: missionTextView.frame.origin.y, width: missionTextView.frame.width, height: newHeight - missionTextView.frame.origin.y * 2)
+		}
 	}
 	
 	func populateAllFields() {
 		navigationItem.title = campaign.name
 		navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
 		
-		nameLabel.text = campaign.name
 		descTextView.text = campaign.description
-		fundsAcquiredLabel.text = campaign.numberOfBackers.description + " apoyan"
+		fundsAcquiredLabel.text = campaign.numberOfBackers.description + " personas apoyan esta campaña"
 	}
 	
 	func setupViews() {
@@ -171,6 +178,11 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 		
 		questionsButton.layer.cornerRadius = 8.0
 		questionsButton.clipsToBounds = true
+		shareButton.layer.cornerRadius = 8.0
+		shareButton.clipsToBounds = true
+		
+		iconContainerView.layer.cornerRadius = iconContainerView.frame.width/2
+		iconContainerView.clipsToBounds = true
 		
 		darkView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height))
 		darkView.backgroundColor = .black

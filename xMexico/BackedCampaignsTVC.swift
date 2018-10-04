@@ -45,15 +45,16 @@ class BackedCampaignsTVC: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.backedCampaignsList.count
+        return 40
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BackedCampaignCell", for: indexPath) as! BackedCampaignTVCell
-		if let parentCampaign = self.backedCampaignsList[indexPath.row].parentCampaign {
-			cell.nameLabel.text = parentCampaign.name
-			cell.campaignImage.image = parentCampaign.thumbnailImage
-		}
+		cell.nameLabel.text = "TEST"
+//		if let parentCampaign = self.backedCampaignsList[indexPath.row].parentCampaign {
+//			cell.nameLabel.text = parentCampaign.name
+//			cell.campaignImage.image = parentCampaign.thumbnailImage
+//		}
         return cell
     }
 	
