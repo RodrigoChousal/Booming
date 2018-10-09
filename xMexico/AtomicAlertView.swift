@@ -23,6 +23,7 @@ class AtomicAlertView: UIView {
 	let verticalPaddingIn = CGFloat(8)
 	let dialogViewWidth = UIScreen.main.bounds.width - CGFloat(64) // TODO: Hate hardcoded values
 	let dialogSubviewHeight = CGFloat(30)
+	let buttonHeight = CGFloat(50)
 	
 	// Layout Helper
 	var currentY = CGFloat(8)
@@ -36,13 +37,14 @@ class AtomicAlertView: UIView {
 		
 		let okButton = UIButton(type: .system)
 		okButton.setTitle("OK", for: .normal)
+		okButton.backgroundColor = UIColor(red: 74/255, green: 83/255, blue: 254/255, alpha: 1.0)
+		okButton.setTitleColor(.white, for: .normal)
 		okButton.addTarget(self, action: #selector(dismiss), for: .touchUpInside)
 		
 		setupBackgroundView()
 		setupTitle()
 		insertSeparator()
 		setupMessage()
-		insertSeparator()
 		setupButtons(actionButtons: [okButton])
 		setupDialogView(withHeight: currentY)
 	}
@@ -55,14 +57,15 @@ class AtomicAlertView: UIView {
 		self.message = link
 		
 		let copyButton = UIButton(type: .system)
-		copyButton.setTitle("COPY", for: .normal)
+		copyButton.setTitle("COPIAR", for: .normal)
+		copyButton.backgroundColor = UIColor(red: 74/255, green: 83/255, blue: 254/255, alpha: 1.0)
+		copyButton.setTitleColor(.white, for: .normal)
 		copyButton.addTarget(self, action: #selector(copyMessage), for: .touchUpInside)
 		
 		setupBackgroundView()
 		setupTitle()
 		insertSeparator()
 		setupLink()
-		insertSeparator()
 		setupButtons(actionButtons: [copyButton])
 		setupDialogView(withHeight: currentY)
 	}
@@ -79,7 +82,6 @@ class AtomicAlertView: UIView {
 		setupTitle()
 		insertSeparator()
 		setupMessage()
-		insertSeparator()
 		setupButtons(actionButtons: actionButtons)
 		setupDialogView(withHeight: currentY)
 	}
@@ -116,6 +118,7 @@ class AtomicAlertView: UIView {
 	
 	func setupTitle() {
 		let titleLabel = UILabel(frame: CGRect(x: 0, y: currentY, width: dialogViewWidth, height: dialogSubviewHeight))
+		titleLabel.font = UIFont(name: "Avenir-Medium", size: CGFloat(20))
 		titleLabel.text = self.title
 		titleLabel.textAlignment = .center
 		dialogView.addSubview(titleLabel)
@@ -141,8 +144,8 @@ class AtomicAlertView: UIView {
 	}
 	
 	func setupLink() {
-		let linkTextField = UITextField(frame: CGRect(x: 0, y: currentY, width: dialogViewWidth, height: dialogSubviewHeight))
-		linkTextField.backgroundColor = .gray
+		let linkTextField = UITextField(frame: CGRect(x: horizontalPaddingIn, y: currentY, width: dialogViewWidth - horizontalPaddingIn*2, height: dialogSubviewHeight))
+		linkTextField.backgroundColor = UIColor(red: 41/255, green: 41/255, blue: 41/255, alpha: 1.0)
 		linkTextField.text = message
 		linkTextField.textColor = .white
 		linkTextField.font = UIFont(name: "Menlo-Regular", size: 16)
@@ -153,24 +156,27 @@ class AtomicAlertView: UIView {
 	}
 	
 	func setupButtons(actionButtons: [UIButton]) {
-		let actionsContainerView = UIView(frame: CGRect(x: 0, y: currentY, width: dialogViewWidth, height: CGFloat(actionButtons.count) * dialogSubviewHeight))
-		for button in actionButtons {
-			button.addTarget(self, action: #selector(dismiss), for: .touchUpInside)
-			actionsContainerView.addSubview(button)
-		}
+		var actionsContainerView = UIView()
 		if actionButtons.count == 2 {
-			actionButtons[0].frame = CGRect(x: 0, y: 0, width: dialogViewWidth/2, height: dialogSubviewHeight)
-			actionButtons[1].frame = CGRect(x: dialogViewWidth/2, y: 0, width: dialogViewWidth/2, height: dialogSubviewHeight)
+			actionsContainerView = UIView(frame: CGRect(x: 0, y: currentY, width: dialogViewWidth, height: buttonHeight))
+			actionButtons[0].frame = CGRect(x: 0, y: 0, width: dialogViewWidth/2, height: buttonHeight)
+			actionButtons[0].addTarget(self, action: #selector(dismiss), for: .touchUpInside)
+			actionsContainerView.addSubview(actionButtons[0])
+			actionButtons[1].frame = CGRect(x: dialogViewWidth/2, y: 0, width: dialogViewWidth/2, height: buttonHeight)
+			actionButtons[1].addTarget(self, action: #selector(dismiss), for: .touchUpInside)
+			actionsContainerView.addSubview(actionButtons[1])
 		} else {
+			actionsContainerView = UIView(frame: CGRect(x: 0, y: currentY, width: dialogViewWidth, height: CGFloat(actionButtons.count) * buttonHeight))
 			var dynamicHeight = CGFloat(0)
 			for button in actionButtons {
-				button.frame = CGRect(x: 0, y: 0, width: dialogViewWidth, height: dialogSubviewHeight)
-				dynamicHeight += dialogSubviewHeight
+				button.frame = CGRect(x: 0, y: 0, width: dialogViewWidth, height: buttonHeight)
+				dynamicHeight += buttonHeight
+				actionsContainerView.addSubview(button)
 			}
 		}
 		dialogView.addSubview(actionsContainerView)
 		
-		currentY += actionsContainerView.frame.height + verticalPaddingIn
+		currentY += actionsContainerView.frame.height
 	}
 	
 	@objc func copyMessage(sender: UIButton) {

@@ -785,16 +785,8 @@
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1pU-Ac-7ov">
                                                 <rect key="frame" x="0.0" y="175" width="375" height="245"/>
                                                 <subviews>
-                                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AOb-Be-hDy">
-                                                        <rect key="frame" x="15" y="54" width="345" height="191"/>
-                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor Lorem ipsum dolor sit er elit lamet, consectetaur cillium</string>
-                                                        <color key="textColor" red="0.15294117647058825" green="0.15294117647058825" blue="0.15294117647058825" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <fontDescription key="fontDescription" name="Avenir-Light" family="Avenir" pointSize="16"/>
-                                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                                    </textView>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Descripción:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ubD-Pf-qbt">
-                                                        <rect key="frame" x="15" y="15" width="345" height="25"/>
+                                                        <rect key="frame" x="15" y="21" width="345" height="25"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="25" id="Syf-mY-7iZ"/>
                                                         </constraints>
@@ -802,16 +794,24 @@
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
+                                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AOb-Be-hDy">
+                                                        <rect key="frame" x="15" y="46" width="345" height="191"/>
+                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor Lorem ipsum dolor sit er elit lamet, consectetaur cillium</string>
+                                                        <color key="textColor" red="0.15294117647058825" green="0.15294117647058825" blue="0.15294117647058825" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <fontDescription key="fontDescription" name="Avenir-Light" family="Avenir" pointSize="16"/>
+                                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                    </textView>
                                                 </subviews>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
-                                                    <constraint firstItem="ubD-Pf-qbt" firstAttribute="top" secondItem="1pU-Ac-7ov" secondAttribute="top" constant="15" id="6Vo-Lb-naZ"/>
-                                                    <constraint firstItem="AOb-Be-hDy" firstAttribute="top" secondItem="ubD-Pf-qbt" secondAttribute="bottom" constant="14" id="Cjh-JN-Ft1"/>
+                                                    <constraint firstItem="ubD-Pf-qbt" firstAttribute="top" secondItem="1pU-Ac-7ov" secondAttribute="top" constant="21" id="6Vo-Lb-naZ"/>
+                                                    <constraint firstItem="AOb-Be-hDy" firstAttribute="top" secondItem="ubD-Pf-qbt" secondAttribute="bottom" id="Cjh-JN-Ft1"/>
                                                     <constraint firstItem="ubD-Pf-qbt" firstAttribute="leading" secondItem="1pU-Ac-7ov" secondAttribute="leading" constant="15" id="EQQ-Sk-G6J"/>
                                                     <constraint firstAttribute="trailing" secondItem="AOb-Be-hDy" secondAttribute="trailing" constant="15" id="ela-5V-CET"/>
                                                     <constraint firstAttribute="trailing" secondItem="ubD-Pf-qbt" secondAttribute="trailing" constant="15" id="fdi-90-B1p"/>
                                                     <constraint firstItem="AOb-Be-hDy" firstAttribute="leading" secondItem="1pU-Ac-7ov" secondAttribute="leading" constant="15" id="gqJ-ih-hDB"/>
-                                                    <constraint firstAttribute="bottom" secondItem="AOb-Be-hDy" secondAttribute="bottom" id="l6d-hh-mQU"/>
+                                                    <constraint firstAttribute="bottom" secondItem="AOb-Be-hDy" secondAttribute="bottom" constant="8" id="l6d-hh-mQU"/>
                                                 </constraints>
                                             </view>
                                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XZf-iI-mCr">
@@ -1429,22 +1429,22 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="200"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.84705882352941175" green="0.84705882352941175" blue="0.84705882352941175" alpha="0.20000000000000001" colorSpace="calibratedRGB"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Xj9-45-5Ib">
+                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="15" minimumInteritemSpacing="15" id="Xj9-45-5Ib">
                                     <size key="itemSize" width="238" height="141"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="30" minY="0.0" maxX="30" maxY="0.0"/>
+                                    <inset key="sectionInset" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="GalleryCell" id="1f5-RQ-zUm" customClass="GalleryCell" customModule="xMexico" customModuleProvider="target">
-                                        <rect key="frame" x="30" y="29.666666666666668" width="238" height="141"/>
+                                        <rect key="frame" x="20" y="29.666666666666668" width="238" height="141"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="238" height="141"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LfE-Gk-soc">
-                                                    <rect key="frame" x="0.0" y="-1" width="238" height="141"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="LfE-Gk-soc">
+                                                    <rect key="frame" x="0.0" y="0.0" width="238" height="141"/>
                                                 </imageView>
                                             </subviews>
                                         </view>

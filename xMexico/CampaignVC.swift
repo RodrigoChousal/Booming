@@ -82,7 +82,7 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 	// MARK: - Action Methods
 
     @IBAction func sharePressed(_ sender: Any) {
-		let copyAlert = AtomicAlertView(title: "Facebook", linkForCopy: "http://www.apple.com")
+		let copyAlert = AtomicAlertView(title: "¡Comparte esta campaña!", linkForCopy: "http://www.apple.com")
 		copyAlert.show(animated: true)
     }
     
@@ -95,20 +95,26 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 		if inPortfolio {
 			let acceptButton = UIButton(type: .system)
 			acceptButton.setTitle("SI", for: .normal)
+			acceptButton.backgroundColor = UIColor(red: 39/255, green: 174/255, blue: 96/255, alpha: 1.0)
+			acceptButton.setTitleColor(.white, for: .normal)
 			acceptButton.addTarget(self, action: #selector(removeFromPortfolioPressed), for: .touchUpInside)
 			let rejectButton = UIButton(type: .system)
 			rejectButton.setTitle("NO", for: .normal)
+			rejectButton.backgroundColor = UIColor(red: 225/255, green: 74/255, blue: 59/255, alpha: 1.0)
+			rejectButton.setTitleColor(.white, for: .normal)
 			let alertView = AtomicAlertView(title: campaign.name, message: "Deseas retirar tu apoyo?", actionButtons: [acceptButton, rejectButton])
 			alertView.show(animated: true)
 		} else {
 			if let localUser = Global.localUser, let fireUser = Auth.auth().currentUser {
+				let generator = UINotificationFeedbackGenerator()
+				generator.notificationOccurred(.success)
 				self.addToPortfolioButton.setImage(UIImage(named: "in_portfolio_button"), for: .normal)
 				self.addToUserPortfolio(localUser: localUser, fireUser: fireUser)
 				self.inPortfolio = true
 				self.campaign.numberOfBackers += 1
-				self.fundsAcquiredLabel.text = self.campaign.numberOfBackers.description
-				let alertView = AtomicAlertView(title: campaign.name, message: "Gracias por agregarnos a tu portafolio")
-				alertView.show(animated: true)
+				self.fundsAcquiredLabel.text = self.campaign.numberOfBackers.description + " personas apoyan esta campaña"
+//				let alertView = AtomicAlertView(title: campaign.name, message: "Gracias por agregarnos a tu portafolio")
+//				alertView.show(animated: true)
 			} else {
 				// TODO: Presentar Lo sentimos, hubo un problema agregando a tu lista
 			}
@@ -122,12 +128,14 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 	// MARK: - Atomic Alert Helper Methods
 	
 	@objc func removeFromPortfolioPressed() {
+		let generator = UINotificationFeedbackGenerator()
+		generator.notificationOccurred(.error)
 		if let localUser = Global.localUser, let fireUser = Auth.auth().currentUser {
 			self.addToPortfolioButton.setImage(UIImage(named: "add_campaign_button"), for: .normal)
 			self.removeFromUserPortfolio(localUser: localUser, fireUser: fireUser)
 			self.inPortfolio = false
 			self.campaign.numberOfBackers -= 1
-			self.fundsAcquiredLabel.text = self.campaign.numberOfBackers.description
+			self.fundsAcquiredLabel.text = self.campaign.numberOfBackers.description + " personas apoyan esta campaña"
 		} else {
 			// TODO: Presentar Lo sentimos, hubo un problema quitando de tu lista
 		}
