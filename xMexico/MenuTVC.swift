@@ -11,19 +11,25 @@ import UIKit
 class MenuTVC: UITableViewController {
     
     var indicatorView = UIView()
+	let impact = UIImpactFeedbackGenerator(style: .light)
+	let profilePicturePlaceholderView = LoadingPlaceholderView()
 
     @IBOutlet weak var userCell: UITableViewCell!
     @IBOutlet weak var accountTitleLabel: UILabel!
+	@IBOutlet weak var userPictureContainerView: UIView!
     @IBOutlet weak var userPictureView: UIImageView!
     @IBOutlet weak var userNameLabel: UILabel!
-    
     @IBOutlet weak var campaignsCell: UITableViewCell!
         
     override func viewDidLoad() {
         super.viewDidLoad()
 		
+		userPictureContainerView.layer.cornerRadius = userPictureContainerView.frame.width/2
+		userPictureContainerView.clipsToBounds = true
+		
 		NotificationCenter.default.addObserver(self, selector: #selector(setupView), name: .userSettingsDidChange, object: nil)
-        
+		NotificationCenter.default.addObserver(self, selector: #selector(uncoverProfilePicture), name: .profileImageFinished, object: nil)
+		
         self.revealViewController().rearViewRevealWidth = 200
         self.revealViewController().rearViewRevealDisplacement = 0
         self.revealViewController().springDampingRatio = 1.0
@@ -32,8 +38,13 @@ class MenuTVC: UITableViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+		impact.impactOccurred()
         if let localUser = Global.localUser {
-            userPictureView.image = localUser.profilePicture.circleMasked
+			if let profilePicture = localUser.profilePicture {
+				userPictureView.image = profilePicture.circleMasked
+			} else {
+				profilePicturePlaceholderView.cover(userPictureContainerView)
+			}
         }
     }
 
@@ -85,10 +96,11 @@ class MenuTVC: UITableViewController {
 		
         if !isVisitor {
             DispatchQueue.main.async {
-                if let user = Global.localUser {
-                    self.userNameLabel.text = user.fullName
-                    self.userPictureView.image = user.profilePicture.circleMasked
-                }
+				if let user = Global.localUser {
+					if let profilePicture = user.profilePicture {
+						self.userPictureView.image = profilePicture.circleMasked
+					}
+				}
             }
             
         } else {
@@ -109,4 +121,16 @@ class MenuTVC: UITableViewController {
             userCell.contentView.addSubview(accessLabel)
         }
     }
+	
+	@objc func uncoverProfilePicture() {
+		profilePicturePlaceholderView.uncover()
+		DispatchQueue.main.async {
+			if let user = Global.localUser {
+				if let profilePicture = user.profilePicture {
+					self.userPictureView.image = profilePicture.circleMasked
+				}
+			}
+		}
+	}
 }
+

@@ -9,9 +9,11 @@
 import UIKit
 
 class CampaignCell: UICollectionViewCell {
-    
+	
+	let imagePlaceholder = LoadingPlaceholderView()
     @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var imageView: UIImageView!
+	@IBOutlet weak var imageContainerView: UIView!
+	@IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var infoLabel: UILabel!
-    
+
 }

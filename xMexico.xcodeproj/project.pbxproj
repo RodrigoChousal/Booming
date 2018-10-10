@@ -46,6 +46,10 @@
 		C2A039F0214045B8007CF467 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A039EF214045B8007CF467 /* SessionManager.swift */; };
 		C2C66269213EEDFF0004A40D /* BackedCampaignTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C66268213EEDFF0004A40D /* BackedCampaignTVCell.swift */; };
 		C2C6626C213EF5AB0004A40D /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C6626B213EF5AB0004A40D /* DatabaseManager.swift */; };
+		C2C874B6216D5C190096606D /* Coverable+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C874B2216D5C160096606D /* Coverable+UIKit.swift */; };
+		C2C874B7216D5C190096606D /* Coverable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C874B3216D5C170096606D /* Coverable.swift */; };
+		C2C874B8216D5C190096606D /* LoadingPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C874B4216D5C180096606D /* LoadingPlaceholderView.swift */; };
+		C2C874B9216D5C190096606D /* UIBezierPath+.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C874B5216D5C190096606D /* UIBezierPath+.swift */; };
 		C2EA672B2076AD0C000206DE /* Pods_xMexico.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73B95FF35028D57B661E40D2 /* Pods_xMexico.framework */; };
 /* End PBXBuildFile section */
 
@@ -96,6 +100,10 @@
 		C2A039EF214045B8007CF467 /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		C2C66268213EEDFF0004A40D /* BackedCampaignTVCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackedCampaignTVCell.swift; sourceTree = "<group>"; };
 		C2C6626B213EF5AB0004A40D /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+		C2C874B2216D5C160096606D /* Coverable+UIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Coverable+UIKit.swift"; sourceTree = "<group>"; };
+		C2C874B3216D5C170096606D /* Coverable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Coverable.swift; sourceTree = "<group>"; };
+		C2C874B4216D5C180096606D /* LoadingPlaceholderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingPlaceholderView.swift; sourceTree = "<group>"; };
+		C2C874B5216D5C190096606D /* UIBezierPath+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIBezierPath+.swift"; sourceTree = "<group>"; };
 		F5436754EE1AC40DD2E7461F /* Pods-xMexico.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-xMexico.release.xcconfig"; path = "Pods/Target Support Files/Pods-xMexico/Pods-xMexico.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -161,6 +169,7 @@
 				33FA7EB51E593AB6007648C7 /* Campaigns */,
 				C2C6626A213EEE090004A40D /* Liked Campaigns */,
 				C29DECCF215C010B00E54C28 /* User */,
+				C2C874B1216D5BFF0096606D /* LoadingPlaceholderView */,
 				33780C1C1E594BF600E11D6B /* Extensions */,
 				33EA145A1E592EF80062A39D /* SWRevealViewController */,
 				33E445081E75CB6000ACEB0D /* View Elements */,
@@ -265,6 +274,17 @@
 				C2C66268213EEDFF0004A40D /* BackedCampaignTVCell.swift */,
 			);
 			name = "Liked Campaigns";
+			sourceTree = "<group>";
+		};
+		C2C874B1216D5BFF0096606D /* LoadingPlaceholderView */ = {
+			isa = PBXGroup;
+			children = (
+				C2C874B3216D5C170096606D /* Coverable.swift */,
+				C2C874B2216D5C160096606D /* Coverable+UIKit.swift */,
+				C2C874B4216D5C180096606D /* LoadingPlaceholderView.swift */,
+				C2C874B5216D5C190096606D /* UIBezierPath+.swift */,
+			);
+			name = LoadingPlaceholderView;
 			sourceTree = "<group>";
 		};
 		C2E41604212776540084B0A7 /* Gallery */ = {
@@ -428,12 +448,15 @@
 				3309BC091E9DBEDF0055E58E /* SettingsTableViewController.swift in Sources */,
 				3309BC071E9DBA350055E58E /* SlideLeftSegue.swift in Sources */,
 				330BC4F71E56682200C64E66 /* CampaignVC.swift in Sources */,
+				C2C874B6216D5C190096606D /* Coverable+UIKit.swift in Sources */,
 				33780C1B1E594BF100E11D6B /* UIImage + mask.swift in Sources */,
 				335BF3A41E6368A400929D2A /* SegmentedControl.swift in Sources */,
 				C2C66269213EEDFF0004A40D /* BackedCampaignTVCell.swift in Sources */,
 				C2289320215C375400A04110 /* AtomicAlertView.swift in Sources */,
 				331879831E98698900EE42F8 /* UIView + showLoadingIndicator.swift in Sources */,
 				336C14271E555A5D002B0033 /* CampaignCell.swift in Sources */,
+				C2C874B8216D5C190096606D /* LoadingPlaceholderView.swift in Sources */,
+				C2C874B7216D5C190096606D /* Coverable.swift in Sources */,
 				C2A039F0214045B8007CF467 /* SessionManager.swift in Sources */,
 				332F38541EFDA6E700309918 /* CustomSearchController.swift in Sources */,
 				C266DA2D214C2FD200D4FD61 /* Notification.Name + names.swift in Sources */,
@@ -447,6 +470,7 @@
 				332F38501EFD9A2700309918 /* SearchTableViewController.swift in Sources */,
 				33E4450A1E75D70D00ACEB0D /* Constants.swift in Sources */,
 				33D248BA1F2A616A00FED90E /* BackedCampaignsTVC.swift in Sources */,
+				C2C874B9216D5C190096606D /* UIBezierPath+.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

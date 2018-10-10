@@ -26,8 +26,12 @@ class SessionManager {
 					  "backed_campaigns" : DatabaseManager.uploadableBackedCampaigns(fromArray: localUser.backedCampaigns)])
 		let changeRequest = fireUser.createProfileChangeRequest()
 		changeRequest.displayName = localUser.firstName + " " + localUser.lastName
-		ImageManager.postImageToFirebase(forFireUser: fireUser, image: localUser.profilePicture, completion: nil)
-		ImageManager.postBackgroundImageToFirebase(forFireUser: fireUser, image: localUser.backgroundPicture!, completion: nil)
+		if let profilePicture = localUser.profilePicture {
+			ImageManager.postImageToFirebase(forFireUser: fireUser, image: profilePicture, completion: nil)
+		}
+		if let backgroundPicture = localUser.backgroundPicture {
+			ImageManager.postBackgroundImageToFirebase(forFireUser: fireUser, image: backgroundPicture, completion: nil)
+		}
 	}
 	
 	static func updateFireUser(fireUser: User, withLocalUser localUser: LocalUser) {

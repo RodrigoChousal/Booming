@@ -105,8 +105,8 @@ class LocalUser {
     var dateCreated: Date
 	var backedCampaigns: [BackedCampaign]
 	
-	// Obligatory properties with default values
-	var profilePicture: UIImage = #imageLiteral(resourceName: "placeholder")
+	// Obligatory properties that must be loaded
+	var profilePicture: UIImage?
     
     // Optional properties (set later in Settings VC)
     var backgroundPicture: UIImage?

@@ -17,8 +17,10 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var contentView: UIView!
     @IBOutlet weak var menuButton: UIBarButtonItem!
-    
-    @IBOutlet weak var userBgImageView: UIImageView!
+	
+	@IBOutlet weak var backgroundPictureContainerView: UIView!
+	@IBOutlet weak var profilePictureContainerView: UIView!
+	@IBOutlet weak var userBgImageView: UIImageView!
     @IBOutlet weak var userPortraitView: UIImageView!
     
     @IBOutlet weak var userDetailsView: UIView!
@@ -31,7 +33,9 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     
     @IBOutlet weak var achievementCollectionHeaderView: UIView!
     @IBOutlet weak var achievementCollectionView: UICollectionView!
-    
+	
+	let profilePicturePlaceholderView = LoadingPlaceholderView()
+	let backgroundPicturePlaceholderView = LoadingPlaceholderView()
     let imagePicker = UIImagePickerController()
     var pickingProfile = false
     var pickingBackground = false
@@ -44,8 +48,8 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         super.viewDidLoad()
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(setupView), name: .userSettingsDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(reloadImages), name: .profileImageFinished, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(reloadImages), name: .backgroundImageFinished, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(uncoverProfilePicture), name: .profileImageFinished, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(uncoverBackgroundPicture), name: .backgroundImageFinished, object: nil)
         
         imagePicker.delegate = self
         scrollView.delegate = self
@@ -113,9 +117,7 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
 		
 		
         // TODO: Animated blur effect
-        
         let stretchFactor = 1 + abs(scrollView.contentOffset.y / scrollView.frame.height)
-		print(navigationController?.navigationBar.frame.height)
 		
         if scrollView.contentOffset.y < 0 {
             userBgImageView.transform = CGAffineTransform(scaleX: stretchFactor, y: stretchFactor)
@@ -221,10 +223,24 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
 	@objc func setupView() {
 		
 		self.extendedLayoutIncludesOpaqueBars = true
+		profilePictureContainerView.layer.cornerRadius = profilePictureContainerView.frame.width/2
+		profilePictureContainerView.clipsToBounds = true
+		userPortraitView.layer.cornerRadius = userPortraitView.frame.width/2
+		userPortraitView.clipsToBounds = true
 		
         if let localUser = Global.localUser {
-            
-            userPortraitView.image = localUser.profilePicture.circleMasked
+			
+			if let profilePicture = localUser.profilePicture {
+				userPortraitView.image = profilePicture.circleMasked
+			} else {
+				profilePicturePlaceholderView.cover(profilePictureContainerView)
+			}
+			
+			if let backgroundPicture = localUser.backgroundPicture {
+				userBgImageView.image = backgroundPicture
+			} else {
+				backgroundPicturePlaceholderView.cover(backgroundPictureContainerView)
+			}
             
             userBgImageView.image = localUser.backgroundPicture
             userBgImageView.contentMode = .scaleAspectFill
@@ -268,10 +284,25 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
         }
     }
 	
-	@objc func reloadImages() {
+	@objc func uncoverProfilePicture() {
+		profilePicturePlaceholderView.uncover()
 		if let localUser = Global.localUser {
-			userPortraitView.image = localUser.profilePicture.circleMasked
-			userBgImageView.image = localUser.backgroundPicture
+			if let profilePicture = localUser.profilePicture {
+				userPortraitView.image = profilePicture.circleMasked
+			} else {
+				print("FALSE POSITIVE: Profile picture finished downloading but local storage is nil.")
+			}
+		}
+	}
+	
+	@objc func uncoverBackgroundPicture() {
+		backgroundPicturePlaceholderView.uncover()
+		if let localUser = Global.localUser {
+			if let backgroundPicture = localUser.backgroundPicture {
+				userBgImageView.image = backgroundPicture
+			} else {
+				print("FALSE POSITIVE: Background finished downloading but local storage is nil.")
+			}
 		}
 	}
 	

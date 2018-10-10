@@ -12,8 +12,7 @@ import FirebaseAuth
 
 class SettingsTableViewController: UITableViewController, UITextViewDelegate, UITextFieldDelegate {
     
-    @IBOutlet weak var upperView: UIView!
-    @IBOutlet weak var saveButton: UIBarButtonItem!
+	@IBOutlet weak var saveButton: UIBarButtonItem!
 
     @IBOutlet weak var firstNameField: UITextField!
     @IBOutlet weak var lastNameField: UITextField!
@@ -21,7 +20,8 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
     @IBOutlet weak var bioTextView: UITextView!
     @IBOutlet weak var cityField: UITextField!
     @IBOutlet weak var stateField: UITextField!
-    
+	
+	let endEditingButton = UIButton(type: .system)
     var keyboardVisible = false
     var successfulSave = false
 	
@@ -35,29 +35,13 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
         
         saveButton.isEnabled = false
         saveButton.setTitleTextAttributes([NSAttributedStringKey.font : UIFont(name: "Avenir-Medium", size: 15)!], for: .normal)
-        
-        bioTextView.delegate = self
-        
-        upperView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SettingsTableViewController.hideKeyboard)))
-        
-        firstNameField.delegate = self
-        lastNameField.delegate = self
-        emailField.delegate = self
-        cityField.delegate = self
-        stateField.delegate = self
-        
-        firstNameField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-        lastNameField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-        emailField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-        cityField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-        stateField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-        
-        emailField.isUserInteractionEnabled = false
-        
+		
+		setupCancelEditingButton()
+		setupTextFields()
         fillTextFields()
     }
     
-    override func viewWillAppear(_ animated: Bool) {        
+    override func viewWillAppear(_ animated: Bool) {
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
@@ -84,13 +68,13 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
     
     @IBAction func cancel(_ sender: Any) {
         // Hide keyboard and dismiss changes
-        upperView.endEditing(true)
+        tableView.endEditing(true)
         self.dismiss(animated: true, completion: nil)
     }
     
     @IBAction func save(_ sender: Any) {
         // Hide keyboard and save changes
-        upperView.endEditing(true)
+        tableView.endEditing(true)
 		view.showLoadingIndicator(withMessage: "Guardando...")
 		let success = saveSettings {
 			self.view.stopLoadingIndicator()
@@ -137,9 +121,11 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		
+		print(indexPath.row)
+		
         tableView.deselectRow(at: indexPath, animated: true)
 		
-        if indexPath.row == 5 { // logout cell index path
+        if indexPath.row == 10 { // logout cell index path
 			self.logOut()
         }
     }
@@ -216,18 +202,58 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
             if user.state != nil { stateField.text = user.state }
         }
     }
-    
+	
+	func setupTextFields() {
+		firstNameField.delegate = self
+		lastNameField.delegate = self
+		emailField.delegate = self
+		cityField.delegate = self
+		stateField.delegate = self
+		bioTextView.delegate = self
+		
+		firstNameField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+		lastNameField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+		emailField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+		cityField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+		stateField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+		
+		emailField.isUserInteractionEnabled = false
+	}
+	
+	func setupCancelEditingButton() {
+		endEditingButton.frame = CGRect(x: 0, y: UIScreen.main.bounds.height, width: UIScreen.main.bounds.width, height: 50)
+		endEditingButton.backgroundColor = UIColor(red: 74/255, green: 83/255, blue: 254/255, alpha: 1.0)
+		endEditingButton.setAttributedTitle(NSAttributedString(string: "ESCONDER TECLADO",
+													 attributes: [NSAttributedStringKey.font : UIFont(name: "Avenir-Medium",
+																									  size: CGFloat(18))!,
+																  NSAttributedStringKey.foregroundColor : UIColor.white]),
+													 for: .normal)
+		endEditingButton.addTarget(self, action: #selector(self.hideKeyboard), for: .touchUpInside)
+		self.tableView.addSubview(endEditingButton)
+	}
+	
     @objc func keyboardWillShow(notification: NSNotification) {
+		var keyboardHeight = CGFloat()
+		if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+			let keyboardRectangle = keyboardFrame.cgRectValue
+			keyboardHeight = keyboardRectangle.origin.y
+		}
+		UIButton.animate(withDuration: 0.3) {
+			self.endEditingButton.frame = CGRect(x: 0, y: UIScreen.main.bounds.height-keyboardHeight, width: UIScreen.main.bounds.width, height: 60)
+		}
         keyboardVisible = true
     }
-    
+	
     @objc func keyboardWillHide(notification: NSNotification) {
+		UIButton.animate(withDuration: 0.3) {
+			self.endEditingButton.frame = CGRect(x: 0, y: UIScreen.main.bounds.height, width: UIScreen.main.bounds.width, height: 60)
+		}
         keyboardVisible = false
     }
-    
+	
     @objc func hideKeyboard() {
         if keyboardVisible {
-          upperView.endEditing(true)
+          tableView.endEditing(true)
         }
     }
 }

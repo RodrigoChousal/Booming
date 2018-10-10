@@ -28,6 +28,9 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
     var photoGallery = [UIImage]()
     var galleryController = GalleryVC()
 	
+	let loadingPlaceholderView = LoadingPlaceholderView()
+	let loadingGalleryView = LoadingPlaceholderView()
+	
 	var inPortfolio = false
     
     var darkView = UIView()
@@ -113,12 +116,12 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 				self.inPortfolio = true
 				self.campaign.numberOfBackers += 1
 				self.fundsAcquiredLabel.text = self.campaign.numberOfBackers.description + " personas apoyan esta campaña"
-//				let alertView = AtomicAlertView(title: campaign.name, message: "Gracias por agregarnos a tu portafolio")
-//				alertView.show(animated: true)
+				let alertView = AtomicAlertView(title: campaign.name, message: "Gracias por agregarnos a tu portafolio")
+				alertView.show(animated: true)
 			} else {
-				// TODO: Presentar Lo sentimos, hubo un problema agregando a tu lista
+				let alertView = AtomicAlertView(title: campaign.name, message: "Hubo un problema agregando a tu portafolio")
+				alertView.show(animated: true)
 			}
-			
 		}
 		DispatchQueue.global(qos: .background).async {
 			DatabaseManager.updateCampaignBackers(campaign: self.campaign)
@@ -189,6 +192,8 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 		shareButton.layer.cornerRadius = 8.0
 		shareButton.clipsToBounds = true
 		
+		iconView.layer.cornerRadius = iconView.frame.width/2
+		iconView.clipsToBounds = true
 		iconContainerView.layer.cornerRadius = iconContainerView.frame.width/2
 		iconContainerView.clipsToBounds = true
 		
@@ -218,20 +223,19 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
     
     func loadCampaignImages() { // maybe reload data as images load, instead of waiting for all
 		
-		ImageManager.fetchCampaignImageFromFirebase(forCampaign: campaign, kind: .MAIN, galleryFileName: nil) { (img) in
-			self.campaign.mainImage = img
-			self.displayCampaignImages()
-		}
-		
+		loadingPlaceholderView.cover(self.iconContainerView)
 		ImageManager.fetchCampaignImageFromFirebase(forCampaign: campaign, kind: .THUMB, galleryFileName: nil) { (img) in
 			if let maskedImage = img.circleMasked {
+				self.loadingPlaceholderView.uncover()
 				self.campaign.thumbnailImage = maskedImage
 				self.displayCampaignImages()
 			}
 		}
 		
+		loadingGalleryView.cover(self.galleryController.galleryCollectionView)
 		for fileName in campaign.galleryImageFileNames {
 			ImageManager.fetchCampaignImageFromFirebase(forCampaign: campaign, kind: .GALLERY, galleryFileName: fileName) { (img) in
+				self.loadingGalleryView.uncover()
 				self.campaign.gallery.append(img)
 				self.displayCampaignImages()
 			}
@@ -239,7 +243,7 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
     }
     
     func displayCampaignImages() {
-        iconView.image = campaign.thumbnailImage
+        iconView.image = campaign.thumbnailImage.circleMasked
         photoGallery = campaign.gallery
         galleryController.photoGallery = self.photoGallery
         galleryController.galleryCollectionView.reloadData()

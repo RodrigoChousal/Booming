@@ -12,13 +12,18 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
         
     @IBOutlet weak var menuButton: UIBarButtonItem!
 	
+	var loadingPlaceholderCount = 4
+	var loadingCellViews = [LoadingPlaceholderView(),
+							LoadingPlaceholderView(),
+							LoadingPlaceholderView(),
+							LoadingPlaceholderView()] // same amount as loadingPlaceholderCount
 	var fromMenu = false
 	var isLoading = false
-    var campaignImages = [UIImage]()
+	var campaignImages = [UIImage]()
     var topFilter = UIButton(type: .system)
     var shadowView = UIView()
     var optionsTableView = UITableView(frame: CGRect(x: 0, y: -200, width: UIScreen.main.bounds.width, height: 200), style: .plain)
-    
+	
     override func viewDidLoad() {
         super.viewDidLoad()
 		
@@ -40,7 +45,11 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
 				self.collectionView?.reloadData()
 				self.isLoading = false
 			}
-        }
+		} else {
+			for campaign in Global.campaignList {
+				campaignImages.append(campaign.mainImage)
+			}
+		}
         
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.black,
 																   NSAttributedStringKey.font: UIFont(name: "Avenir-Black", size: 22)!]
@@ -88,7 +97,7 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if isLoading {
-            return 4
+            return loadingPlaceholderCount
         } else {
             return Global.campaignList.count
         }
@@ -97,18 +106,29 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CampaignCell", for: indexPath) as! CampaignCell
         
-        if isLoading { // Show template cell
-            cell.imageView.image = #imageLiteral(resourceName: "placeholder")
-            
-            cell.nameLabel.backgroundColor = UIColor(red: 143/255, green: 143/255, blue: 143/255, alpha: 0.5)
-            cell.nameLabel.frame = CGRect(x: cell.nameLabel.frame.origin.x, y: cell.nameLabel.frame.origin.y, width: cell.nameLabel.frame.width, height: 15)
-            
-            cell.infoLabel.backgroundColor = UIColor(red: 143/255, green: 143/255, blue: 143/255, alpha: 0.5)
-            cell.infoLabel.frame = CGRect(x: cell.infoLabel.frame.origin.x, y: cell.infoLabel.frame.origin.y, width: cell.infoLabel.frame.width, height: 15)
-            
+        if isLoading { // Show loading cells
+			
+			print("COVERING CELL: " + indexPath.row.description)
+			self.loadingCellViews[indexPath.row].cover(cell)
+			
         } else { // Load content into cell
-            cell.imageView.image = Global.campaignList[indexPath.row].mainImage
-            
+			
+			// Uncover placeholders
+			for placeholder in loadingCellViews {
+				print("UNCOVERING CELL: " + indexPath.row.description)
+				placeholder.uncover()
+			}
+			
+			// Cover loading images
+			if campaignImages.count - 1 >= indexPath.row {
+				cell.imageView.image = Global.campaignList[indexPath.row].mainImage
+				print("UNCOVERING CELL: " + indexPath.row.description)
+				cell.imagePlaceholder.uncover()
+			} else {
+				print("COVERING CELL: " + indexPath.row.description)
+				cell.imagePlaceholder.cover(cell.imageContainerView)
+			}
+			
             cell.nameLabel.text = Global.campaignList[indexPath.row].name
             cell.nameLabel.backgroundColor = .clear
             cell.nameLabel.sizeToFit()
@@ -222,7 +242,6 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
             
             darkenCollectionView()
 			
-			
             collectionView?.addSubview(optionsTableView)
             optionsTableView.alpha = 1.0
             
@@ -286,7 +305,6 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
         default:
             Global.campaignList = Global.campaignList.sorted(by: { $0.name > $1.name })
             collectionView?.reloadData()
-            
         }
     }
 }

@@ -36,15 +36,21 @@ class GalleryVC: UIViewController, UICollectionViewDelegate, UICollectionViewDat
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return photoGallery.count
+		if photoGallery.count == 0 {
+			return 3
+		} else {
+			return photoGallery.count
+		}
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! GalleryCell
         
-        // Configure the cell
-        cell.imageView.image = photoGallery[indexPath.row]
-        
+		if photoGallery.count > 0 {
+			// Configure the cell
+			cell.imageView.image = photoGallery[indexPath.row]
+		}
+		
         return cell
     }
     
