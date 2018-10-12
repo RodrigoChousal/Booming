@@ -115,17 +115,14 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
 			
 			// Uncover placeholders
 			for placeholder in loadingCellViews {
-				print("UNCOVERING CELL: " + indexPath.row.description)
 				placeholder.uncover()
 			}
 			
 			// Cover loading images
 			if campaignImages.count - 1 >= indexPath.row {
 				cell.imageView.image = Global.campaignList[indexPath.row].mainImage
-				print("UNCOVERING CELL: " + indexPath.row.description)
 				cell.imagePlaceholder.uncover()
 			} else {
-				print("COVERING CELL: " + indexPath.row.description)
 				cell.imagePlaceholder.cover(cell.imageContainerView)
 			}
 			
@@ -303,13 +300,11 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
 			if let localUser = Global.localUser {
 				var interestList = [Campaign]()
 				var noInterestList = [Campaign]()
-				for interest in localUser.interests {
-					for campaign in Global.campaignList {
-						if campaign.type == interest {
-							interestList.append(campaign)
-						} else {
-							noInterestList.append(campaign)
-						}
+				for campaign in Global.campaignList {
+					if localUser.interests.contains(campaign.type) {
+						interestList.append(campaign)
+					} else {
+						noInterestList.append(campaign)
 					}
 				}
 				sortedCampaignList.append(contentsOf: interestList)
