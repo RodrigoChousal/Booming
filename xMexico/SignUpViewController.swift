@@ -22,6 +22,21 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
     
     @IBOutlet weak var chooseImageButton: UIButton!
     @IBOutlet weak var pageController: SegmentedControl!
+	
+	// Interests View Buttons
+	@IBOutlet weak var interestButton1: UIButton!
+	@IBOutlet weak var interestButton2: UIButton!
+	@IBOutlet weak var interestButton3: UIButton!
+	@IBOutlet weak var interestButton4: UIButton!
+	@IBOutlet weak var interestButton5: UIButton!
+	@IBOutlet weak var interestButton6: UIButton!
+	@IBOutlet weak var interestButton7: UIButton!
+	@IBOutlet weak var interestButton8: UIButton!
+	@IBOutlet weak var interestButton9: UIButton!
+	@IBOutlet weak var interestButton10: UIButton!
+	@IBOutlet weak var interestButton11: UIButton!
+	@IBOutlet weak var interestButton12: UIButton!
+	var interestButtons = [UIButton]()
 
     var keyboardVisible = false
     var imagePicker = UIImagePickerController()
@@ -32,10 +47,19 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
         
         NotificationCenter.default.addObserver(self, selector: #selector(SignUpViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(SignUpViewController.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SignUpViewController.hideKeyboard)))
+		
+		let rightSwipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipeHandler(_:)))
+		rightSwipeRecognizer.direction = .right
+		let leftSwipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipeHandler(_:)))
+		leftSwipeRecognizer.direction = .left
+		view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(hideKeyboard)))
+		view.addGestureRecognizer(rightSwipeRecognizer)
+		view.addGestureRecognizer(leftSwipeRecognizer)
 		
         imagePicker.delegate = self
-        pageController.addTarget(self, action: #selector(self.segmentedControlValueChanged), for: .allEvents)
+        pageController.addTarget(self, action: #selector(segmentedControlValueChanged), for: .allEvents)
+		
+		setupButtonsList()
     }
 	
     override func didReceiveMemoryWarning() {
@@ -165,21 +189,101 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
         
         picker.dismiss(animated: true, completion: { () -> Void in })
     }
+	
+	// MARK: - Selector Methods
+	
+	@objc func interestSelected(sender: UIButton) {
+		if let interest = CampaignType(rawValue: sender.titleLabel?.text ?? "") {
+			if sender.backgroundColor == .white {
+				let buttonAttributes = [NSAttributedStringKey.font : UIFont(name: "Avenir-Heavy",
+																			size: CGFloat(16))!,
+										NSAttributedStringKey.foregroundColor : UIColor.white]
+				sender.setAttributedTitle(NSAttributedString(string: interest.rawValue,
+															 attributes: buttonAttributes), for: .normal)
+				sender.backgroundColor = .clear
+			} else {
+				let buttonAttributes = [NSAttributedStringKey.font : UIFont(name: "Avenir-Heavy",
+																			size: CGFloat(16))!,
+										NSAttributedStringKey.foregroundColor : UIColor.orange]
+				sender.setAttributedTitle(NSAttributedString(string: interest.rawValue,
+															 attributes: buttonAttributes), for: .normal)
+				sender.backgroundColor = .white
+			}
+		}
+	}
+	
+	@objc func segmentedControlValueChanged() {
+		switch pageController.selectedIndex {
+		case 0:
+			changeFormContent(toIndex: 0)
+		case 1:
+			changeFormContent(toIndex: 1)
+		case 2:
+			changeFormContent(toIndex: 2)
+		default:
+			changeFormContent(toIndex: 0)
+		}
+	}
+	
+	@objc func swipeHandler(_ gestureRecognizer : UISwipeGestureRecognizer) {
+		if gestureRecognizer.direction == .left {
+			print("SWIPING LEFT")
+			pageController.selectedIndex += 1
+			segmentedControlValueChanged()
+		} else if gestureRecognizer.direction == .right {
+			print("SWIPING RIGHT")
+			pageController.selectedIndex -= 1
+			segmentedControlValueChanged()
+		}
+	}
+	
+	@objc func keyboardWillShow(notification: NSNotification) {
+		keyboardVisible = true
+	}
+	
+	@objc func keyboardWillHide(notification: NSNotification) {
+		keyboardVisible = false
+	}
+	
+	@objc func hideKeyboard() {
+		if keyboardVisible {
+			self.view.endEditing(true)
+			keyboardVisible = false
+		}
+	}
     
     // MARK: - Helper Methods
-    
-    @objc func segmentedControlValueChanged() {
-        switch pageController.selectedIndex {
-        case 0:
-            changeFormContent(toIndex: 0)
-        case 1:
-            changeFormContent(toIndex: 1)
-        case 2:
-            changeFormContent(toIndex: 2)
-        default:
-            changeFormContent(toIndex: 0)
-        }
-    }
+	
+	func setupButtonsList() { // The greatest sin in the history of computer programming
+		interestButtons.append(interestButton1)
+		interestButtons.append(interestButton2)
+		interestButtons.append(interestButton3)
+		interestButtons.append(interestButton4)
+		interestButtons.append(interestButton5)
+		interestButtons.append(interestButton6)
+		interestButtons.append(interestButton7)
+		interestButtons.append(interestButton8)
+		interestButtons.append(interestButton9)
+		interestButtons.append(interestButton10)
+		interestButtons.append(interestButton11)
+		interestButtons.append(interestButton12)
+		
+		var i = 0
+		for button in interestButtons {
+			button.addTarget(self, action: #selector(self.interestSelected(sender:)), for: .touchUpInside)
+			button.backgroundColor = .clear
+			button.layer.cornerRadius = 16
+			button.layer.borderWidth = 3
+			button.layer.borderColor = UIColor.white.cgColor
+			button.setTitleColor(.white, for: .normal)
+			let buttonAttributes = [NSAttributedStringKey.font : UIFont(name: "Avenir-Heavy",
+																		size: CGFloat(16))!,
+									NSAttributedStringKey.foregroundColor : UIColor.white]
+			button.setAttributedTitle(NSAttributedString(string: CampaignType.allValues[i].rawValue,
+														 attributes: buttonAttributes), for: .normal)
+			i += 1
+		}
+	}
     
     func changeFormContent(toIndex index: Int) {
         UIView.animate(withDuration: 0.3) {
@@ -208,20 +312,5 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
             count += 1
         }
         return 0
-    }
-    
-    @objc func keyboardWillShow(notification: NSNotification) {
-        keyboardVisible = true
-    }
-    
-    @objc func keyboardWillHide(notification: NSNotification) {
-        keyboardVisible = false
-    }
-    
-    @objc func hideKeyboard() {
-        if keyboardVisible {
-            self.view.endEditing(true)
-            keyboardVisible = false
-        }
     }
 }

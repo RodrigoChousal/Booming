@@ -82,6 +82,7 @@ class DatabaseManager {
 		let campaign = Campaign(uniqueID: campaignID,
 								status: validStatus(fromString: dictionary.value(forKey: "status") as! String),
 								name: dictionary.value(forKey: "name") as! String,
+								type: dictionary.value(forKey: "type") as! String,
 								description: dictionary.value(forKey: "description") as! String,
 								objective: dictionary.value(forKey: "objective") as! String,
 								dateCreated: validDate(fromString: dictionary.value(forKey: "date_created") as! String),

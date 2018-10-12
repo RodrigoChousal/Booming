@@ -23,6 +23,11 @@ import UIKit
     
     var selectedIndex : Int = 0 {
         didSet {
+			if selectedIndex == items.count {
+				selectedIndex = items.count - 1
+			} else if selectedIndex < 0 {
+				selectedIndex = 0
+			}
             displayNewSelectedIndex()
         }
     }
@@ -68,7 +73,7 @@ import UIKit
         setupView()
     }
     
-    func setupView(){
+    func setupView() {
         
         layer.cornerRadius = frame.height / 2
         layer.borderColor = UIColor(white: 1.0, alpha: 0.5).cgColor
@@ -83,7 +88,7 @@ import UIKit
         insertSubview(thumbView, at: 0)
     }
     
-    func setupLabels(){
+    func setupLabels() {
         
         for label in labels {
             label.removeFromSuperview()

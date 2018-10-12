@@ -35,6 +35,7 @@ class Campaign {
 	var fundsNeeded: Int //TODO: Make class with currency property
 	var numberOfBackers: Int
 	var status: Status
+	var type: CampaignType
 	
 	var fundsAcquired: Int = 0
 	
@@ -58,10 +59,16 @@ class Campaign {
 		case GALLERY = "Gallery"
 	}
 	
-	init(uniqueID: String, status: Status, name: String, description: String, objective: String, dateCreated: Date, contact: Contact, numberOfBackers: Int, fundsNeeded: Int) {
+	init(uniqueID: String, status: Status, name: String, type: String, description: String, objective: String, dateCreated: Date, contact: Contact, numberOfBackers: Int, fundsNeeded: Int) {
 		self.uniqueID = uniqueID
 		self.status = status
 		self.name = name
+		if let campaignType = CampaignType(rawValue: type) {
+			self.type = campaignType
+		} else {
+			self.type = CampaignType.DEFAULT
+		}
+		
 		self.description = description
 		self.objective = objective
 		self.dateCreated = dateCreated
@@ -128,6 +135,24 @@ class LocalUser {
 		self.dateCreated = dateCreated
 		self.backedCampaigns = backedCampaigns
     }
+}
+
+enum CampaignType: String {
+	case NATURE = "Naturaleza"
+	case INDIGENOUS = "Grupos Indígenas"
+	case EDUCATION = "Educación"
+	case POVERTY = "Pobreza"
+	case PEACE = "Paz"
+	case TRANSPARENCY = "Transparencia"
+	case NUTRITION = "Alimentación"
+	case SPORT = "Deporte"
+	case MEDICINE = "Medicina"
+	case DISABILITIES = "Discapacidades"
+	case FAMILY = "Familia"
+	case EXPRESSION = "Libertad de Expresión"
+	case DEFAULT = "Default"
+	
+	static let allValues: [CampaignType] = [NATURE, INDIGENOUS, EDUCATION, POVERTY, PEACE, TRANSPARENCY, NUTRITION, SPORT, MEDICINE, DISABILITIES, FAMILY, EXPRESSION, DEFAULT]
 }
 
 struct Credentials {
