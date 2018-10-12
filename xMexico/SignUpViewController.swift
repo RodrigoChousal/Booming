@@ -48,15 +48,10 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
         NotificationCenter.default.addObserver(self, selector: #selector(SignUpViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(SignUpViewController.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
 		
-		let rightSwipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipeHandler(_:)))
-		rightSwipeRecognizer.direction = .right
-		let leftSwipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipeHandler(_:)))
-		leftSwipeRecognizer.direction = .left
-		view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(hideKeyboard)))
-		view.addGestureRecognizer(rightSwipeRecognizer)
-		view.addGestureRecognizer(leftSwipeRecognizer)
+		setupSwipeGestureRecognizers()
 		
         imagePicker.delegate = self
+		
         pageController.addTarget(self, action: #selector(segmentedControlValueChanged), for: .allEvents)
 		
 		setupButtonsList()
@@ -115,7 +110,7 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
                 case 4:
                     missingField = "su contraseña"
                 case 5:
-                    missingField = "un método de pago"
+                    missingField = "sus campañas de interés"
                 default:
                     missingField = "sus datos"
             }
@@ -132,6 +127,7 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
             let lastName = self.lastNameField.text!
             let email = self.emailField.text!
             let password = self.passwordField.text!
+			let interests = captureUserInterests()
 			
             Auth.auth().createUser(withEmail: email, password: password) { (authResult, error) in
                 
@@ -146,6 +142,7 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
                                                  lastName: lastName,
                                                  email: email,
 												 dateCreated: Date(),
+												 interests: interests,
 												 backedCampaigns: [BackedCampaign]())
                     if let localUser = Global.localUser {
                         localUser.profilePicture = img
@@ -254,6 +251,16 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
     
     // MARK: - Helper Methods
 	
+	func setupSwipeGestureRecognizers() {
+		let rightSwipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipeHandler(_:)))
+		rightSwipeRecognizer.direction = .right
+		let leftSwipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipeHandler(_:)))
+		leftSwipeRecognizer.direction = .left
+		view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(hideKeyboard)))
+		view.addGestureRecognizer(rightSwipeRecognizer)
+		view.addGestureRecognizer(leftSwipeRecognizer)
+	}
+	
 	func setupButtonsList() { // The greatest sin in the history of computer programming
 		interestButtons.append(interestButton1)
 		interestButtons.append(interestButton2)
@@ -284,6 +291,18 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
 			i += 1
 		}
 	}
+	
+	func captureUserInterests() -> [CampaignType] {
+		var userInterests = [CampaignType]()
+		for button in interestButtons {
+			if button.backgroundColor == .white {
+				if let interest = CampaignType(rawValue: button.titleLabel?.text ?? "") {
+					userInterests.append(interest)
+				}
+			}
+		}
+		return userInterests
+	}
     
     func changeFormContent(toIndex index: Int) {
         UIView.animate(withDuration: 0.3) {
@@ -294,22 +313,28 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
     func checkFormCompletion() -> Int {
         
         let requiredFields = [firstNameField, lastNameField, emailField, passwordField]
-        
-        let missingPayment = false
-        // TODO: Check if missing payment
-        print(missingPayment)
-        
-        var count = 1
-        
+		var missingFields = 0
+		
+        var missingInterests = true
+		for button in interestButtons {
+			if button.backgroundColor == .white {
+				missingInterests = false
+			}
+		}
+		if missingInterests {
+			missingFields = 5
+			return missingFields
+		}
+		
         // Check if missing any required field
         for field in requiredFields {
             
             // TODO: Check for password and email validity
             
             if let text = field?.text, text.isEmpty { 
-                return count
+                return missingFields
             }
-            count += 1
+            missingFields += 1
         }
         return 0
     }

@@ -11,6 +11,16 @@ import Foundation
 class DatabaseManager {
 	
 	// MARK: - Custom-to-Uploadable Native
+	
+	static func uploadableInterests(fromArray interestsArray: [CampaignType]) -> NSArray {
+		var uploadable = NSArray()
+		for interest in interestsArray {
+			let uploadableInterest = interest.rawValue
+			uploadable = uploadable.adding(uploadableInterest) as NSArray
+		}
+		return uploadable
+	}
+	
 	static func uploadableBackedCampaigns(fromArray backedCampaignsArray: [BackedCampaign]) -> NSArray {
 		var uploadable = NSArray()
 		for backedCampaign in backedCampaignsArray { // FIXME: How do I know uniqueID?
@@ -66,8 +76,17 @@ class DatabaseManager {
 	
 	// MARK: - Native-to-Custom Class
 	
+	static func validInterests(fromArray rawArray: NSArray) -> [CampaignType] {
+		var validInterests = [CampaignType]()
+		for interestString in rawArray {
+			if let interest = CampaignType(rawValue: interestString as! String) {
+				validInterests.append(interest)
+			}
+		}
+		return validInterests
+	}
+	
 	static func validBackedCampaign(fromDictionary dictionary: NSDictionary) -> BackedCampaign {
-		print(dictionary)
 		let amountContributed = validFunds(fromString: dictionary.value(forKey: "amount_contributed") as! String)
 		let dateContributed = validDate(fromString: dictionary.value(forKey: "date_contributed") as! String)
 		let parentID = dictionary.value(forKey: "campaign_id") as! String

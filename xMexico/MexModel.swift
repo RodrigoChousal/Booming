@@ -110,6 +110,7 @@ class LocalUser {
     var fullName: String { return firstName + " " + lastName }
     var email: String
     var dateCreated: Date
+	var interests: [CampaignType]
 	var backedCampaigns: [BackedCampaign]
 	
 	// Obligatory properties that must be loaded
@@ -128,11 +129,12 @@ class LocalUser {
         lastName = fullNameArr.joined(separator: " ")
     }
     
-	init(firstName: String, lastName: String, email: String, dateCreated: Date, backedCampaigns: [BackedCampaign]) {
+	init(firstName: String, lastName: String, email: String, dateCreated: Date, interests: [CampaignType], backedCampaigns: [BackedCampaign]) {
         self.firstName = firstName
         self.lastName = lastName
         self.email = email
 		self.dateCreated = dateCreated
+		self.interests = interests
 		self.backedCampaigns = backedCampaigns
     }
 }

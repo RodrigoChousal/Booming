@@ -154,7 +154,7 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
+        return 5
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -174,11 +174,11 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
             thirdCell.textLabel?.text = "Por orden alfabético"
             thirdCell.textLabel?.font = UIFont(name: "Avenir-Medium", size: 14)
             return thirdCell
-        case 3:
-            let fourthCell = UITableViewCell()
-            fourthCell.textLabel?.text = "Por necesidad"
-            fourthCell.textLabel?.font = UIFont(name: "Avenir-Medium", size: 14)
-            return fourthCell
+		case 3:
+			let fourthCell = UITableViewCell()
+			fourthCell.textLabel?.text = "Mis intereses"
+			fourthCell.textLabel?.font = UIFont(name: "Avenir-Medium", size: 14)
+			return fourthCell
         default:
             let defaultCell = UITableViewCell()
             defaultCell.textLabel?.text = "0"
@@ -287,7 +287,7 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
         
         switch kind {
         case 0:
-            Global.campaignList = Global.campaignList.sorted(by: { $0.name < $1.name })
+            Global.campaignList = Global.campaignList.sorted(by: { $0.numberOfBackers < $1.numberOfBackers })
             collectionView?.reloadData()
             
         case 1:
@@ -297,10 +297,26 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
         case 2:
             Global.campaignList = Global.campaignList.sorted(by: { $0.name > $1.name })
             collectionView?.reloadData()
-            
-        case 3:
-            Global.campaignList = Global.campaignList.sorted(by: { $0.name > $1.name })
-            collectionView?.reloadData()
+			
+		case 3:
+			var sortedCampaignList = [Campaign]()
+			if let localUser = Global.localUser {
+				var interestList = [Campaign]()
+				var noInterestList = [Campaign]()
+				for interest in localUser.interests {
+					for campaign in Global.campaignList {
+						if campaign.type == interest {
+							interestList.append(campaign)
+						} else {
+							noInterestList.append(campaign)
+						}
+					}
+				}
+				sortedCampaignList.append(contentsOf: interestList)
+				sortedCampaignList.append(contentsOf: noInterestList)
+			}
+			Global.campaignList = sortedCampaignList
+			collectionView?.reloadData()
             
         default:
             Global.campaignList = Global.campaignList.sorted(by: { $0.name > $1.name })

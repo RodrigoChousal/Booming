@@ -23,6 +23,7 @@ class SessionManager {
 					  "city" : localUser.city ?? "",
 					  "state" : localUser.state ?? "",
 					  "achievements" : localUser.achievements ?? [Achievement](), // TODO: uploadableAchievements
+					  "interests" : DatabaseManager.uploadableInterests(fromArray: localUser.interests),
 					  "backed_campaigns" : DatabaseManager.uploadableBackedCampaigns(fromArray: localUser.backedCampaigns)])
 		let changeRequest = fireUser.createProfileChangeRequest()
 		changeRequest.displayName = localUser.firstName + " " + localUser.lastName
@@ -43,6 +44,7 @@ class SessionManager {
 								 "bio" : localUser.bio ?? "",
 								 "city" : localUser.city ?? "",
 								 "state" : localUser.state ?? "",
+								 "interests" : DatabaseManager.uploadableInterests(fromArray: localUser.interests),
 								 // "achievements" : localUser.achievements ?? [Achievement](), // TODO: uploadableAchievements
 								 "backed_campaigns" : DatabaseManager.uploadableBackedCampaigns(fromArray: localUser.backedCampaigns)
 				]) { err in
@@ -63,6 +65,7 @@ class SessionManager {
 				let lastName = value["last_name"] as? String ?? ""
 				let email = value["email"] as? String ?? ""
 				let dateCreated = DatabaseManager.validDate(fromString: value["date_created"] as? String ?? "")
+				let interests = DatabaseManager.validInterests(fromArray: value["interests"] as? NSArray ?? NSArray())
 				let backedCampaignsDictionaries = value["backed_campaigns"] as? NSArray ?? NSArray()
 				var backedCampaigns = [BackedCampaign]()
 				for backedCampaignDictionary in backedCampaignsDictionaries {
@@ -72,6 +75,7 @@ class SessionManager {
 											 lastName: lastName,
 											 email: email,
 											 dateCreated: dateCreated,
+											 interests: interests,
 											 backedCampaigns: backedCampaigns)
 				ImageManager.fetchImageFromFirebase(forFireUser: fireUser, profilePicture: true)
 				ImageManager.fetchImageFromFirebase(forFireUser: fireUser, profilePicture: false)
