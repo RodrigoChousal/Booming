@@ -315,17 +315,6 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
         let requiredFields = [firstNameField, lastNameField, emailField, passwordField]
 		var missingFields = 0
 		
-        var missingInterests = true
-		for button in interestButtons {
-			if button.backgroundColor == .white {
-				missingInterests = false
-			}
-		}
-		if missingInterests {
-			missingFields = 5
-			return missingFields
-		}
-		
         // Check if missing any required field
         for field in requiredFields {
             
@@ -336,6 +325,18 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
             }
             missingFields += 1
         }
+		
+		var missingInterests = true
+		for button in interestButtons {
+			if button.backgroundColor == .white {
+				missingInterests = false
+			}
+		}
+		if missingInterests {
+			missingFields = 5
+			return missingFields
+		}
+		
         return 0
     }
 }

@@ -219,7 +219,7 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
             view.addGestureRecognizer(self.revealViewController().tapGestureRecognizer())
         }
     }
-    
+	    
 	@objc func setupView() {
 		
 		self.extendedLayoutIncludesOpaqueBars = true

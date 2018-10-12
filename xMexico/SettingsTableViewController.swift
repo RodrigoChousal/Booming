@@ -56,13 +56,6 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
-    }
     
     // MARK: - Action Methods
     
@@ -120,14 +113,10 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
     // MARK: - Table View Delegate
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		
-		print(indexPath.row)
-		
         tableView.deselectRow(at: indexPath, animated: true)
-		
-        if indexPath.row == 10 { // logout cell index path
-			self.logOut()
-        }
+		if indexPath.row == 10 {
+			showConfirmationPrompt() // Requesting SignOut
+		}
     }
     
     // MARK: - Text View Delegate
@@ -166,24 +155,22 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
     @objc func textFieldDidChange(_ textField: UITextField) {
         saveButton.isEnabled = true
     }
-    
+	
     // MARK: - Helper methods
 	
-	func logOut() {
-		print("Attempting sign out...")
+	@objc func signOut() {
 		if let currentWindow = UIApplication.shared.keyWindow {
 			currentWindow.showLoadingIndicator(withMessage: "Cerrando sesión")
 			if let _ = try? Auth.auth().signOut() {
-				currentWindow.stopLoadingIndicator()
 				print("Successfully signed out")
 				// Purge keychain access
 				if let _ = try? KeychainManager.deleteCredentials(credentials: KeychainManager.fetchCredentials()) {
 					print("Successfully deleted credentials in Keychain")
+					currentWindow.stopLoadingIndicator()
+					performSegue(withIdentifier: "SignOutSegue", sender: self)
 				} else {
 					print("Something went wrong deleting credentials in Keychain")
 				}
-				self.navigationController?.popToRootViewController(animated: true)
-				
 			} else {
 				currentWindow.stopLoadingIndicator()
 				print("Something went wrong")
@@ -191,7 +178,21 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
 			}
 		}
 	}
-    
+	
+	func showConfirmationPrompt() {
+		let acceptButton = UIButton(type: .system)
+		acceptButton.setTitle("SI", for: .normal)
+		acceptButton.backgroundColor = UIColor(red: 39/255, green: 174/255, blue: 96/255, alpha: 1.0)
+		acceptButton.setTitleColor(.white, for: .normal)
+		acceptButton.addTarget(self, action: #selector(signOut), for: .touchUpInside)
+		let rejectButton = UIButton(type: .system)
+		rejectButton.setTitle("NO", for: .normal)
+		rejectButton.backgroundColor = UIColor(red: 225/255, green: 74/255, blue: 59/255, alpha: 1.0)
+		rejectButton.setTitleColor(.white, for: .normal)
+		let alertView = AtomicAlertView(title: "Cerrar Sesión", message: "Estás seguro?", actionButtons: [acceptButton, rejectButton])
+		alertView.show(animated: true)
+	}
+	
     func fillTextFields() {
         if let user = Global.localUser {
             firstNameField.text = user.firstName

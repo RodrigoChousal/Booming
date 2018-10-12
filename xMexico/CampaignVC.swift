@@ -96,17 +96,7 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 	
 	@IBAction func addToPortfolioPressed(_ sender: Any) {
 		if inPortfolio {
-			let acceptButton = UIButton(type: .system)
-			acceptButton.setTitle("SI", for: .normal)
-			acceptButton.backgroundColor = UIColor(red: 39/255, green: 174/255, blue: 96/255, alpha: 1.0)
-			acceptButton.setTitleColor(.white, for: .normal)
-			acceptButton.addTarget(self, action: #selector(removeFromPortfolioPressed), for: .touchUpInside)
-			let rejectButton = UIButton(type: .system)
-			rejectButton.setTitle("NO", for: .normal)
-			rejectButton.backgroundColor = UIColor(red: 225/255, green: 74/255, blue: 59/255, alpha: 1.0)
-			rejectButton.setTitleColor(.white, for: .normal)
-			let alertView = AtomicAlertView(title: campaign.name, message: "Deseas retirar tu apoyo?", actionButtons: [acceptButton, rejectButton])
-			alertView.show(animated: true)
+			showConfirmationPrompt()
 		} else {
 			if let localUser = Global.localUser, let fireUser = Auth.auth().currentUser {
 				let generator = UINotificationFeedbackGenerator()
@@ -165,6 +155,20 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 		localUser.backedCampaigns.remove(at: index)
 		SessionManager.updateFireUser(fireUser: fireUser, withLocalUser: localUser)
 		NotificationCenter.default.post(name: .portfolioDidChange, object: nil)
+	}
+	
+	func showConfirmationPrompt() {
+		let acceptButton = UIButton(type: .system)
+		acceptButton.setTitle("SI", for: .normal)
+		acceptButton.backgroundColor = UIColor(red: 39/255, green: 174/255, blue: 96/255, alpha: 1.0)
+		acceptButton.setTitleColor(.white, for: .normal)
+		acceptButton.addTarget(self, action: #selector(removeFromPortfolioPressed), for: .touchUpInside)
+		let rejectButton = UIButton(type: .system)
+		rejectButton.setTitle("NO", for: .normal)
+		rejectButton.backgroundColor = UIColor(red: 225/255, green: 74/255, blue: 59/255, alpha: 1.0)
+		rejectButton.setTitleColor(.white, for: .normal)
+		let alertView = AtomicAlertView(title: campaign.name, message: "Deseas retirar tu apoyo?", actionButtons: [acceptButton, rejectButton])
+		alertView.show(animated: true)
 	}
 	
 	func resizeMission(newHeight: CGFloat, newY: CGFloat) {
