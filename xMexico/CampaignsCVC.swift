@@ -17,7 +17,6 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
 							LoadingPlaceholderView(),
 							LoadingPlaceholderView(),
 							LoadingPlaceholderView()] // same amount as loadingPlaceholderCount
-	var fromMenu = false
 	var isLoading = false
 	var campaignImages = [UIImage]()
     var topFilter = UIButton(type: .system)
@@ -27,8 +26,9 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		if !fromMenu {
+		if Global.returningAccess {
 			self.navigationController?.view.hide(duration: 1.0)
+			Global.returningAccess = false
 		}
 
         setupFilterButton()

@@ -12,6 +12,8 @@ import FirebaseDatabase
 import FirebaseFirestore
 
 class Global {
+	static var returningAccess = false // TODO: This is pretty terrible design
+	
     static var localUser: LocalUser? // Optional because users can enter as visitors
 	static var campaignList = [Campaign]()
 
@@ -103,7 +105,7 @@ class Contact {
 }
 
 class LocalUser {
-    
+	
     // Obligatory data (set during signup)
     var firstName: String
     var lastName: String
