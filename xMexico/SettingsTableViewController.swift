@@ -114,7 +114,7 @@ class SettingsTableViewController: UITableViewController, UITextViewDelegate, UI
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-		if indexPath.row == 10 {
+		if indexPath.row == 7 {
 			showConfirmationPrompt() // Requesting SignOut
 		}
     }

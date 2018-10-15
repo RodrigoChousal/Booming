@@ -32,22 +32,22 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
     override func viewWillAppear(_ animated: Bool) {
 		NotificationCenter.default.addObserver(self, selector: #selector(AccessViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(AccessViewController.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+		setupGestures()
     }
     
     override func viewDidLoad() {
+		
         super.viewDidLoad()
 		
 		setupGestures()
+		
+		buttonsViewPadding = buttonsView.frame.origin.x // Could prove buggy in the future
 		
 		showSignInFormsButton.layer.cornerRadius = 25
 		signInButton.layer.cornerRadius = 25
 		signUpButton.layer.cornerRadius = 25
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-		buttonsViewPadding = buttonsView.frame.origin.x
-    }
-    
+	
     override func viewWillDisappear(_ animated: Bool) {
         NotificationCenter.default.removeObserver(self)
     }
@@ -69,8 +69,11 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func backPressed(_ sender: Any) {
+		print("BACK PRESSED")
         if self.buttonsView.frame.origin.x < 0 {
             UIView.animate(withDuration: 0.3) {
+				print(self.buttonsView.frame.width/2)
+				print(self.buttonsViewPadding)
 				self.buttonsView.frame.origin.x += self.buttonsView.frame.width/2 + self.buttonsViewPadding
             }
         }

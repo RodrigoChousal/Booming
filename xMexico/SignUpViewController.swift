@@ -101,28 +101,7 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
         
         if formIncomplete > 0 { // A field or payment is missing
             
-            var missingField = ""
-
-            switch formIncomplete {
-                case 1:
-                    missingField = "ingresar su primer nombre"
-                case 2:
-                    missingField = "ingresar su apellido"
-                case 3:
-                    missingField = "ingresar su correo electrónico"
-                case 4:
-                    missingField = "ingresar su contraseña"
-				case 5:
-					missingField = "ingresar su contraseña 2 veces"
-                case 6:
-                    missingField = "ingresar sus campañas de interés"
-				case 7:
-					missingField = "asegurar que las contraseñas coincidan"
-                default:
-                    missingField = "ingresar sus datos"
-			}
-            
-            SCLAlertView().showWarning("Ups!", subTitle: "Favor de \(missingField)")
+			presentMissingFieldAlert(case: formIncomplete)
             
         } else {
             
@@ -160,6 +139,13 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
                     if let localUser = Global.localUser {
 						SessionManager.populateFireUser(fireUser: fireUser, withLocalUser: localUser)
                     }
+					
+					// Send verification email:
+					fireUser.sendEmailVerification { (error) in
+						if let err = error {
+							print(err.localizedDescription)
+						}
+					}
                     
                     // We're done
                     print("Finished sign up. Accessing main VC.")
@@ -309,6 +295,31 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
 			}
 		}
 		return userInterests
+	}
+	
+	func presentMissingFieldAlert(case formIncomplete: Int) {
+		var missingField = ""
+		
+		switch formIncomplete {
+		case 1:
+			missingField = "ingresar su primer nombre"
+		case 2:
+			missingField = "ingresar su apellido"
+		case 3:
+			missingField = "ingresar su correo electrónico"
+		case 4:
+			missingField = "ingresar su contraseña"
+		case 5:
+			missingField = "ingresar su contraseña 2 veces"
+		case 6:
+			missingField = "ingresar sus campañas de interés"
+		case 7:
+			missingField = "asegurar que las contraseñas coincidan"
+		default:
+			missingField = "ingresar sus datos"
+		}
+		
+		SCLAlertView().showWarning("Ups!", subTitle: "Favor de \(missingField)")
 	}
     
     func changeFormContent(toIndex index: Int) {

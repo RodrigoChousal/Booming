@@ -60,11 +60,6 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
             [NSAttributedStringKey.foregroundColor: UIColor.black,
              NSAttributedStringKey.font: UIFont(name: "Avenir-Medium", size: 17)!]
 		
-		// TEST ONLY
-		if let localUser = Global.localUser {
-			localUser.achievements = [Achievement(), Achievement()]
-		}
-		
         setupMenu()
         setupView()
     }

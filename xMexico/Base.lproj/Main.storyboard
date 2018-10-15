@@ -169,7 +169,7 @@
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0D6-v0-EI3">
                                                 <rect key="frame" x="0.0" y="414" width="375" height="38"/>
                                                 <subviews>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Reconocimientos (#)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BWm-M9-Oru">
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Reconocimientos (0)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BWm-M9-Oru">
                                                         <rect key="frame" x="22" y="17" width="158" height="21"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="16"/>
@@ -886,6 +886,70 @@
             </objects>
             <point key="canvasLocation" x="-1799" y="-398"/>
         </scene>
+        <!--Lost PasswordVC-->
+        <scene sceneID="Fi1-Xk-juh">
+            <objects>
+                <viewController id="YEL-CI-QgQ" customClass="LostPasswordVC" customModule="xMexico" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="3B9-Ew-Xq3"/>
+                        <viewControllerLayoutGuide type="bottom" id="Qq8-XU-EYK"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="r9T-wF-NdA">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Recupera tu contraseña" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nxn-YK-Rlr">
+                                <rect key="frame" x="96" y="115" width="195" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Escribe tu correo electrónico y te enviarémos una liga para recuperar tu cuenta." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wik-Iq-r4b">
+                                <rect key="frame" x="16" y="158" width="343" height="69"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Correo electrónico" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="kqh-bd-FrD">
+                                <rect key="frame" x="16" y="274" width="343" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5VW-U7-zMW">
+                                <rect key="frame" x="16" y="335" width="343" height="59"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" title="Mandar Link">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="sendLink:" destination="YEL-CI-QgQ" eventType="touchUpInside" id="7ph-Rg-10y"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jpr-xy-UZw">
+                                <rect key="frame" x="298" y="44" width="61" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Cancelar"/>
+                                <connections>
+                                    <action selector="cancelReset:" destination="YEL-CI-QgQ" eventType="touchUpInside" id="Zl6-3R-De1"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </view>
+                    <connections>
+                        <outlet property="emailField" destination="kqh-bd-FrD" id="KuS-o0-ZQN"/>
+                        <outlet property="sendLinkButton" destination="5VW-U7-zMW" id="Pym-xw-cKj"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="IHd-QO-aGd" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1942" y="-1265"/>
+        </scene>
         <!--AccessViewController-->
         <scene sceneID="9uW-Kg-4hq">
             <objects>
@@ -895,15 +959,15 @@
                         <viewControllerLayoutGuide type="bottom" id="8ou-8e-LQO"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="bI9-sO-idK">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <rect key="frame" x="0.0" y="0.0" width="750" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="R5k-NL-lZm">
-                                <rect key="frame" x="51" y="487" width="646" height="261"/>
+                                <rect key="frame" x="51" y="443" width="646" height="305"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="center" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F7U-BS-3ql">
-                                        <rect key="frame" x="0.0" y="125" width="271" height="51"/>
+                                        <rect key="frame" x="0.0" y="144" width="271" height="51"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="14"/>
@@ -915,7 +979,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Wl-VG-VvM">
-                                        <rect key="frame" x="0.0" y="44" width="271" height="51"/>
+                                        <rect key="frame" x="0.0" y="63" width="271" height="51"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="14"/>
@@ -988,7 +1052,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z2d-0E-0vD">
-                                        <rect key="frame" x="486" y="211" width="46" height="30"/>
+                                        <rect key="frame" x="486" y="275" width="46" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="16"/>
                                         <state key="normal" title="Atrás">
@@ -1009,15 +1073,24 @@
                                         <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </view>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uEX-t0-dlo">
-                                        <rect key="frame" x="64" y="223" width="143" height="32"/>
+                                        <rect key="frame" x="46" y="233" width="180" height="32"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="14"/>
-                                        <state key="normal" title="Entrar como visitante">
+                                        <state key="normal" title="Descubre ONGs en México">
                                             <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
                                             <action selector="enterAsVisitor:" destination="hfL-hG-Gq6" eventType="touchUpInside" id="NQa-Yc-QhI"/>
                                             <segue destination="bLp-zQ-IJh" kind="custom" identifier="AccessGranted" customClass="SlideLeftSegue" customModule="xMexico" customModuleProvider="target" id="GkI-xa-TZo"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7br-dC-fDb">
+                                        <rect key="frame" x="415" y="215" width="189" height="34"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="16"/>
+                                        <state key="normal" title="¿Olvidaste tu contraseña?"/>
+                                        <connections>
+                                            <segue destination="YEL-CI-QgQ" kind="show" id="xIR-GM-AAL"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -1026,6 +1099,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
+                    <size key="freeformSize" width="750" height="812"/>
                     <connections>
                         <outlet property="buttonsView" destination="R5k-NL-lZm" id="qjG-po-8Oz"/>
                         <outlet property="emailField" destination="nBa-Vz-9Ts" id="yUx-WI-wbD"/>
@@ -1039,7 +1113,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JAV-PH-xgB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3367.1999999999998" y="-805.41871921182269"/>
+            <point key="canvasLocation" x="-3368" y="-805.41871921182269"/>
         </scene>
         <!--Sign Up View Controller-->
         <scene sceneID="xyD-uh-kGc">
@@ -1788,7 +1862,7 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="jU4-P0-rrX"/>
-        <segue reference="QvK-uZ-PNE"/>
+        <segue reference="FUI-Hz-f9k"/>
         <segue reference="gQJ-Bq-bBJ"/>
     </inferredMetricsTieBreakers>
 </document>
