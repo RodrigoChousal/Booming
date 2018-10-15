@@ -29,21 +29,14 @@ class MatchmakingVC: UIViewController {
 		createButtonInstances()
 		arrangeButtonInstances()
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 	
 	// MARK: - Selectors
 	
 	@objc func interestSelected(sender: UIButton) {
+		
+		let feedback = UIImpactFeedbackGenerator(style: .light)
+		feedback.impactOccurred()
+		
 		if let interest = CampaignType(rawValue: sender.titleLabel?.text ?? "") {
 			if sender.backgroundColor == .white {
 				let buttonAttributes = [NSAttributedStringKey.font : UIFont(name: "Avenir-Heavy",
