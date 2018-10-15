@@ -18,7 +18,8 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
     @IBOutlet weak var lastNameField: UITextField!
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
-    @IBOutlet weak var showPasswordButton: UIButton!
+	@IBOutlet weak var confirmPasswordField: UITextField!
+	@IBOutlet weak var showPasswordButton: UIButton!
     
     @IBOutlet weak var chooseImageButton: UIButton!
     @IBOutlet weak var pageController: SegmentedControl!
@@ -72,11 +73,13 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
             showPasswordButton.setBackgroundImage(#imageLiteral(resourceName: "visible"), for: .normal)
             showPasswordButton.frame.size.height *= 3/4
             passwordField.isSecureTextEntry = false
+			confirmPasswordField.isSecureTextEntry = false
             
         } else {
             showPasswordButton.setBackgroundImage(#imageLiteral(resourceName: "not_visible"), for: .normal)
             showPasswordButton.frame.size.height *= 4/3
             passwordField.isSecureTextEntry = true
+			confirmPasswordField.isSecureTextEntry = true
         }
     }
     
@@ -102,20 +105,24 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
 
             switch formIncomplete {
                 case 1:
-                    missingField = "su primer nombre"
+                    missingField = "ingresar su primer nombre"
                 case 2:
-                    missingField = "su apellido"
+                    missingField = "ingresar su apellido"
                 case 3:
-                    missingField = "su correo electrónico"
+                    missingField = "ingresar su correo electrónico"
                 case 4:
-                    missingField = "su contraseña"
-                case 5:
-                    missingField = "sus campañas de interés"
+                    missingField = "ingresar su contraseña"
+				case 5:
+					missingField = "ingresar su contraseña 2 veces"
+                case 6:
+                    missingField = "ingresar sus campañas de interés"
+				case 7:
+					missingField = "asegurar que las contraseñas coincidan"
                 default:
-                    missingField = "sus datos"
-            }
+                    missingField = "ingresar sus datos"
+			}
             
-            SCLAlertView().showWarning("Ups!", subTitle: "Favor de ingresar \(missingField)")
+            SCLAlertView().showWarning("Ups!", subTitle: "Favor de \(missingField)")
             
         } else {
             
@@ -146,7 +153,7 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
 												 backedCampaigns: [BackedCampaign]())
                     if let localUser = Global.localUser {
                         localUser.profilePicture = img
-						localUser.backgroundPicture = #imageLiteral(resourceName: "placeholder") // TODO: Make background image placeholder
+						localUser.backgroundPicture = UIImage(named: "background_template")
                     }
                     
                     // Store details in d cloud:
@@ -292,7 +299,7 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
 		}
 	}
 	
-	func captureUserInterests() -> [CampaignType] {
+	func captureUserInterests() -> [CampaignType] { // TODO: Lol this seems comical, must be better way
 		var userInterests = [CampaignType]()
 		for button in interestButtons {
 			if button.backgroundColor == .white {
@@ -312,7 +319,11 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
     
     func checkFormCompletion() -> Int {
         
-        let requiredFields = [firstNameField, lastNameField, emailField, passwordField]
+        let requiredFields = [firstNameField,
+							  lastNameField,
+							  emailField,
+							  passwordField,
+							  confirmPasswordField]
 		var missingFields = 0
 		
         // Check if missing any required field
@@ -333,8 +344,12 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
 			}
 		}
 		if missingInterests {
-			missingFields = 5
+			missingFields = 6
 			return missingFields
+		}
+		
+		if passwordField.text != confirmPasswordField.text {
+			return 7
 		}
 		
         return 0

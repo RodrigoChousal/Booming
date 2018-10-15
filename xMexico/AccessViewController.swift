@@ -17,7 +17,10 @@ var isVisitor = false
 class AccessViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet weak var buttonsView: UIView!
-    @IBOutlet weak var emailField: UITextField!
+	@IBOutlet weak var showSignInFormsButton: UIButton!
+	@IBOutlet weak var signInButton: UIButton!
+	@IBOutlet weak var signUpButton: UIButton!
+	@IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
     @IBOutlet weak var showPasswordButton: UIButton!
 
@@ -27,24 +30,18 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
     var newUser = true
         
     override func viewWillAppear(_ animated: Bool) {
-		self.view.hide(duration: 2.0)
-		
-        NotificationCenter.default.addObserver(self, selector: #selector(AccessViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(AccessViewController.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(AccessViewController.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(AccessViewController.hideKeyboard)))
-        
-        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(self.backPressed(_:)))
-        swipeRight.direction = UISwipeGestureRecognizerDirection.right
-        self.view.addGestureRecognizer(swipeRight)
-        
-        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(self.showLoginForm(_:)))
-        swipeLeft.direction = UISwipeGestureRecognizerDirection.left
-        self.view.addGestureRecognizer(swipeLeft)
+		setupGestures()
+		
+		showSignInFormsButton.layer.cornerRadius = 25
+		signInButton.layer.cornerRadius = 25
+		signUpButton.layer.cornerRadius = 25
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -146,6 +143,18 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
     }
     
     // MARK: - Helper Methods
+	
+	func setupGestures() {
+		view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(AccessViewController.hideKeyboard)))
+		
+		let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(self.backPressed(_:)))
+		swipeRight.direction = UISwipeGestureRecognizerDirection.right
+		self.view.addGestureRecognizer(swipeRight)
+		
+		let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(self.showLoginForm(_:)))
+		swipeLeft.direction = UISwipeGestureRecognizerDirection.left
+		self.view.addGestureRecognizer(swipeLeft)
+	}
 	
     @objc func keyboardWillShow(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {

@@ -55,12 +55,7 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
 																   NSAttributedStringKey.font: UIFont(name: "Avenir-Black", size: 22)!]
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil) // Back button w/o title in campaign details
         
-        if revealViewController() != nil {
-            menuButton.target = self.revealViewController()
-            menuButton.action = #selector((SWRevealViewController.revealToggleMenu) as (SWRevealViewController) -> (Any?) -> Void) as Selector
-            view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
-            view.addGestureRecognizer(self.revealViewController().tapGestureRecognizer())
-        }
+        setupMenu()
     }
 
     override func didReceiveMemoryWarning() {
@@ -107,8 +102,6 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CampaignCell", for: indexPath) as! CampaignCell
         
         if isLoading { // Show loading cells
-			
-			print("COVERING CELL: " + indexPath.row.description)
 			self.loadingCellViews[indexPath.row].cover(cell)
 			
         } else { // Load content into cell
@@ -130,7 +123,7 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
             cell.nameLabel.backgroundColor = .clear
             cell.nameLabel.sizeToFit()
             
-            cell.infoLabel.text = "Desde " + Global.campaignList[indexPath.row].dateCreated.description
+            cell.infoLabel.text = Global.campaignList[indexPath.row].numberOfBackers.description + " personas apoyan"
             cell.infoLabel.backgroundColor = .clear
             cell.infoLabel.sizeToFit()
         }
@@ -196,6 +189,15 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
     }
     
     // MARK: - Helper Methods
+	
+	func setupMenu() {
+		if revealViewController() != nil {
+			menuButton.target = self.revealViewController()
+			menuButton.action = #selector((SWRevealViewController.revealToggleMenu) as (SWRevealViewController) -> (Any?) -> Void) as Selector
+			view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
+			view.addGestureRecognizer(self.revealViewController().tapGestureRecognizer())
+		}
+	}
     
     func loadCampaignImages() {
         for campaign in Global.campaignList {

@@ -92,6 +92,7 @@ class MenuTVC: UITableViewController {
         if !isVisitor {
             DispatchQueue.main.async {
 				if let user = Global.localUser {
+					self.userNameLabel.text = user.fullName
 					if let profilePicture = user.profilePicture {
 						self.userPictureView.image = profilePicture.circleMasked
 					}

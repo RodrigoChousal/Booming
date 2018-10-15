@@ -151,55 +151,51 @@ class UserVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSo
     // MARK: - UIImagePickerControllerDelegate
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        
-        if let image = info[UIImagePickerControllerEditedImage] as? UIImage {
-            
-            if let user = Auth.auth().currentUser {
-                if let locUser = Global.localUser {
-                    if pickingProfile {
-                        self.view.showLoadingIndicator(withMessage: "Actualizando su foto...")
-                        // Upload and update meta
-						ImageManager.postImageToFirebase(forFireUser: user, image: image, completion: { error in
-							self.view.stopLoadingIndicator()
-							if let err = error {
-								SCLAlertView().showWarning("Ups!", subTitle: err.localizedDescription)
-							} else {
-								// Update local user object
-								locUser.profilePicture = image
-								
-								// Update view
-								DispatchQueue.main.async {
-									self.userPortraitView.image = image.circleMasked
-								}
-							}
-							return
-						})
-                        
-                        pickingProfile = false
-                        
-                    } else if pickingBackground {
-                        self.view.showLoadingIndicator(withMessage: "Actualizando su foto...")
-                        // Upload and update meta
-						ImageManager.postBackgroundImageToFirebase(forFireUser: user, image: image, completion: { error in
-							self.view.stopLoadingIndicator()
-							if let err = error {
-								SCLAlertView().showWarning("Ups!", subTitle: err.localizedDescription)
-							} else {
-								// Update local user object
-								locUser.backgroundPicture = image
-								
-								// Update view
-								DispatchQueue.main.async {
-									self.userBgImageView.image = image
-								}
-							}
-						})
+		
+		DispatchQueue.main.async {
+			self.view.showLoadingIndicator(withMessage: "Actualizando su foto...")
+		}
+		
+        if let image = info[UIImagePickerControllerEditedImage] as? UIImage, let user = Auth.auth().currentUser, let localUser = Global.localUser {
+			if pickingProfile {
+				// Upload and update meta
+				ImageManager.postImageToFirebase(forFireUser: user, image: image, completion: { error in
+					self.view.stopLoadingIndicator()
+					if let err = error {
+						SCLAlertView().showWarning("Ups!", subTitle: err.localizedDescription)
+					} else {
+						// Update local user object
+						localUser.profilePicture = image
 						
-                        pickingBackground = false
-                    }
-                }
-            }
-            
+						// Update view
+						DispatchQueue.main.async {
+							self.userPortraitView.image = image.circleMasked
+						}
+					}
+					return
+				})
+				
+				pickingProfile = false
+				
+			} else if pickingBackground {
+				// Upload and update meta
+				ImageManager.postBackgroundImageToFirebase(forFireUser: user, image: image, completion: { error in
+					self.view.stopLoadingIndicator()
+					if let err = error {
+						SCLAlertView().showWarning("Ups!", subTitle: err.localizedDescription)
+					} else {
+						// Update local user object
+						localUser.backgroundPicture = image
+						
+						// Update view
+						DispatchQueue.main.async {
+							self.userBgImageView.image = image
+						}
+					}
+				})
+				
+				pickingBackground = false
+			}
             print("Finished picking new profile picture...")
             
         } else {

@@ -11,6 +11,7 @@ import UIKit
 class BackedCampaignsTVC: UITableViewController {
 	
 	var backedCampaignsList = [BackedCampaign]()
+	var backedCampaignImages = [UIImage]()
 	
     @IBOutlet weak var menuButton: UIBarButtonItem!
 		
@@ -19,12 +20,7 @@ class BackedCampaignsTVC: UITableViewController {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(portfolioDidChange), name: .portfolioDidChange, object: nil)
 		
-        if revealViewController() != nil {
-            menuButton.target = self.revealViewController()
-            menuButton.action = #selector((SWRevealViewController.revealToggleMenu) as (SWRevealViewController) -> (Any?) -> Void) as Selector
-            view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
-            view.addGestureRecognizer(self.revealViewController().tapGestureRecognizer())
-        }
+		setupMenu()
     }
 
     override func didReceiveMemoryWarning() {
@@ -46,7 +42,14 @@ class BackedCampaignsTVC: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BackedCampaignCell", for: indexPath) as! BackedCampaignTVCell
 		if let parentCampaign = self.backedCampaignsList[indexPath.row].parentCampaign {
 			cell.nameLabel.text = parentCampaign.name
-			cell.campaignImage.image = parentCampaign.thumbnailImage
+			// Cover loading images
+			if backedCampaignImages.count - 1 >= indexPath.row {
+				cell.campaignImage.image = parentCampaign.thumbnailImage
+				cell.imagePlaceholder.uncover()
+			} else {
+				cell.imagePlaceholder.cover(cell.campaignImageContainerView)
+			}
+			
 		}
         return cell
     }
@@ -81,6 +84,15 @@ class BackedCampaignsTVC: UITableViewController {
 
 	// MARK: - Helper Methods
 	
+	func setupMenu() {
+		if revealViewController() != nil {
+			menuButton.target = self.revealViewController()
+			menuButton.action = #selector((SWRevealViewController.revealToggleMenu) as (SWRevealViewController) -> (Any?) -> Void) as Selector
+			view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
+			view.addGestureRecognizer(self.revealViewController().tapGestureRecognizer())
+		}
+	}
+	
 	func loadBackedCampaigns(forLocalUser localUser: LocalUser) {
 		SessionManager.downloadBackedCampaignData(fromLocalUser: localUser, completion: {
 			self.backedCampaignsList = localUser.backedCampaigns
@@ -94,6 +106,7 @@ class BackedCampaignsTVC: UITableViewController {
 			if let parentCampaign = backedCampaign.parentCampaign {
 				ImageManager.fetchCampaignImageFromFirebase(forCampaign: parentCampaign, kind: .THUMB, galleryFileName: nil) { (img) in
 					parentCampaign.thumbnailImage = img
+					self.backedCampaignImages.append(img)
 					self.tableView.reloadData()
 				}
 			} else {

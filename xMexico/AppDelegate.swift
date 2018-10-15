@@ -92,6 +92,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
 		let accessVC = mainStoryboard.instantiateViewController(withIdentifier: "AccessViewController") as! AccessViewController
 		self.window?.rootViewController = accessVC
+		accessVC.view.hide(duration: 1.0)
 		if !newUser {
 			Global.returningAccess = true
 			accessVC.performSegue(withIdentifier: "AccessGrantedNoAnimation", sender: self)
