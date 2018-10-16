@@ -19,8 +19,10 @@ class BackedCampaignTVCell: UITableViewCell {
 	override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-		nameLabel.font = UIFont(name: "Avenir-Heavy", size: CGFloat(20))
+		nameLabel.font = UIFont(name: "Avenir-Heavy", size: CGFloat(18))
+		nameLabel.numberOfLines = 0
 		campaignImageContainerView.layer.cornerRadius = campaignImageContainerView.frame.width/2
+		campaignImageContainerView.clipsToBounds = true
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

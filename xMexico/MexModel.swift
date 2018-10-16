@@ -14,8 +14,11 @@ import FirebaseFirestore
 class Global {
 	static var returningAccess = false // TODO: This is pretty terrible design
 	
+	static var atomicBlue = UIColor(red: 0, green: 122/255, blue: 255/255, alpha: 1.0)
+	
     static var localUser: LocalUser? // Optional because users can enter as visitors
 	static var campaignList = [Campaign]()
+	static var backedCampaignsList = [BackedCampaign]()
 
 	// Realtime Database
     static let databaseRef = Database.database().reference()

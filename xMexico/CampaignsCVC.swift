@@ -50,11 +50,9 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
 				campaignImages.append(campaign.mainImage)
 			}
 		}
-        
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.black,
-																   NSAttributedStringKey.font: UIFont(name: "Avenir-Black", size: 22)!]
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil) // Back button w/o title in campaign details
-        
+		
+		navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil) // Back button w/o title in campaign details
+		
         setupMenu()
     }
 
@@ -286,7 +284,7 @@ class CampaignsCVC: UICollectionViewController, UITableViewDelegate, UITableView
         
         switch kind {
         case 0:
-            Global.campaignList = Global.campaignList.sorted(by: { $0.numberOfBackers < $1.numberOfBackers })
+            Global.campaignList = Global.campaignList.sorted(by: { $0.numberOfBackers > $1.numberOfBackers })
             collectionView?.reloadData()
             
         case 1:

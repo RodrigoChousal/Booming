@@ -42,6 +42,7 @@
 		C23C7D892174F05E00A2D460 /* MatchmakingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23C7D882174F05E00A2D460 /* MatchmakingVC.swift */; };
 		C23C7D8D2175136C00A2D460 /* ChangePasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23C7D8C2175136C00A2D460 /* ChangePasswordVC.swift */; };
 		C23C7D8F2175249F00A2D460 /* LostPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23C7D8E2175249F00A2D460 /* LostPasswordVC.swift */; };
+		C23C7D9221754B6400A2D460 /* AtomicTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23C7D9121754B6400A2D460 /* AtomicTextField.swift */; };
 		C25DD7EE212E09E90047E044 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25DD7ED212E09E90047E044 /* KeychainManager.swift */; };
 		C266DA2D214C2FD200D4FD61 /* Notification.Name + names.swift in Sources */ = {isa = PBXBuildFile; fileRef = C266DA2C214C2FD200D4FD61 /* Notification.Name + names.swift */; };
 		C27ED40521483E95007C5EBF /* UIView + hide.swift in Sources */ = {isa = PBXBuildFile; fileRef = C27ED40421483E95007C5EBF /* UIView + hide.swift */; };
@@ -99,6 +100,7 @@
 		C23C7D882174F05E00A2D460 /* MatchmakingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchmakingVC.swift; sourceTree = "<group>"; };
 		C23C7D8C2175136C00A2D460 /* ChangePasswordVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordVC.swift; sourceTree = "<group>"; };
 		C23C7D8E2175249F00A2D460 /* LostPasswordVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LostPasswordVC.swift; sourceTree = "<group>"; };
+		C23C7D9121754B6400A2D460 /* AtomicTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicTextField.swift; sourceTree = "<group>"; };
 		C25DD7ED212E09E90047E044 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
 		C266DA2C214C2FD200D4FD61 /* Notification.Name + names.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification.Name + names.swift"; sourceTree = "<group>"; };
 		C27ED40421483E95007C5EBF /* UIView + hide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView + hide.swift"; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 			isa = PBXGroup;
 			children = (
 				C228931F215C375400A04110 /* AtomicAlertView.swift */,
+				C23C7D9121754B6400A2D460 /* AtomicTextField.swift */,
 				33B43DF81E6A6AB400219D24 /* SCLAlertView */,
 				33E445061E75BFC300ACEB0D /* LoadingIndicator.swift */,
 				335BF3A31E6368A400929D2A /* SegmentedControl.swift */,
@@ -455,6 +458,7 @@
 				C23C7D892174F05E00A2D460 /* MatchmakingVC.swift in Sources */,
 				33B43DF61E6A6AA500219D24 /* SCLAlertView.swift in Sources */,
 				C27ED40521483E95007C5EBF /* UIView + hide.swift in Sources */,
+				C23C7D9221754B6400A2D460 /* AtomicTextField.swift in Sources */,
 				3350D3361E511F0E00359414 /* CampaignsCVC.swift in Sources */,
 				C23C7D8D2175136C00A2D460 /* ChangePasswordVC.swift in Sources */,
 				332F38521EFDA4EE00309918 /* CustomSearchBar.swift in Sources */,

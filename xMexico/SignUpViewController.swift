@@ -20,7 +20,8 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
     @IBOutlet weak var passwordField: UITextField!
 	@IBOutlet weak var confirmPasswordField: UITextField!
 	@IBOutlet weak var showPasswordButton: UIButton!
-    
+	@IBOutlet weak var finishSignUpButton: UIButton!
+	
     @IBOutlet weak var chooseImageButton: UIButton!
     @IBOutlet weak var pageController: SegmentedControl!
 	
@@ -54,6 +55,9 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
         imagePicker.delegate = self
 		
         pageController.addTarget(self, action: #selector(segmentedControlValueChanged), for: .allEvents)
+		
+		finishSignUpButton.layer.cornerRadius = 16
+		finishSignUpButton.clipsToBounds = true
 		
 		setupButtonsList()
     }
@@ -184,20 +188,20 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
 	
 	@objc func interestSelected(sender: UIButton) {
 		if let interest = CampaignType(rawValue: sender.titleLabel?.text ?? "") {
-			if sender.backgroundColor == .white {
+			if sender.backgroundColor == Global.atomicBlue {
 				let buttonAttributes = [NSAttributedStringKey.font : UIFont(name: "Avenir-Heavy",
 																			size: CGFloat(16))!,
-										NSAttributedStringKey.foregroundColor : UIColor.white]
+										NSAttributedStringKey.foregroundColor : Global.atomicBlue]
 				sender.setAttributedTitle(NSAttributedString(string: interest.rawValue,
 															 attributes: buttonAttributes), for: .normal)
 				sender.backgroundColor = .clear
 			} else {
 				let buttonAttributes = [NSAttributedStringKey.font : UIFont(name: "Avenir-Heavy",
 																			size: CGFloat(16))!,
-										NSAttributedStringKey.foregroundColor : UIColor.orange]
+										NSAttributedStringKey.foregroundColor : UIColor.white]
 				sender.setAttributedTitle(NSAttributedString(string: interest.rawValue,
 															 attributes: buttonAttributes), for: .normal)
-				sender.backgroundColor = .white
+				sender.backgroundColor = Global.atomicBlue
 			}
 		}
 	}
@@ -274,11 +278,10 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
 			button.backgroundColor = .clear
 			button.layer.cornerRadius = 16
 			button.layer.borderWidth = 3
-			button.layer.borderColor = UIColor.white.cgColor
-			button.setTitleColor(.white, for: .normal)
+			button.layer.borderColor = Global.atomicBlue.cgColor
 			let buttonAttributes = [NSAttributedStringKey.font : UIFont(name: "Avenir-Heavy",
 																		size: CGFloat(16))!,
-									NSAttributedStringKey.foregroundColor : UIColor.white]
+									NSAttributedStringKey.foregroundColor : Global.atomicBlue]
 			button.setAttributedTitle(NSAttributedString(string: CampaignType.allValues[i].rawValue,
 														 attributes: buttonAttributes), for: .normal)
 			i += 1
@@ -288,7 +291,7 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
 	func captureUserInterests() -> [CampaignType] { // TODO: Lol this seems comical, must be better way
 		var userInterests = [CampaignType]()
 		for button in interestButtons {
-			if button.backgroundColor == .white {
+			if button.backgroundColor == Global.atomicBlue {
 				if let interest = CampaignType(rawValue: button.titleLabel?.text ?? "") {
 					userInterests.append(interest)
 				}
@@ -350,7 +353,7 @@ class SignUpViewController: UIViewController, UINavigationControllerDelegate, UI
 		
 		var missingInterests = true
 		for button in interestButtons {
-			if button.backgroundColor == .white {
+			if button.backgroundColor == Global.atomicBlue {
 				missingInterests = false
 			}
 		}

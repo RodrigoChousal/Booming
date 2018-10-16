@@ -38,20 +38,20 @@ class MatchmakingVC: UIViewController {
 		feedback.impactOccurred()
 		
 		if let interest = CampaignType(rawValue: sender.titleLabel?.text ?? "") {
-			if sender.backgroundColor == .white {
+			if sender.backgroundColor == Global.atomicBlue {
 				let buttonAttributes = [NSAttributedStringKey.font : UIFont(name: "Avenir-Heavy",
 																			size: CGFloat(16))!,
-										NSAttributedStringKey.foregroundColor : UIColor.white]
+										NSAttributedStringKey.foregroundColor : Global.atomicBlue]
 				sender.setAttributedTitle(NSAttributedString(string: interest.rawValue,
 															 attributes: buttonAttributes), for: .normal)
 				sender.backgroundColor = .clear
 			} else {
 				let buttonAttributes = [NSAttributedStringKey.font : UIFont(name: "Avenir-Heavy",
 																			size: CGFloat(16))!,
-										NSAttributedStringKey.foregroundColor : UIColor.green]
+										NSAttributedStringKey.foregroundColor : UIColor.white]
 				sender.setAttributedTitle(NSAttributedString(string: interest.rawValue,
 															 attributes: buttonAttributes), for: .normal)
-				sender.backgroundColor = .white
+				sender.backgroundColor = Global.atomicBlue
 			}
 		}
 		
@@ -88,16 +88,16 @@ class MatchmakingVC: UIViewController {
 				interestButton.addTarget(self, action: #selector(self.interestSelected(sender:)), for: .touchUpInside)
 				interestButton.layer.cornerRadius = 16
 				interestButton.layer.borderWidth = 3
-				interestButton.layer.borderColor = UIColor.white.cgColor
+				interestButton.layer.borderColor = Global.atomicBlue.cgColor
 				var buttonAttributes = [NSAttributedStringKey.font : UIFont(name: "Avenir-Heavy",
 																			size: CGFloat(16))!,
 										NSAttributedStringKey.foregroundColor : UIColor.white]
 				if selectedInterests.contains(type) {
-					interestButton.backgroundColor = .white
-					buttonAttributes[.foregroundColor] = UIColor.green
+					interestButton.backgroundColor = Global.atomicBlue
+					buttonAttributes[.foregroundColor] = UIColor.white
 				} else {
 					interestButton.backgroundColor = .clear
-					buttonAttributes[.foregroundColor] = UIColor.white
+					buttonAttributes[.foregroundColor] = Global.atomicBlue
 				}
 				interestButton.setAttributedTitle(NSAttributedString(string: type.rawValue,
 																	 attributes: buttonAttributes), for: .normal)
@@ -107,7 +107,7 @@ class MatchmakingVC: UIViewController {
 		}
 		
 		saveButton.addTarget(self, action: #selector(self.saveInterestsPressed), for: .touchUpInside)
-		saveButton.backgroundColor = .blue
+		saveButton.backgroundColor = .green
 		saveButton.layer.cornerRadius = 16
 		saveButton.setTitleColor(.white, for: .normal)
 		saveButton.setTitle("Guardar", for: .normal)
@@ -146,7 +146,7 @@ class MatchmakingVC: UIViewController {
 	func captureUserInterests() -> [CampaignType] {
 		var userInterests = [CampaignType]()
 		for button in interestButtons {
-			if button.backgroundColor == .white {
+			if button.backgroundColor == Global.atomicBlue {
 				if let interest = CampaignType(rawValue: button.titleLabel?.text ?? "") {
 					userInterests.append(interest)
 				}

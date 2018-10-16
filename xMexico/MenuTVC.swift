@@ -19,8 +19,11 @@ class MenuTVC: UITableViewController {
 	@IBOutlet weak var userPictureContainerView: UIView!
     @IBOutlet weak var userPictureView: UIImageView!
     @IBOutlet weak var userNameLabel: UILabel!
+	
     @IBOutlet weak var campaignsCell: UITableViewCell!
-        
+	@IBOutlet weak var portfolioCell: UITableViewCell!
+	@IBOutlet weak var matchmakingCell: UITableViewCell!
+	
     override func viewDidLoad() {
         super.viewDidLoad()
 		
@@ -33,7 +36,9 @@ class MenuTVC: UITableViewController {
         self.revealViewController().rearViewRevealWidth = 200
         self.revealViewController().rearViewRevealDisplacement = 0
         self.revealViewController().springDampingRatio = 1.0
-        
+		
+		setupCellStyles()
+		
         setupView()
     }
     
@@ -51,28 +56,8 @@ class MenuTVC: UITableViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-
-    // MARK: - Navigation
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-		if segue.identifier == "BackedCampaignsSegue" {
-			let destination = segue.destination as! UINavigationController
-			if let localUser = Global.localUser {
-				let backedVC = destination.topViewController as! BackedCampaignsTVC
-				backedVC.loadBackedCampaigns(forLocalUser: localUser)
-				backedVC.loadBackedCampaignImages()
-			}
-		}
-    }
-    
+	
     // MARK: - UITableViewDelegate
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.row == 0 { // User VC
-            
-        }
-    }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.row == 0 { // userCell is taller
@@ -81,11 +66,19 @@ class MenuTVC: UITableViewController {
             }
             return 125
         }
-		
         return 54 // menu item cells
     }
     
     // MARK: - Helper Methods
+	
+	func setupCellStyles() {
+		let backgroundView = UIView()
+		backgroundView.backgroundColor = UIColor(red: 40/255, green: 140/255, blue: 255/255, alpha: 1.0)
+		userCell.selectedBackgroundView = backgroundView
+		campaignsCell.selectedBackgroundView = backgroundView
+		portfolioCell.selectedBackgroundView = backgroundView
+		matchmakingCell.selectedBackgroundView = backgroundView
+	}
     
     @objc func setupView() {
 		

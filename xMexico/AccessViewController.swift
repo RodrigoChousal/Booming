@@ -69,7 +69,6 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func backPressed(_ sender: Any) {
-		print("BACK PRESSED")
         if self.buttonsView.frame.origin.x < 0 {
             UIView.animate(withDuration: 0.3) {
 				print(self.buttonsView.frame.width/2)
@@ -131,7 +130,6 @@ class AccessViewController: UIViewController, UITextFieldDelegate {
                         self.view.stopLoadingIndicator()
                         self.performSegue(withIdentifier: "AccessGranted", sender: self)
                     }
-
                 }
             }
             

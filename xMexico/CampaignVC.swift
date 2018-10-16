@@ -183,6 +183,7 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 		navigationItem.title = campaign.name
 		navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
 		
+		missionTextView.text = campaign.objective
 		descTextView.text = campaign.description
 		fundsAcquiredLabel.text = campaign.numberOfBackers.description + " personas apoyan esta campaña"
 	}
@@ -226,8 +227,9 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 	}
     
     func loadCampaignImages() { // maybe reload data as images load, instead of waiting for all
-		
-		loadingPlaceholderView.cover(self.iconContainerView)
+		DispatchQueue.main.async {
+			self.loadingPlaceholderView.cover(self.iconContainerView)
+		}
 		ImageManager.fetchCampaignImageFromFirebase(forCampaign: campaign, kind: .THUMB, galleryFileName: nil) { (img) in
 			if let maskedImage = img.circleMasked {
 				self.loadingPlaceholderView.uncover()
@@ -236,7 +238,9 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
 			}
 		}
 		
-		loadingGalleryView.cover(self.galleryController.galleryCollectionView)
+		DispatchQueue.main.async {
+			self.loadingGalleryView.cover(self.galleryController.galleryCollectionView)
+		}
 		for fileName in campaign.galleryImageFileNames {
 			ImageManager.fetchCampaignImageFromFirebase(forCampaign: campaign, kind: .GALLERY, galleryFileName: fileName) { (img) in
 				self.loadingGalleryView.uncover()

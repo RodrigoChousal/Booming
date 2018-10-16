@@ -10,7 +10,6 @@ import UIKit
 
 class BackedCampaignsTVC: UITableViewController {
 	
-	var backedCampaignsList = [BackedCampaign]()
 	var backedCampaignImages = [UIImage]()
 	
     @IBOutlet weak var menuButton: UIBarButtonItem!
@@ -20,6 +19,13 @@ class BackedCampaignsTVC: UITableViewController {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(portfolioDidChange), name: .portfolioDidChange, object: nil)
 		
+		if let localUser = Global.localUser {
+			if Global.backedCampaignsList.count == 0 && localUser.backedCampaigns.count != 0 {
+				loadBackedCampaigns(forLocalUser: localUser)
+				loadBackedCampaignImages()
+			}
+		}
+		
 		setupMenu()
     }
 
@@ -28,19 +34,19 @@ class BackedCampaignsTVC: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    // MARK: - Table view data source
+    // MARK: - Table View Data Source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return backedCampaignsList.count
+        return Global.backedCampaignsList.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BackedCampaignCell", for: indexPath) as! BackedCampaignTVCell
-		if let parentCampaign = self.backedCampaignsList[indexPath.row].parentCampaign {
+		if let parentCampaign = Global.backedCampaignsList[indexPath.row].parentCampaign {
 			cell.nameLabel.text = parentCampaign.name
 			// Cover loading images
 			if backedCampaignImages.count - 1 >= indexPath.row {
@@ -49,7 +55,6 @@ class BackedCampaignsTVC: UITableViewController {
 			} else {
 				cell.imagePlaceholder.cover(cell.campaignImageContainerView)
 			}
-			
 		}
         return cell
     }
@@ -65,7 +70,7 @@ class BackedCampaignsTVC: UITableViewController {
 		if segue.identifier == "ShowBackedCampaignSegue" {
 			let cell = sender as! BackedCampaignTVCell
 			if let indexPath = tableView?.indexPath(for: cell) {
-				if let campaign = backedCampaignsList[indexPath.row].parentCampaign {
+				if let campaign = Global.backedCampaignsList[indexPath.row].parentCampaign {
 					let campaignDetailVC = segue.destination as! CampaignVC
 					campaignDetailVC.campaign = campaign
 				}
@@ -77,7 +82,7 @@ class BackedCampaignsTVC: UITableViewController {
 	
 	@objc func portfolioDidChange() {
 		if let localUser = Global.localUser {
-			self.backedCampaignsList = localUser.backedCampaigns
+			Global.backedCampaignsList = localUser.backedCampaigns
 			self.tableView.reloadData()
 		}
 	}
@@ -95,14 +100,14 @@ class BackedCampaignsTVC: UITableViewController {
 	
 	func loadBackedCampaigns(forLocalUser localUser: LocalUser) {
 		SessionManager.downloadBackedCampaignData(fromLocalUser: localUser, completion: {
-			self.backedCampaignsList = localUser.backedCampaigns
+			Global.backedCampaignsList = localUser.backedCampaigns
 			self.loadBackedCampaignImages()
 			self.tableView.reloadData()
 		})
 	}
 	
 	func loadBackedCampaignImages() {
-		for backedCampaign in backedCampaignsList {
+		for backedCampaign in Global.backedCampaignsList {
 			if let parentCampaign = backedCampaign.parentCampaign {
 				ImageManager.fetchCampaignImageFromFirebase(forCampaign: parentCampaign, kind: .THUMB, galleryFileName: nil) { (img) in
 					parentCampaign.thumbnailImage = img

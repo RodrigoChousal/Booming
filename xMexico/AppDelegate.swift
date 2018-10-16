@@ -45,6 +45,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				self.grantAccess(newUser: false)
             }
         }
+		
+		setupSystemStyles()
         
         return true
     }
@@ -97,6 +99,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			Global.returningAccess = true
 			accessVC.performSegue(withIdentifier: "AccessGrantedNoAnimation", sender: self)
 		}
+	}
+	
+	func setupSystemStyles() {
+		let attributes = [NSAttributedStringKey.foregroundColor: UIColor.black,
+						  NSAttributedStringKey.font: UIFont(name: "Avenir-Medium", size: 18)!]
+		UINavigationBar.appearance().titleTextAttributes = attributes
 	}
 }
 
