@@ -22,8 +22,8 @@ class BackedCampaignsTVC: UITableViewController {
 		if let localUser = Global.localUser {
 			if Global.backedCampaignsList.count == 0 && localUser.backedCampaigns.count != 0 {
 				loadBackedCampaigns(forLocalUser: localUser)
-				loadBackedCampaignImages()
 			}
+			loadBackedCampaignImages() // TODO: Find way to only load images once
 		}
 		
 		setupMenu()

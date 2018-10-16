@@ -14,7 +14,6 @@ class BackedCampaignTVCell: UITableViewCell {
 	@IBOutlet weak var campaignImageContainerView: UIView!
 	@IBOutlet weak var campaignImage: UIImageView!
 	@IBOutlet weak var nameLabel: UILabel!
-	@IBOutlet weak var favoriteButton: UIButton!
 	
 	override func awakeFromNib() {
         super.awakeFromNib()
@@ -30,8 +29,4 @@ class BackedCampaignTVCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-
-	@IBAction func favoritePressed(_ sender: Any) {
-		
-	}
 }

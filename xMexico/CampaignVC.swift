@@ -90,7 +90,7 @@ class CampaignVC: UIViewController, UIScrollViewDelegate {
     }
     
 	@IBAction func questionPressed(_ sender: Any) {
-		let copyAlert = AtomicAlertView(title: "Contestamos tus preguntas!", linkForCopy: "http://www.apple.com")
+		let copyAlert = AtomicAlertView(title: "¡Contestamos tus preguntas!", linkForCopy: campaign.contact.email)
 		copyAlert.show(animated: true)
 	}
 	

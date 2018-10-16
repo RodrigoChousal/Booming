@@ -13,6 +13,8 @@ class MatchmakingVC: UIViewController {
 
 	@IBOutlet weak var menuButton: UIBarButtonItem!
 	
+	var customGray = UIColor(red: 50/255, green: 50/255, blue: 50/255, alpha: 1.0)
+	
 	var interestButtons = [UIButton]()
 	var saveButton = UIButton(type: .system)
 	var selectedInterests = [CampaignType]()
@@ -38,10 +40,10 @@ class MatchmakingVC: UIViewController {
 		feedback.impactOccurred()
 		
 		if let interest = CampaignType(rawValue: sender.titleLabel?.text ?? "") {
-			if sender.backgroundColor == Global.atomicBlue {
+			if sender.backgroundColor == customGray {
 				let buttonAttributes = [NSAttributedStringKey.font : UIFont(name: "Avenir-Heavy",
 																			size: CGFloat(16))!,
-										NSAttributedStringKey.foregroundColor : Global.atomicBlue]
+										NSAttributedStringKey.foregroundColor : customGray]
 				sender.setAttributedTitle(NSAttributedString(string: interest.rawValue,
 															 attributes: buttonAttributes), for: .normal)
 				sender.backgroundColor = .clear
@@ -51,7 +53,7 @@ class MatchmakingVC: UIViewController {
 										NSAttributedStringKey.foregroundColor : UIColor.white]
 				sender.setAttributedTitle(NSAttributedString(string: interest.rawValue,
 															 attributes: buttonAttributes), for: .normal)
-				sender.backgroundColor = Global.atomicBlue
+				sender.backgroundColor = customGray
 			}
 		}
 		
@@ -81,23 +83,22 @@ class MatchmakingVC: UIViewController {
 	}
 	
 	func createButtonInstances() {
-		
 		for type in CampaignType.allValues {
 			if type != .DEFAULT {
 				let interestButton = UIButton(type: .custom)
 				interestButton.addTarget(self, action: #selector(self.interestSelected(sender:)), for: .touchUpInside)
 				interestButton.layer.cornerRadius = 16
 				interestButton.layer.borderWidth = 3
-				interestButton.layer.borderColor = Global.atomicBlue.cgColor
+				interestButton.layer.borderColor = customGray.cgColor
 				var buttonAttributes = [NSAttributedStringKey.font : UIFont(name: "Avenir-Heavy",
 																			size: CGFloat(16))!,
 										NSAttributedStringKey.foregroundColor : UIColor.white]
 				if selectedInterests.contains(type) {
-					interestButton.backgroundColor = Global.atomicBlue
+					interestButton.backgroundColor = customGray
 					buttonAttributes[.foregroundColor] = UIColor.white
 				} else {
 					interestButton.backgroundColor = .clear
-					buttonAttributes[.foregroundColor] = Global.atomicBlue
+					buttonAttributes[.foregroundColor] = customGray
 				}
 				interestButton.setAttributedTitle(NSAttributedString(string: type.rawValue,
 																	 attributes: buttonAttributes), for: .normal)
@@ -107,10 +108,14 @@ class MatchmakingVC: UIViewController {
 		}
 		
 		saveButton.addTarget(self, action: #selector(self.saveInterestsPressed), for: .touchUpInside)
-		saveButton.backgroundColor = .green
+		saveButton.backgroundColor = Global.atomicBlue
 		saveButton.layer.cornerRadius = 16
 		saveButton.setTitleColor(.white, for: .normal)
-		saveButton.setTitle("Guardar", for: .normal)
+		let buttonAttributes = [NSAttributedStringKey.font : UIFont(name: "Avenir-Medium",
+																	size: CGFloat(16))!,
+								NSAttributedStringKey.foregroundColor : UIColor.white]
+		saveButton.setAttributedTitle(NSAttributedString(string: "Guardar",
+														attributes: buttonAttributes), for: .normal)
 	}
 	
 	func arrangeButtonInstances() {
@@ -137,7 +142,7 @@ class MatchmakingVC: UIViewController {
 			i += 1
 		}
 		
-		let saveButtonY = yInset + CGFloat(interestButtons.count/2)*(buttonHeight + yPadding)
+		let saveButtonY = UIScreen.main.bounds.height - (buttonHeight + yInset)
 		let saveButtonWidth = UIScreen.main.bounds.width - xInset * 2
 		saveButton.frame = CGRect(x: xInset, y: saveButtonY, width: saveButtonWidth, height: buttonHeight)
 		view.addSubview(saveButton)

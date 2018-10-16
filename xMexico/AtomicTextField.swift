@@ -15,7 +15,6 @@ class AtomicTextField: UITextField {
 	let imagePadding = CGFloat(10)
 	let imageWidth = CGFloat(20)
 	let imageHeight = CGFloat(20)
-	let accentColor = UIColor(red: 205/255, green: 205/255, blue: 205/255, alpha: 1.0)
 	
 	var padding: UIEdgeInsets {
 		return UIEdgeInsets(top: 0, left: (imagePadding + imageWidth + imagePadding), bottom: 0, right: 5)
@@ -54,7 +53,7 @@ class AtomicTextField: UITextField {
 			imageView.contentMode = .scaleAspectFit
 			imageView.image = image
 			// Note: In order for your image to use the tint color, you have to select the image in the Assets.xcassets and change the "Render As" property to "Template Image".
-			imageView.tintColor = accentColor
+			imageView.tintColor = self.tintColor
 			leftView = imageView
 		} else {
 			leftViewMode = UITextFieldViewMode.never
@@ -62,7 +61,7 @@ class AtomicTextField: UITextField {
 		}
 		
 		// Placeholder text color
-		attributedPlaceholder = NSAttributedString(string: placeholder != nil ?  placeholder! : "", attributes:[NSAttributedStringKey.foregroundColor: accentColor])
+		attributedPlaceholder = NSAttributedString(string: placeholder != nil ?  placeholder! : "", attributes:[NSAttributedStringKey.foregroundColor: UIColor(red: 205/255, green: 205/255, blue: 205/255, alpha: 1.0)])
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
@@ -70,8 +69,6 @@ class AtomicTextField: UITextField {
 		self.leftViewMode = .always
 		self.layer.cornerRadius = 8
 		self.backgroundColor = UIColor(red: 242/255, green: 242/255, blue: 242/255, alpha: 1.0)
-		self.tintColor = UIColor.black
-		self.textColor = UIColor.black
 		self.font = UIFont(name: "Avenir-Medium", size: 16)
 	}
 	
