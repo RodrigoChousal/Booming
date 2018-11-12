@@ -1,5 +1,5 @@
-# Hatcher
-Hatcher is a crowdfunding platform that empowers communities at a local level so that government is not needed in order to launch projects that will benefit the public. Through crowdfunding donations, citizens can contribute to projects that they deem necessary in their communities, knowing that the team behind the proposal will be responsible for implementing it. Please feel free to download this project and launch it in your own community, as it is specifically designed for it to be reproduced and used worldwide.
+# Booming Funding
+Booming is a crowdfunding platform that empowers communities at a local level so that government is not needed in order to launch projects that will benefit the public. Through crowdfunding donations, citizens can contribute to projects that they deem necessary in their communities, knowing that the team behind the proposal will be responsible for implementing it. Please feel free to download this project and launch it in your own community, as it is specifically designed for it to be reproduced and used worldwide.
 
 ## Getting Started
 
